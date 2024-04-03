@@ -2,6 +2,7 @@ API
     [ERail](https://erail.in/rail/getTrains.aspx)
     [ERail Implement](https://github.com/AniCrad/indian-rail-api)
     [Anicrad/Indian-rail](https://github.com/AniCrad/indian-rail)
+    [Metro Data](https://themetrorailguy.com/kolkata-metro-information-map-updates/)
 
 Authorization (Register and login)
     Clerk
