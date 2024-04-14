@@ -91,3 +91,23 @@ print(astar(graph, start, goal))
 
 This is a basic implementation and can be further optimized or extended based on specific requirements and constraints. Additionally, you need to define the graph and heuristic function according to your map representation and domain.
 
+
+Station Schema:  {
+    station_name:""
+    station_code:""
+    line_color_code:""
+    <!-- undirected graph -->
+    connected_stations:[array of multiple station_id] 
+
+}
+
+route:{
+    source:""
+    destination:""
+    distance:""
+    intermidiate_stations:[]
+    fare:""
+    begin_time:""
+    ending_time:""
+    current_time:""
+}
