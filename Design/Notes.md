@@ -98,8 +98,8 @@ Station Schema:  {
     station_code:""
     line_color_code:""
     <!-- undirected graph -->
-    connected_stations:[array of multiple station_id] 
-
+    connected_metro_stations:[array of multiple station_id adjacent to itself] 
+    connected_railway_stations:[array of multiple station_id adjacent to itself] 
 }
 
 route:{
