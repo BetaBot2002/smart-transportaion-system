@@ -5,9 +5,14 @@ const stationSchema = new Schema ({
         type: String,
         required: true
     },
+
     station_code:{
         type: String,
         required: true
+    },
+    station_type:{
+        type:String,
+        required:true
     },
     line_color_code:{
         type: [String],

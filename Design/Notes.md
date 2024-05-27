@@ -115,3 +115,50 @@ route:{
 
 
 ADD CACHING MECHANISM TO SPEED UP SOURCE TO DESTINATION SEARCH WHEN SOURCE IS SAME
+
+
+Metro Route added
+    Blue Line: Dakshineswar to Kavi Subhash (New Garia)
+    Green Line: Howrah Maidan to Teghoria
+    Purple Line: Joka to Esplanade
+    Yellow Line: Noapara to Barasat
+    Orange Line: Kavi Subhash to Biman Bandar (Airport)
+    Pink Line: Baranagar to Barrackpore
+
+
+Local EMU added
+    Sealdah north
+        Sealdah to dum dum
+        dum dum to naihati
+        dum dum to barasat
+        dum dum to dankuni
+        dum dum to majherhat
+
+        naihati to bandel
+        naihati to kalyani
+
+        barasat to bangaon
+        barasat to hasanabad 
+
+        Kalyani to kalyani simanta
+        kalyani to ranaghat
+
+        ranaghat to gede
+        ranaghat to lalgola
+        ranaghat to shantipur
+        ranaghat to bongaon
+
+
+    sealdah south
+        sealdah to ballygunge
+        
+        ballygunge to budge budge
+        ballygunge to sonarpur
+
+        sonarpur to canning
+        sonarpur to baruipur
+
+        baruipur to diamond harbour
+        baruipur to namkhana
+    
+    Howrah Main

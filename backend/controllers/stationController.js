@@ -1,15 +1,19 @@
 import Station from "../models/stationModel.js";
 import findShortestPath from "../utils/findShortestPath.js";
+import CustomError from "../utils/customError.js";
 const createStation = async (req,res) =>{
+    try{
+        const station = await Station.findOne({station_name: req.body.station_name});
+        if(station) {
+            throw new CustomError("Station already exists");
+        }
 
-    const station = await Station.findOne({station_name: req.body.station_name});
-    if(station) {
-        return res.status(400).json("Station already exists");
+
+        await Station.create(req.body);
+        res.status(200).json("Station created successfully");
+    }catch(err) {
+        res.status(400).json(e.message);
     }
-
-
-    await Station.create(req.body);
-    res.status(200).json("Station created successfully");
 }
 
 const getRoute = async (req, res) => {
@@ -31,7 +35,8 @@ const getAllStations = async (req, res) => {
         const stations = await Station.find({});
         res.status(200).json(stations);
     }catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json(err.message);
     }
 }
+
 export {createStation,getRoute,getAllStations};
