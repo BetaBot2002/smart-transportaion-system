@@ -1,5 +1,5 @@
 1. routes completion
-2. server upload on onrender
+2. server upload on onrender.
 3. database create 
     1. Sealdah Main
     2. Sealdah North
