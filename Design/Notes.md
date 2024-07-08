@@ -3,6 +3,7 @@ API
     [ERail Implement](https://github.com/AniCrad/indian-rail-api)
     [Anicrad/Indian-rail](https://github.com/AniCrad/indian-rail)
     [Metro Data](https://themetrorailguy.com/kolkata-metro-information-map-updates/)
+    [Backend Url](https://indian-rail-api.onrender.com/)
 
 Authorization (Register and login)
     Clerk
@@ -118,35 +119,45 @@ ADD CACHING MECHANISM TO SPEED UP SOURCE TO DESTINATION SEARCH WHEN SOURCE IS SA
 
 
 Metro Route added
-    Blue Line: Dakshineswar to Kavi Subhash (New Garia)
-    Green Line: Howrah Maidan to Teghoria
-    Purple Line: Joka to Esplanade
-    Yellow Line: Noapara to Barasat
-    Orange Line: Kavi Subhash to Biman Bandar (Airport)
-    Pink Line: Baranagar to Barrackpore
+    Blue Line: Dakshineswar to Kavi Subhash (New Garia).
+    Green Line: Howrah Maidan to Teghoria.
+    Purple Line: Joka to Esplanade.
+    Yellow Line: Noapara to Barasat.
+    Orange Line: Kavi Subhash to Biman Bandar (Airport).
+    Pink Line: Baranagar to Barrackpore.
+
+    intersecting stations :
+    [{ "station": "Noapara", "lines": ["blue", "yellow"] },
+    { "station": "Esplanade", "lines": ["blue", "purple", "green"] },
+    { "station": "Park Street", "lines": ["blue", "purple"] },
+    { "station": "Saltlake Sector V", "lines": ["orange", "green"] },
+    { "station": "VIP Road/Teghoria", "lines": ["orange", "yellow"] },
+    { "station": "Biman Bandar", "lines": ["yellow", "orange"] },
+    { "station": "Kavi Subhash", "lines": ["blue", "orange"] }]
+
 
 
 Local EMU added
     Sealdah north
-        Sealdah to dum dum
-        dum dum to naihati
-        dum dum to barasat
-        dum dum to dankuni
-        dum dum to majherhat
+        Sealdah to dum dum.
+        dum dum to naihati.
+        dum dum to barasat.
+        dum dum to dankuni.
+        dum dum to majherhat.
 
-        naihati to bandel
-        naihati to kalyani
+        naihati to bandel.
+        naihati to kalyani.
 
-        barasat to bangaon
-        barasat to hasanabad 
+        barasat to bangaon.
+        barasat to hasanabad. 
 
-        Kalyani to kalyani simanta
-        kalyani to ranaghat
+        Kalyani to kalyani simanta.
+        kalyani to ranaghat.
 
-        ranaghat to gede
-        ranaghat to lalgola
-        ranaghat to shantipur
-        ranaghat to bongaon
+        ranaghat to gede.
+        ranaghat to lalgola.
+        ranaghat to shantipur.
+        ranaghat to bongaon.
 
 
     sealdah south
@@ -161,4 +172,12 @@ Local EMU added
         baruipur to diamond harbour
         baruipur to namkhana
     
-    Howrah Main
+    Howrah
+        Howrah Junction to Katwa (includes Howrah to Bandel)
+        Howrah Junction to Barddhaman Junction (via Main Line)
+        Howrah Junction to Barddhaman Junction (via Chord Line)
+        Howrah Junction to Tarakeswar (includes Howrah to Masagram)
+        Howrah Junction to Amta
+        Howrah Junction to Goghat
+        Howrah Junction to Midnapore (includes Howrah to Kharagpur, Howrah to Balichak, Howrah to Bagnan, Howrah to Panskura, Howrah to Mecheda, Howrah to Tamluk, Howrah to Deulti, Howrah to Uluberia, and Howrah to Phuleswar)
+        Howrah Junction to Haldia

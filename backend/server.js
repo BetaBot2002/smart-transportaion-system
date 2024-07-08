@@ -9,7 +9,7 @@ dotenv.config({path:"./backend/database/config.env"});
 connectDB();
 
 app.use((req, res, next) => {
-    res.status(404).send("Sorry, resource not found!");
+    res.status(404).send("Check the route please");
 });
   
 app.listen(process.env.PORT,() => {
