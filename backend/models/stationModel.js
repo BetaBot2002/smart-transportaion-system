@@ -22,7 +22,7 @@ const stationSchema = new Schema ({
         type: [String],
         required: true,
         Validitor:{
-            validate: (v) => v.length>0,
+            validate: v => v.length>0,
             message:"Station must have atleast one colour code"
         }
     },
@@ -34,6 +34,7 @@ const stationSchema = new Schema ({
     }
     
 })
+stationSchema.index({station_name:1});
 
 const Station = mongoose.model("Station", stationSchema);
 

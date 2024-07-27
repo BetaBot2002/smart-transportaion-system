@@ -1,0 +1,47 @@
+import { verifyToken } from "../utils/jwt.helper.js"
+
+const verifyAccessToken=(req,res,next)=>{
+    const token=req.token
+    const payload=verifyToken(token,"ACCESS")
+    console.log(payload.status!==200)
+    console.log(payload)
+    if(payload.status!==200){
+        res.status(404).send({
+            message:payload.message
+        })
+    }else{
+        const {username} = payload.decoded
+        req.username=username
+        console.log(username)
+        next()
+    }
+}
+
+const verifyRefreshToken=async (req,res,next)=>{
+    const token=req.token
+    //const isTokenBlacklisted=await isBlacklisted(token)
+    const isTokenBlacklisted=true
+    if(!isTokenBlacklisted){
+        const payload=verifyToken(token,"REFRESH")
+
+        if(payload.status!==200){
+            res.status(404).send({
+                message:payload.message
+            })
+        }else{
+            const {username} = payload.decoded
+            req.username=username
+            console.log(username)
+            next()
+        }
+    }else{
+        res.status(404).send({
+            message:`TOKEN EXPIRED`
+        })
+    }
+}
+
+export {
+    verifyAccessToken,
+    verifyRefreshToken
+}
