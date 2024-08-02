@@ -46,7 +46,7 @@ const loginUser = async (req, res, next) => {
 }
 const logoutUser = async (req, res, next) => {
     try {
-        req.logout();
+        //token remove
         res.status(200).send({
             success: true,
             message: "Logged out successfully"
@@ -61,8 +61,7 @@ const logoutUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
     try {
         const updates = req.body;
-        
-        const user = req.user
+        const user = await User.findOne({username:req.username})
         const updatedUser = await User.findByIdAndUpdate(user._id, updates, {
             new: true,
         });
@@ -83,8 +82,8 @@ const updatePassword=async(req,res,next) => {
     if(!oldPassword) {
         throw new CustomError("Enter password");
     }
-    const user = User.findById(req.user._id);
-    const checkPassword = user.comparePassword(oldPassword);
+    const user = await User.findOne({username:req.username});
+    const checkPassword = await user.comparePassword(oldPassword);
     if(!checkPassword) {
         throw new CustomError("Enter valid password");
     }
@@ -94,7 +93,7 @@ const updatePassword=async(req,res,next) => {
 }
 const getMe = async (req, res, next) => {
     try {
-        const user = req.user;
+        const user = await User.findOne({username:req.username})
         res.status(200).send({
             success: true,
             user,
@@ -189,7 +188,7 @@ const adminGetUser = async (req, res, next) => {
 };
 const adminGetAllUsers = async (req, res, next) => {
     try {
-        const users = await User.find();
+        const users = await User.find({});
         res.status(200).send({
             success: true,
             users,

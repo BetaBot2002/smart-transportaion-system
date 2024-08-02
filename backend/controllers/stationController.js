@@ -56,14 +56,28 @@ const createStation = async (req, res) => {
 };
 
 const getRoute = async (req, res) => {
-	const source = req.query.source;
-	const destination = req.query.destination;
-	const route = await findShortestPath(source, destination);
+	try{	
+		const source = req.body.source;
+		const destination = req.body.destination;
+		const source_station = await Station.findOne({station_name:source});
+		if(!source_station) {
+			throw new CustomError("Source station does not exists");
+		}
+		const destination_station = await Station.findOne({station_name:destination});
+		if(!destination_station) {
+			throw new CustomError("destination station does not exists");
+		}
+		const route = await findShortestPath(source, destination);
 
-	const routeObject = Object.fromEntries(route);
-	const routeJSON = JSON.stringify(routeObject, null, 2);
+		const routeObject = Object.fromEntries(route);
+		const routeJSON = JSON.stringify(routeObject, null, 2);
 
-	res.status(200).json(routeObject[destination]);
+		res.status(200).json(routeObject[destination]);
+	}catch(err) {
+		res.status(500).json({
+			message:err.message
+		})
+	}
 };
 const updateStation = async (req, res) => {
 	try {
