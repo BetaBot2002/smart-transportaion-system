@@ -34,7 +34,7 @@ const stationSchema = new Schema ({
     }
     
 })
-stationSchema.index({station_name:1});
+//stationSchema.index({station_name:1});
 
 const Station = mongoose.model("Station", stationSchema);
 

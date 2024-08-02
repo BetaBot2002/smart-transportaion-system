@@ -5,7 +5,7 @@ import user from "./routes/userRoutes.js"
 const app=express();
 app.use(express.json());
 
-app.use("/smart-transportation",station);
+app.use("/station",station);
 app.use("/user",user);
 
 export default app
