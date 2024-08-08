@@ -59,6 +59,10 @@ const userSchema = new Schema({
     type: [Schema.Types.ObjectId],
     ref: "Station",
     default: []
+  },
+  role:{
+    type:String,
+    default:"user"
   }
 }, {
   timestamps: true
@@ -73,7 +77,7 @@ userSchema.pre('save', async function(next) {
 });
 
 userSchema.methods.comparePassword = async function(password) {
-  return compare(password, this.password);
+  return await compare(password, this.password);
 };
 
 const User = model('User', userSchema);

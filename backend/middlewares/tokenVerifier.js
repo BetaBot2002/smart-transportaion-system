@@ -3,8 +3,6 @@ import { verifyToken } from "../utils/jwt.helper.js"
 const verifyAccessToken=(req,res,next)=>{
     const token=req.token
     const payload=verifyToken(token,"ACCESS")
-    console.log(payload.status!==200)
-    console.log(payload)
     if(payload.status!==200){
         res.status(404).send({
             message:payload.message
@@ -12,7 +10,6 @@ const verifyAccessToken=(req,res,next)=>{
     }else{
         const {username} = payload.decoded
         req.username=username
-        console.log(username)
         next()
     }
 }
@@ -31,7 +28,6 @@ const verifyRefreshToken=async (req,res,next)=>{
         }else{
             const {username} = payload.decoded
             req.username=username
-            console.log(username)
             next()
         }
     }else{
