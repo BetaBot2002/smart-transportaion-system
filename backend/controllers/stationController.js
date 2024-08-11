@@ -90,7 +90,7 @@ const updateStation = async (req, res) => {
 
 		const updateKeys = Object.keys(req.body);
 
-		updateKeys.forEach((key) => {
+		updateKeys.map((key) => {
 			switch (key) {
 				case "station_code":
 					station.station_code = req.body.station_code;
