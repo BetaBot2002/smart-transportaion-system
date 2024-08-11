@@ -1,8 +1,8 @@
 import User from "../models/userModel.js";
 import { addTokenToRequest } from "./tokenChecker.js"
-import { verifyAccessToken } from "./tokenVerifier.js";
+import { verifyAccessToken, verifyRefreshToken } from "./tokenVerifier.js";
 
-export const isAuthenticated = (req,res,next)=> {
+export const isAuthenticatedAccess = (req,res,next)=> {
         addTokenToRequest(req, res, (err) => {
           if (err) return; // Stop execution if an error response has been sent
       
@@ -12,6 +12,17 @@ export const isAuthenticated = (req,res,next)=> {
             next();
           });
         });
+}
+export const isAuthenticatedRefresh = (req,res,next)=> {
+    addTokenToRequest(req, res, (err) => {
+      if (err) return; // Stop execution if an error response has been sent
+  
+      verifyRefreshToken(req, res, (err) => {
+        if (err) return; // Stop execution if an error response has been sent
+  
+        next();
+      });
+    });
 }
 
 export const isAuthrorizeRoles =async (req,res,next)=> {

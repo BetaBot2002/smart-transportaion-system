@@ -1,3 +1,4 @@
+import blackListedToken from "../models/blackListedToken.js";
 import User from "../models/userModel.js";
 import CustomError from "../utils/customError.js";
 import { newAccessToken, signUser } from "../utils/jwt.helper.js";
@@ -29,6 +30,7 @@ const refresh = async (req, res) => {
     try {
         const { username } = req;
         const { accessToken } = newAccessToken(username);
+
         res.status(200).json({
             success: true,
             accessToken: accessToken,
@@ -67,6 +69,11 @@ const loginUser = async (req, res, next) => {
 
 const logoutUser = async (req, res, next) => {
     try {
+        const token= req.token;
+        const newToken = await blackListedToken.create({
+            token:token
+        });
+
         res.status(200).json({
             success: true,
             message: "Logged out successfully",

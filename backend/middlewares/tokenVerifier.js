@@ -1,3 +1,4 @@
+import blackListedToken from "../models/blackListedToken.js"
 import { verifyToken } from "../utils/jwt.helper.js"
 
 const verifyAccessToken=(req,res,next)=>{
@@ -16,8 +17,7 @@ const verifyAccessToken=(req,res,next)=>{
 
 const verifyRefreshToken=async (req,res,next)=>{
     const token=req.token
-    //const isTokenBlacklisted=await isBlacklisted(token)
-    const isTokenBlacklisted=true
+    const isTokenBlacklisted = await blackListedToken.findOne({token:token});
     if(!isTokenBlacklisted){
         const payload=verifyToken(token,"REFRESH")
 
