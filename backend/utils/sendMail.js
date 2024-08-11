@@ -1,20 +1,27 @@
 import nodemailer from "nodemailer";
 
 export const sendEmail = async (email, OTP) => {
-    const transporter = nodemailer.createTransport({
-        service: 'gmail', // Use the service you prefer (Gmail, Yahoo, etc.)
-        auth: {
-            user: 'your-email@gmail.com', // Your email address
-            pass: 'your-email-password', // Your email password (use environment variables for security)
-        },
-    });
+    console.log(process.env.SENDER_EMAIL)
+    console.log(process.env.SENDER_EMAIL_PASSWORD)
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.SENDER_EMAIL,
+                pass: process.env.SENDER_EMAIL_PASSWORD,
+            },
+        });
 
-    const mailOptions = {
-        from: 'your-email@gmail.com',
-        to: email,
-        subject: 'Your OTP for Password Reset',
-        text: `Your OTP for password reset is: ${OTP}`,
-    };
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: 'Your OTP for Password Reset',
+            text: `Your OTP for password reset is: ${OTP}`,
+        };
 
-    await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
+        console.log(`Email sent to ${email}`);
+    } catch (error) {
+        console.error(`Error sending email: ${error.message}`);
+    }
 };

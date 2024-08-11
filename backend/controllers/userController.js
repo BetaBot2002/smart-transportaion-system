@@ -144,6 +144,11 @@ const getMe = async (req, res, next) => {
     }
 };
 
+const generateOTP = () => {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    return otp;
+};
+
 const forgotPassword = async (req, res, next) => {
     try {
         const { email, phoneNo, username } = req.body;

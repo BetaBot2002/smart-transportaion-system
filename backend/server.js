@@ -1,10 +1,8 @@
 import app from './app.js';
-import dotenv from 'dotenv';
+import dotenv from "dotenv"
 import connectDB from './database/database.js';
 
-
-//config
-dotenv.config({path:"./backend/database/config.env"});
+dotenv.config({path:"backend/.env"})
 
 connectDB();
 
