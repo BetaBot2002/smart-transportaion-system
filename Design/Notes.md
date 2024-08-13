@@ -118,4 +118,7 @@ route:{
 ADD CACHING MECHANISM TO SPEED UP SOURCE TO DESTINATION SEARCH WHEN SOURCE IS SAME
 
 
+react-jwt
+chakra-ui / setup
+redux
 
