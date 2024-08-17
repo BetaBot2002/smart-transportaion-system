@@ -16,7 +16,7 @@ router.route('/get-route').post(isAuthenticatedAccess,getRoute);
 router.route('/get-train-details').get(isAuthenticatedAccess,getTrainDetails);
 router.route('/get-station-database-details').get(isAuthenticatedAccess,getDatabaseStationDetails);
 router.route('/get-train-between').get(isAuthenticatedAccess,getTrainInBetweenStations);
-//router.route('/get-list-of-trains/:date').get(getTrainList);
+router.route('/get-list-of-trains/:date').get(isAuthenticatedAccess,getTrainList);
 
 // router.route("/temp").get(async (req,res)=>{
 //     const station = await Station.findOne({station_name:req.params.station}).explain();
