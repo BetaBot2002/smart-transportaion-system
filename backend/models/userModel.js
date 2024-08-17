@@ -60,6 +60,11 @@ const userSchema = new Schema({
     ref: "Station",
     default: []
   },
+  favouriteRoutes:{
+    type:[[Schema.Types.ObjectId,Schema.Types.ObjectId]],
+    ref:"Station",
+    default:[]
+  },
   role:{
     type:String,
     default:"user"
