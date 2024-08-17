@@ -191,10 +191,21 @@ const deleteStation = async (req, res) => {
 
 		res.status(200).json({ message: "Stations deleted successfully", deletedCount: result.deletedCount });
 	} catch (err) {
-		res.status(500).json(err.message);
+		res.status(500).json({message:err.message});
+	}
+}
+const getTrainList = async (req,res)=>{
+	try {
+		const {from, to} = req.query;
+		const {date} = req.params;
+		const trainList = (await axios.get(`https://indian-rail-api.onrender.com/trains/getTrainOn?from=${from}&to=${to}&date=${date}`)).data;
+		res.status(200).json({ success:true,trainList,message:"train list successfully" });
+
+	} catch (err) {
+		res.status(500).json({message:err.message});
 	}
 }
 export {
-	createStation, getRoute, getAllStations, getTrainDetails,
+	createStation, getRoute, getAllStations, getTrainDetails, getTrainList,
 	getDatabaseStationDetails, getTrainInBetweenStations, deleteStation,updateStation
 };
