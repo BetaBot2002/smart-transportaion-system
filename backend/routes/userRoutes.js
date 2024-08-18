@@ -1,9 +1,8 @@
 import express from "express";
 import {
-  registerUser, loginUser, logoutUser, updateUser, getMe, forgotPassword, adminDeleteUser,
+  registerUser, loginUser, logoutUser, updateUser, getMe, forgotPassword, adminDeleteUser, addFavouriteRoute,
   adminGetUser, adminGetAllUsers, updatePassword, ressetPasswordByOTP, updateRoleAdmin, refresh
 } from "../controllers/userController.js";
-import { addTokenToRequest } from "../middlewares/tokenChecker.js"
 import { isAuthenticatedAccess, isAuthenticatedRefresh, isAuthrorizeRoles } from "../middlewares/Authentication.js";
 
 const router = express.Router();
@@ -19,7 +18,7 @@ router.route("/update/me").put(isAuthenticatedAccess,updateUser);
 router.route("/update/password").put(isAuthenticatedAccess,updatePassword);
 router.route("/me").get(isAuthenticatedAccess,getMe);
 router.route("/refresh").get(isAuthenticatedRefresh,refresh);
-//router.route("/save-favourite-route").post(isAuthenticatedAccess,addFavouriteRoute);
+router.route("/save-favourite-route").post(isAuthenticatedAccess,addFavouriteRoute);
 
 router.route("/admin/delete/:id").delete(isAuthenticatedAccess,isAuthrorizeRoles,adminDeleteUser);
 router.route("/admin/getuser/:id").get(isAuthenticatedAccess,isAuthrorizeRoles,adminGetUser);

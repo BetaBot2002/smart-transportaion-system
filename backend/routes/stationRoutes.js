@@ -1,8 +1,7 @@
 import express from 'express';
 import { createStation, getRoute, getAllStations,getTrainDetails,
     getTrainInBetweenStations ,getDatabaseStationDetails,
-    deleteStation,
-    updateStation} from '../controllers/stationController.js';
+    deleteStation,getTrainList, updateStation} from '../controllers/stationController.js';
 
 import { isAuthenticatedAccess,isAuthrorizeRoles } from '../middlewares/Authentication.js';
 const router = express.Router();

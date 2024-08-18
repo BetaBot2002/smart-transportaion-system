@@ -274,7 +274,26 @@ const updateRoleAdmin = async (req, res) => {
         });
     }
 };
-
+const addFavouriteRoute = async (req,res)=>{
+    try {
+        const {source,destination} = req.body;
+        if(!source || !destination) {
+            throw new CustomError("Enter source and destination");
+        }
+        const user = await User.findOne({username:req.username});
+        user.favouriteRoutes.push([source,destination]);
+        await user.save();
+        res.status(200).json({
+            success: true,
+            message: "station added as a favourite station",
+        });
+    } catch (err) {
+        res.status(400).json({
+            success:false,
+            message:err.message
+        })
+    }
+}
 export {
     registerUser,
     loginUser,
@@ -289,4 +308,5 @@ export {
     adminGetUser,
     updateRoleAdmin,
     adminGetAllUsers,
+    addFavouriteRoute
 };
