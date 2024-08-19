@@ -5,14 +5,8 @@ import {
   Flex,
   Avatar,
   HStack,
-  Text,
   IconButton,
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,Link,
-  MenuItem,
-  MenuDivider,
+  Link as ChakraLink,
   useDisclosure,
   useColorModeValue,
   Stack,
@@ -20,11 +14,31 @@ import {
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { useNavigate } from 'react-router-dom'
 
-const Links = ['Home','Trains', 'Routes', 'Stations']
+const Links = ['Home', 'Trains', 'Routes', 'Stations']
+
+const NavLink = ({ children, to }) => (
+  <ChakraLink
+    px={2}
+    py={1}
+    rounded={'md'}
+    _hover={{
+      textDecoration: 'none',
+      bg: useColorModeValue('gray.200', 'gray.700'),
+      color: useColorModeValue('teal.500', 'teal.200'),
+    }}
+    _activeLink={{
+      fontWeight: 'bold',
+      color: useColorModeValue('teal.600', 'teal.300'),
+    }}
+    href={to}
+  >
+    {children}
+  </ChakraLink>
+)
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const navigate= useNavigate();
+  const navigate = useNavigate()
 
   return (
     <>
@@ -38,35 +52,36 @@ export default function Navbar() {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={'center'}>
-            <Box><Avatar size={'lg'} src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8PsNJc628Od7pFf6sC6sgtBTgoz_0q71rzblgIVgahS2gKMbe4OkQ4e8yHH2ZIjcPEBI&usqp=CAU'} /></Box>
-            <HStack as={'nav'} spacing={15} gap={'15'} display={{ base: 'none', md: 'flex' }}>
+            <Box>
+              <Avatar
+                size={'lg'}
+                src={
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8PsNJc628Od7pFf6sC6sgtBTgoz_0q71rzblgIVgahS2gKMbe4OkQ4e8yHH2ZIjcPEBI&usqp=CAU'
+                }
+              />
+            </Box>
+            <HStack as={'nav'} spacing={5} display={{ base: 'none', md: 'flex' }}>
               {Links.map((link) => (
-                <Link key={link} href={`${link.toLowerCase()}`}>{link}</Link>
+                <NavLink key={link} to={`/${link.toLowerCase()}`}>
+                  {link}
+                </NavLink>
               ))}
             </HStack>
           </HStack>
           <Flex alignItems={'center'}>
-            {/* <Menu>
-              <MenuButton
-                as={Button}
-                rounded={'full'}
-                cursor={'pointer'}
-                minW={0}>
-                <Avatar
-                  size={'lg'}
-                  src={
-                    'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-                  }
-                />
-              </MenuButton>
-              <MenuList>
-                <MenuItem><Link href='/home'>Home</Link></MenuItem>
-                <MenuItem><Link href='/profile'>Profile</Link></MenuItem>
-                <MenuDivider />
-                <MenuItem>Log out</MenuItem>
-              </MenuList>
-            </Menu> */}
-            <Link href='/login'>Login</Link>
+            <ChakraLink
+              px={2}
+              py={1}
+              rounded={'md'}
+              _hover={{
+                textDecoration: 'none',
+                bg: useColorModeValue('gray.200', 'gray.700'),
+                color: useColorModeValue('teal.500', 'teal.200'),
+              }}
+              href="/login"
+            >
+              Login
+            </ChakraLink>
           </Flex>
         </Flex>
 
@@ -74,13 +89,14 @@ export default function Navbar() {
           <Box pb={4} display={{ md: 'none' }}>
             <Stack as={'nav'} spacing={4}>
               {Links.map((link) => (
-                <Link key={link}>{link}</Link>
+                <NavLink key={link} to={`/${link.toLowerCase()}`}>
+                  {link}
+                </NavLink>
               ))}
             </Stack>
           </Box>
         ) : null}
       </Box>
-
     </>
   )
 }
