@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Box, IconButton, useBreakpointValue, Container, Stack, Heading, Text } from '@chakra-ui/react'
+import { Box, IconButton, useBreakpointValue, Container, Stack, Heading, Text, Button, Link } from '@chakra-ui/react'
 import { BiLeftArrowAlt, BiRightArrowAlt } from 'react-icons/bi'
 import Slider from 'react-slick'
 
@@ -36,7 +36,7 @@ export default () => {
         infinite: true,
         autoplay: true,
         speed: 500,
-        autoplaySpeed: 5000,
+        autoplaySpeed: 3000,
         slidesToShow: 1,
         slidesToScroll: 1,
     }
@@ -114,7 +114,7 @@ export default () => {
                                 >
                                     {card.text}
                                 </Text>
-
+                                <Button colorScheme='pink' variant={'solid'} > <Link _hover={{textDecoration:'none'}} href='/routes'>Search Routes</Link> </Button>
                             </Stack>
                         </Container>
                     </Box>

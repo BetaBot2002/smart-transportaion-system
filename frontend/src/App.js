@@ -7,6 +7,8 @@ import ResetPasswordForm from './components/Auth/ResetPasswordForm.js';
 import Navbar from './components/Common/Navbar.js';
 import Footer from './components/Common/Footer.js';
 import HomePage from './pages/HomePage.js';
+import RoutePage from './components/Station/Route.js';
+
 function App() {
     return (
         <Router>
@@ -17,6 +19,7 @@ function App() {
                 <Route path="/forgot-password" element={<ForgotPasswordForm />} />
                 <Route path="/reset-password" element={<ResetPasswordForm/>} />
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/routes" element={<RoutePage />} />
 
                 <Route path="/test" element={<Test/>}/>
             </Routes>

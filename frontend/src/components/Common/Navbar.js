@@ -16,10 +16,11 @@ import { useNavigate } from 'react-router-dom'
 
 const Links = ['Home', 'Trains', 'Routes', 'Stations']
 
-const NavLink = ({ children, to }) => (
+const NavLink = ({ children, to,fontSize }) => (
   <ChakraLink
     px={2}
     py={1}
+    fontSize={fontSize}
     rounded={'md'}
     _hover={{
       textDecoration: 'none',
@@ -58,9 +59,13 @@ export default function Navbar() {
                 src={
                   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8PsNJc628Od7pFf6sC6sgtBTgoz_0q71rzblgIVgahS2gKMbe4OkQ4e8yHH2ZIjcPEBI&usqp=CAU'
                 }
+                cursor={'pointer'}
               />
             </Box>
             <HStack as={'nav'} spacing={5} display={{ base: 'none', md: 'flex' }}>
+              <NavLink fontSize={'lg'} to={'/home'}>
+                  Smart Transportation System
+              </NavLink>
               {Links.map((link) => (
                 <NavLink key={link} to={`/${link.toLowerCase()}`}>
                   {link}
