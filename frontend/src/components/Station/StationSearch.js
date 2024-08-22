@@ -8,11 +8,60 @@ import {
     ListItem,
     Button,
     FormControl,
-    FormLabel
+    FormLabel,
+    TableContainer,
+    Table,
+    Tr,
+    Th,
+    Tbody,
+    Thead,
+    Td
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 const stationNames = ['aab', 'abab', 'aaabbb', 'bbaa', 'baba'];
+
+const routes = [
+    {
+        source: 'aab',
+        destination: 'abab',
+        date: '2024-08-25',
+        trainName: 'Express A'
+    },
+    {
+        source: 'aaabbb',
+        destination: 'bbaa',
+        date: '2024-08-26',
+        trainName: 'Superfast B'
+    },
+    {
+        source: 'abab',
+        destination: 'baba',
+        date: '2024-08-27',
+        trainName: 'Regional C'
+    },
+    {
+        source: 'aab',
+        destination: 'bbaa',
+        date: '2024-08-28',
+        trainName: 'Intercity D'
+    },
+    {
+        source: 'baba',
+        destination: 'aaabbb',
+        date: '2024-08-29',
+        trainName: 'Nightline E'
+    }
+];
+
+const findRoute = (source, destination, date) => {
+    const matchingRoutes = routes.filter(route =>
+        route.source === source &&
+        route.date === date &&
+        route.destination === destination
+    );
+    return matchingRoutes;
+}
 
 export default function StationSearch() {
     const [openSourceStations, setOpenSourceStations] = useState(false);
@@ -22,6 +71,8 @@ export default function StationSearch() {
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
     const [date, setDate] = useState('');
+
+    const [searchResults, setSearchResults] = useState([])
 
     const filterStations = (stationInput) => {
         return stationNames.filter(station =>
@@ -62,7 +113,8 @@ export default function StationSearch() {
     }
 
     const handleSearch = () => {
-        alert(`Searching from ${source} to ${destination} on ${date}`);
+        if (source === '' || destination === '' || date === '') return
+        setSearchResults(findRoute(source, destination, date))
     }
 
     return (
@@ -167,6 +219,34 @@ export default function StationSearch() {
                     Search
                 </Button>
             </Box>
+                <Box>
+                {searchResults && searchResults.length > 0 ? (
+                <TableContainer>
+                    <Table variant="simple">
+                        <Thead>
+                            <Tr>
+                                <Th>Source</Th>
+                                <Th>Destination</Th>
+                                <Th>Date</Th>
+                                <Th>Train Name</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {searchResults.map((route, index) => (
+                                <Tr key={index}>
+                                    <Td>{route.source}</Td>
+                                    <Td>{route.destination}</Td>
+                                    <Td>{route.date}</Td>
+                                    <Td>{route.trainName}</Td>
+                                </Tr>
+                            ))}
+                        </Tbody>
+                    </Table>
+                </TableContainer>
+            ) : (
+                <Text>No search results found.</Text>
+            )}
+                </Box>
         </Box>
     );
 }
