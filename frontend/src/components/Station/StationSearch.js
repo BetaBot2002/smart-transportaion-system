@@ -90,7 +90,9 @@ export default function StationSearch() {
             setOpenSourceStations(false);
             setFilteredSource([]);
         }
+    }, [source]);
 
+    useEffect(() => {
         if (destination.length > 0) {
             setOpenSourceStations(false);
             setOpenDestinationStations(true);
@@ -100,7 +102,8 @@ export default function StationSearch() {
             setOpenDestinationStations(false);
             setFilteredDestination([]);
         }
-    }, [source, destination]);
+    }, [destination]);
+
 
     const handleSourceSelection = (station) => {
         setSource(station);
