@@ -93,6 +93,16 @@ export default function StationSearch() {
     }, [source]);
 
     useEffect(() => {
+        if (source.length > 0) {
+            setOpenSourceStations(true);
+            setOpenDestinationStations(false);
+            const stations = filterStations(source);
+            setFilteredSource(stations);
+        } else {
+            setOpenSourceStations(false);
+            setFilteredSource([]);
+        }
+
         if (destination.length > 0) {
             setOpenSourceStations(false);
             setOpenDestinationStations(true);
