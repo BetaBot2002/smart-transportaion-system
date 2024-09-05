@@ -39,11 +39,11 @@ export function UserDetailsTable() {
           </Tr>
           
           <Tr>
-            <Td><strong>nearestMetroStation</strong></Td>
+            <Td><strong>NearestMetroStation</strong></Td>
             <Td><EditableComponent value={user.nearestMetroStation}/></Td>
           </Tr>
           <Tr>
-            <Td><strong>nearestRailStation</strong></Td>
+            <Td><strong>NearestRailStation</strong></Td>
             <Td><EditableComponent value={user.nearestRailStation}/></Td>
           </Tr>
           <Tr>
