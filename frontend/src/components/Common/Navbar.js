@@ -14,7 +14,7 @@ import {
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { useNavigate } from 'react-router-dom'
 
-const Links = ['Home', 'Trains', 'Routes', 'Stations']
+const Links = ['Home', 'Routes', 'Stations', 'About us']
 
 const NavLink = ({ children, to,fontSize }) => (
   <ChakraLink
