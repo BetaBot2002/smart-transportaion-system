@@ -1,21 +1,7 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
-    Heading,
-    Input,
-    Box,
-    Text,
-    UnorderedList,
-    ListItem,
-    Button,
-    FormControl,
-    FormLabel,
-    TableContainer,
-    Table,
-    Tr,
-    Th,
-    Tbody,
-    Thead,
-    Td
+    Heading,Input,Box,Text,UnorderedList,ListItem,Button,
+    FormControl,FormLabel,TableContainer,Table,Tr,Th,Tbody,Thead,Td
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
@@ -232,34 +218,34 @@ export default function StationSearch() {
                     Search
                 </Button>
             </Box>
-                <Box>
+            <Box>
                 {searchResults && searchResults.length > 0 ? (
-                <TableContainer>
-                    <Table variant="simple">
-                        <Thead>
-                            <Tr>
-                                <Th>Source</Th>
-                                <Th>Destination</Th>
-                                <Th>Date</Th>
-                                <Th>Train Name</Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {searchResults.map((route, index) => (
-                                <Tr key={index}>
-                                    <Td>{route.source}</Td>
-                                    <Td>{route.destination}</Td>
-                                    <Td>{route.date}</Td>
-                                    <Td>{route.trainName}</Td>
+                    <TableContainer>
+                        <Table variant="simple">
+                            <Thead>
+                                <Tr>
+                                    <Th>Source</Th>
+                                    <Th>Destination</Th>
+                                    <Th>Date</Th>
+                                    <Th>Train Name</Th>
                                 </Tr>
-                            ))}
-                        </Tbody>
-                    </Table>
-                </TableContainer>
-            ) : (
-                <Text>No search results found.</Text>
-            )}
-                </Box>
+                            </Thead>
+                            <Tbody>
+                                {searchResults.map((route, index) => (
+                                    <Tr key={index}>
+                                        <Td>{route.source}</Td>
+                                        <Td>{route.destination}</Td>
+                                        <Td>{route.date}</Td>
+                                        <Td>{route.trainName}</Td>
+                                    </Tr>
+                                ))}
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
+                ) : (
+                    <Text>No search results found.</Text>
+                )}
+            </Box>
         </Box>
     );
 }

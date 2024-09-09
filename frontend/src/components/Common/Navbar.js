@@ -63,9 +63,6 @@ export default function Navbar() {
               />
             </Box>
             <HStack as={'nav'} spacing={5} display={{ base: 'none', md: 'flex' }}>
-              <NavLink fontSize={'lg'} to={'/home'}>
-                  Smart Transportation System
-              </NavLink>
               {Links.map((link) => (
                 <NavLink key={link} to={`/${link.toLowerCase()}`}>
                   {link}
