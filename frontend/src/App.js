@@ -8,7 +8,8 @@ import Navbar from './components/Common/Navbar.js';
 import Footer from './components/Common/Footer.js';
 import HomePage from './pages/HomePage.js';
 import RoutePage from './components/Station/Route.js';
-import UserProfile from './components/Dashboard/UserProfile.js';
+import UserProfile from './components/Dashboard/User/UserProfile.js';
+import AboutUs from './pages/AboutUs.js';
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/routes" element={<RoutePage />} />
 
                 <Route path="/profile" element={<UserProfile/>}/>
+                <Route path="/About Us" element={<AboutUs/>}/>
                 <Route path="/test" element={<Test/>}/>
 
             </Routes>
