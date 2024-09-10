@@ -154,7 +154,7 @@ const FAQDropdown = () => {
     );
 };
 
-export default function AboutUss() {
+export default function AboutUs() {
     return (
         <>
             <Helper

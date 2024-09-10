@@ -43,9 +43,9 @@
 		{
 			"id": "pointer:pointer",
 			"typeName": "pointer",
-			"x": 486.1461401185062,
-			"y": 195.12498331069946,
-			"lastActivityTimestamp": 1724254700834,
+			"x": 143.60000610351562,
+			"y": 349.6000061035156,
+			"lastActivityTimestamp": 1725475557838,
 			"meta": {}
 		},
 		{
@@ -119,13 +119,16 @@
 			"devicePixelRatio": 1.25,
 			"isCoarsePointer": false,
 			"isHoveringCanvas": true,
-			"openMenus": [],
+			"openMenus": [
+				"pages",
+				"page-menu"
+			],
 			"isChangingStyle": false,
 			"isReadonly": false,
 			"meta": {},
 			"duplicateProps": null,
 			"id": "instance:instance",
-			"currentPageId": "page:HMKn6erHzzZ3bAo-mXyG4",
+			"currentPageId": "page:4h8PbEXkjOPhNHGTjwpOf",
 			"typeName": "instance"
 		},
 		{
@@ -222,8 +225,8 @@
 			"typeName": "page"
 		},
 		{
-			"x": -14.546134014990571,
-			"y": -27.924986362457275,
+			"x": -20.54613401499057,
+			"y": 22.4750075340271,
 			"z": 1,
 			"meta": {},
 			"id": "camera:page:HMKn6erHzzZ3bAo-mXyG4",
@@ -232,10 +235,8 @@
 		{
 			"editingShapeId": null,
 			"croppingShapeId": null,
-			"selectedShapeIds": [
-				"shape:0Pp0PpmK8l4yB3gms-fRg"
-			],
-			"hoveredShapeId": "shape:0Pp0PpmK8l4yB3gms-fRg",
+			"selectedShapeIds": [],
+			"hoveredShapeId": null,
 			"erasingShapeIds": [],
 			"hintingShapeIds": [],
 			"focusedGroupId": null,
@@ -263,7 +264,7 @@
 			"editingShapeId": null,
 			"croppingShapeId": null,
 			"selectedShapeIds": [],
-			"hoveredShapeId": "shape:iOeJge09riNtM4PpckquG",
+			"hoveredShapeId": null,
 			"erasingShapeIds": [],
 			"hintingShapeIds": [],
 			"focusedGroupId": null,
@@ -56723,6 +56724,34 @@
 			"parentId": "page:HMKn6erHzzZ3bAo-mXyG4",
 			"index": "b0H0uC",
 			"typeName": "shape"
+		},
+		{
+			"meta": {},
+			"id": "page:4h8PbEXkjOPhNHGTjwpOf",
+			"name": "User Profile",
+			"index": "a707b",
+			"typeName": "page"
+		},
+		{
+			"x": 0,
+			"y": 0,
+			"z": 1,
+			"meta": {},
+			"id": "camera:page:4h8PbEXkjOPhNHGTjwpOf",
+			"typeName": "camera"
+		},
+		{
+			"editingShapeId": null,
+			"croppingShapeId": null,
+			"selectedShapeIds": [],
+			"hoveredShapeId": null,
+			"erasingShapeIds": [],
+			"hintingShapeIds": [],
+			"focusedGroupId": null,
+			"meta": {},
+			"id": "instance_page_state:page:4h8PbEXkjOPhNHGTjwpOf",
+			"pageId": "page:4h8PbEXkjOPhNHGTjwpOf",
+			"typeName": "instance_page_state"
 		}
 	]
 }
