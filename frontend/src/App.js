@@ -10,6 +10,9 @@ import HomePage from './pages/HomePage.js';
 import RoutePage from './components/Station/Route.js';
 import UserProfile from './components/Dashboard/User/UserProfile.js';
 import AboutUs from './pages/AboutUs.js';
+import ChangePassword from './components/Dashboard/ChangePassword.js';
+import ViewFavouriteRoutes from './components/Dashboard/ViewFavouriteRoutes.js';
+import Logout from './components/Dashboard/Logout.js';
 
 function App() {
     return (
@@ -26,6 +29,9 @@ function App() {
                 <Route path="/profile" element={<UserProfile/>}/>
                 <Route path="/About Us" element={<AboutUs/>}/>
                 <Route path="/test" element={<Test/>}/>
+                <Route path="/logout" element={<Logout/>}/>
+                <Route path='/change-password' element={<ChangePassword/>}/>
+                <Route path='/saved-routes' element={<ViewFavouriteRoutes/>}/>
 
             </Routes>
             <Footer/>
