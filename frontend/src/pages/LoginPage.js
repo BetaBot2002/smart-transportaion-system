@@ -1,5 +1,6 @@
 'use client'
 
+import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import {
     Flex, Box, FormControl, FormLabel, Link,
     Input, Checkbox, Stack, Button, Heading,
@@ -38,7 +39,6 @@ export default function LoginPage() {
     }
     return (
         <Flex
-            minH={'100vh'}
             align={'center'}
             justify={'center'}
             bg={useColorModeValue('gray.50', 'gray.800')}>
@@ -51,7 +51,7 @@ export default function LoginPage() {
                 </Stack>
                 <Menu>
                     <MenuButton as={Button} colorScheme="blue">
-                        Login using
+                        Login using <ArrowDownIcon/>
                     </MenuButton>
                     <MenuList>
                         <MenuItem onClick={() => setInputField("username")}>Username</MenuItem>
