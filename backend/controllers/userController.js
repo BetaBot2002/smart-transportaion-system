@@ -17,6 +17,22 @@ const registerUser = async (req, res, next) => {
     try {
         const user = await User.create(req.body);
         const { accessToken, refreshToken } = signUser(user.username);
+        await sendEmail(
+            user.email,
+            "Welcome to Smart Transportation – Explore Our Best Features!",
+            'Thank you for registering on our platform! Enjoy real-time tracking, seamless connectivity, and an efficient user-friendly interface.',
+            `
+        <h1>Welcome to Our Smart Transportation System!</h1>
+        <p>We are thrilled to have you on board. Here are the top 3 features you will love:</p>
+        <ul>
+            <li>Real-Time Tracking</li>
+            <li>Seamless Connectivity</li>
+            <li>User-Friendly Interface</li>
+        </ul>
+        <p>If you need help, please visit the <a href="">Contact Us</a> section on our website.</p>
+        <p>This is auto-generated email. Please do not reply to this email.</p>
+    `
+        );
         sendToken(res, user, accessToken, refreshToken);
     } catch (e) {
         res.status(400).json({
@@ -69,9 +85,9 @@ const loginUser = async (req, res, next) => {
 
 const logoutUser = async (req, res, next) => {
     try {
-        const token= req.token;
+        const token = req.token;
         const newToken = await blackListedToken.create({
-            token:token
+            token: token
         });
 
         res.status(200).json({
@@ -162,7 +178,18 @@ const forgotPassword = async (req, res, next) => {
         if (!user) throw new CustomError("User does not exist");
 
         const OTP = generateOTP();
-        await sendEmail(user.email, OTP);
+        const subject = 'Your One-Time Password (OTP)';
+    const message = `Your OTP for verification is ${OTP}.`;
+
+    const htmlContent = `
+        <h1>Verification Code</h1>
+        <p>Your OTP for verification is:</p>
+        <h2>${OTP}</h2>
+        <p>This code is valid for 10 minutes. Please do not share it with anyone.</p>
+        <p>If you did not request this OTP, please ignore this email or contact support.</p>
+        <p>Please do not reply to this email. For assistance, visit the <a href="">Contact Us</a> section on our website.</p>
+    `;
+        await sendEmail(user.email, subject,message,htmlContent);
         user.otp = OTP;
         await user.save();
 
@@ -274,14 +301,14 @@ const updateRoleAdmin = async (req, res) => {
         });
     }
 };
-const addFavouriteRoute = async (req,res)=>{
+const addFavouriteRoute = async (req, res) => {
     try {
-        const {source,destination} = req.body;
-        if(!source || !destination) {
+        const { source, destination } = req.body;
+        if (!source || !destination) {
             throw new CustomError("Enter source and destination");
         }
-        const user = await User.findOne({username:req.username});
-        user.favouriteRoutes.push([source,destination]);
+        const user = await User.findOne({ username: req.username });
+        user.favouriteRoutes.push([source, destination]);
         await user.save();
         res.status(200).json({
             success: true,
@@ -289,8 +316,8 @@ const addFavouriteRoute = async (req,res)=>{
         });
     } catch (err) {
         res.status(400).json({
-            success:false,
-            message:err.message
+            success: false,
+            message: err.message
         })
     }
 }
