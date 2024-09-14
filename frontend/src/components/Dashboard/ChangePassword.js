@@ -9,6 +9,7 @@ import {
     Input,
     InputGroup,
     InputRightElement,
+    Link,
     Stack,
     useColorModeValue,
 } from '@chakra-ui/react'
@@ -55,6 +56,7 @@ export default function ChangePassword() {
                             />
                         </InputRightElement>
                     </InputGroup>
+                    <Link fontSize={'small'} color={'blue'} href='/forgot-password'>forgot password</Link>
                 </FormControl>
 
                 {/* New Password Field */}
