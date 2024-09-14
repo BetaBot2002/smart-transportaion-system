@@ -208,7 +208,10 @@ const forgotPassword = async (req, res, next) => {
 const ressetPasswordByOTP = async (req, res, next) => {
     try {
         const { email, otp, newPassword } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email:email });
+        if(!user) {
+            throw new CustomError("Please provide correct email")
+        }
 
         if (user.otp !== otp) throw new CustomError("Enter valid OTP");
 
