@@ -1,7 +1,7 @@
 import express from "express";
 import {
   registerUser, loginUser, logoutUser, updateUser, getMe, forgotPassword, adminDeleteUser, addFavouriteRoute,
-  adminGetUser, adminGetAllUsers, updatePassword, ressetPasswordByOTP, updateRoleAdmin, refresh
+  adminGetUser, adminGetAllUsers, updatePassword, ressetPasswordByOTP, updateRoleAdmin, refresh, contactUs
 } from "../controllers/userController.js";
 import { isAuthenticatedAccess, isAuthenticatedRefresh, isAuthrorizeRoles } from "../middlewares/Authentication.js";
 
@@ -19,6 +19,8 @@ router.route("/update/password").put(isAuthenticatedAccess,updatePassword);
 router.route("/me").get(isAuthenticatedAccess,getMe);
 router.route("/refresh").get(isAuthenticatedRefresh,refresh);
 router.route("/save-favourite-route").post(isAuthenticatedAccess,addFavouriteRoute);
+router.route("/contact-us").post(isAuthenticatedAccess,contactUs);
+
 
 router.route("/admin/delete/:id").delete(isAuthenticatedAccess,isAuthrorizeRoles,adminDeleteUser);
 router.route("/admin/getuser/:id").get(isAuthenticatedAccess,isAuthrorizeRoles,adminGetUser);

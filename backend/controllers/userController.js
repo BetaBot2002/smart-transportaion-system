@@ -324,6 +324,15 @@ const addFavouriteRoute = async (req, res) => {
         })
     }
 }
+const contactUs = async (req,res)=>{
+    email, subject, message = req.body;
+    const username = req.username;
+    await sendEmail(process.env.ADMIN_EMAIL,subject,message);
+    const UserMailSubject = `Thank you ${username} for giving Feedback`;
+    const UserMailMessage = `Dear ${username} Thank you for giving us your valuable feedback for our website. We will look after the matter
+    you have raised: ${message}.`
+    await sendEmail(email,UserMailSubject,UserMailMessage);
+}
 export {
     registerUser,
     loginUser,
@@ -338,5 +347,6 @@ export {
     adminGetUser,
     updateRoleAdmin,
     adminGetAllUsers,
-    addFavouriteRoute
+    addFavouriteRoute,
+    contactUs
 };
