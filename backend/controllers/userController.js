@@ -9,12 +9,14 @@ const sendToken = (res, user, accessToken, refreshToken) => {
         success: true,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        username: user.username,
+        user
     });
 };
 
 const registerUser = async (req, res, next) => {
     try {
+        const { username, phoneNumber, email, password, city, nearestRailStation, nearestMetroStation } = req.body;
+
         const user = await User.create(req.body);
         const { accessToken, refreshToken } = signUser(user.username);
         await sendEmail(
@@ -61,11 +63,12 @@ const refresh = async (req, res) => {
 
 const loginUser = async (req, res, next) => {
     try {
-        const { email, phoneNo, password } = req.body;
+        const { email, phoneNo, username, password } = req.body;
         let user;
 
-        if (email) user = await User.findOne({ email });
+        if (email) user = await User.findOne({ email: email });
         else if (phoneNo) user = await User.findOne({ phoneNumber: phoneNo });
+        else if (username) user = await User.findOne({ username: username });
         else throw new CustomError("Enter email or phone number");
 
         if (!user) throw new CustomError("User does not exist");
@@ -179,9 +182,9 @@ const forgotPassword = async (req, res, next) => {
 
         const OTP = generateOTP();
         const subject = 'Your One-Time Password (OTP)';
-    const message = `Your OTP for verification is ${OTP}.`;
+        const message = `Your OTP for verification is ${OTP}.`;
 
-    const htmlContent = `
+        const htmlContent = `
         <h1>Verification Code</h1>
         <p>Your OTP for verification is:</p>
         <h2>${OTP}</h2>
@@ -189,7 +192,7 @@ const forgotPassword = async (req, res, next) => {
         <p>If you did not request this OTP, please ignore this email or contact support.</p>
         <p>Please do not reply to this email. For assistance, visit the <a href="">Contact Us</a> section on our website.</p>
     `;
-        await sendEmail(user.email, subject,message,htmlContent);
+        await sendEmail(user.email, subject, message, htmlContent);
         user.otp = OTP;
         await user.save();
 
@@ -208,8 +211,8 @@ const forgotPassword = async (req, res, next) => {
 const ressetPasswordByOTP = async (req, res, next) => {
     try {
         const { email, otp, newPassword } = req.body;
-        const user = await User.findOne({ email:email });
-        if(!user) {
+        const user = await User.findOne({ email: email });
+        if (!user) {
             throw new CustomError("Please provide correct email")
         }
 
@@ -324,14 +327,14 @@ const addFavouriteRoute = async (req, res) => {
         })
     }
 }
-const contactUs = async (req,res)=>{
+const contactUs = async (req, res) => {
     email, subject, message = req.body;
     const username = req.username;
-    await sendEmail(process.env.ADMIN_EMAIL,subject,message);
+    await sendEmail(process.env.ADMIN_EMAIL, subject, message);
     const UserMailSubject = `Thank you ${username} for giving Feedback`;
     const UserMailMessage = `Dear ${username} Thank you for giving us your valuable feedback for our website. We will look after the matter
     you have raised: ${message}.`
-    await sendEmail(email,UserMailSubject,UserMailMessage);
+    await sendEmail(email, UserMailSubject, UserMailMessage);
 }
 export {
     registerUser,
