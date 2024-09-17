@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Heading, Container, useBreakpointValue, IconButton, Stack, Button, Link, Text } from '@chakra-ui/react';
 import Slider from 'react-slick'; // Make sure react-slick is installed
 import { BiLeftArrowAlt, BiRightArrowAlt } from 'react-icons/bi';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function SliderWithImage() {
@@ -9,6 +10,7 @@ export default function SliderWithImage() {
 
     const top = useBreakpointValue({ base: '90%', md: '50%' });
     const side = useBreakpointValue({ base: '30%', md: '10px' });
+    const navigate = useNavigate();
 
     // Dynamically set the height and width based on screen size
     const containerHeight = useBreakpointValue({ base: '50vh', md: '80vh', lg: '100vh' });
@@ -116,9 +118,7 @@ export default function SliderWithImage() {
                                     {card.text}
                                 </Text>
                                 <Button colorScheme="pink" variant={'solid'} width={'90%'}>
-                                    <Link _hover={{ textDecoration: 'none' }} href="/routes">
-                                        Search Routes
-                                    </Link>
+                                    <Text onClick={()=> navigate("/routes")}>Search Routes</Text>
                                 </Button>
                             </Stack>
                         </Container>

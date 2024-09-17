@@ -8,6 +8,7 @@ import {
     useColorModeValue, useToast
 } from '@chakra-ui/react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
 
@@ -15,6 +16,7 @@ export default function LoginPage() {
     const [inputFieldValue,setinputFieldValue] = useState("");
     const [password,setPassword] = useState("");
     const toast = useToast();
+    const navigate = useNavigate();
     const handleinputsubmit = (e) =>{
         e.preventDefault();
         if(inputField != "" && password != "") {
@@ -83,7 +85,7 @@ export default function LoginPage() {
                             </Stack>
                             <Text>
                                 New User?{' '}
-                                <Link color='teal.500' href='/register'>
+                                <Link color='teal.500'onClick={()=>navigate('/register')}>
                                     Register
                                 </Link>
                             </Text>

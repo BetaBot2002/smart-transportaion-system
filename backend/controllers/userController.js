@@ -9,14 +9,32 @@ const sendToken = (res, user, accessToken, refreshToken) => {
         success: true,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        username: user.username,
+        user
     });
 };
 
 const registerUser = async (req, res, next) => {
     try {
+        const { username, phoneNumber, email, password, city, nearestRailStation, nearestMetroStation } = req.body;
+
         const user = await User.create(req.body);
         const { accessToken, refreshToken } = signUser(user.username);
+        await sendEmail(
+            user.email,
+            "Welcome to Smart Transportation – Explore Our Best Features!",
+            'Thank you for registering on our platform! Enjoy real-time tracking, seamless connectivity, and an efficient user-friendly interface.',
+            `
+        <h1>Welcome to Our Smart Transportation System!</h1>
+        <p>We are thrilled to have you on board. Here are the top 3 features you will love:</p>
+        <ul>
+            <li>Real-Time Tracking</li>
+            <li>Seamless Connectivity</li>
+            <li>User-Friendly Interface</li>
+        </ul>
+        <p>If you need help, please visit the <a href="">Contact Us</a> section on our website.</p>
+        <p>This is auto-generated email. Please do not reply to this email.</p>
+    `
+        );
         sendToken(res, user, accessToken, refreshToken);
     } catch (e) {
         res.status(400).json({
@@ -45,11 +63,12 @@ const refresh = async (req, res) => {
 
 const loginUser = async (req, res, next) => {
     try {
-        const { email, phoneNo, password } = req.body;
+        const { email, phoneNo, username, password } = req.body;
         let user;
 
-        if (email) user = await User.findOne({ email });
+        if (email) user = await User.findOne({ email: email });
         else if (phoneNo) user = await User.findOne({ phoneNumber: phoneNo });
+        else if (username) user = await User.findOne({ username: username });
         else throw new CustomError("Enter email or phone number");
 
         if (!user) throw new CustomError("User does not exist");
@@ -69,9 +88,9 @@ const loginUser = async (req, res, next) => {
 
 const logoutUser = async (req, res, next) => {
     try {
-        const token= req.token;
+        const token = req.token;
         const newToken = await blackListedToken.create({
-            token:token
+            token: token
         });
 
         res.status(200).json({
@@ -162,7 +181,18 @@ const forgotPassword = async (req, res, next) => {
         if (!user) throw new CustomError("User does not exist");
 
         const OTP = generateOTP();
-        await sendEmail(user.email, OTP);
+        const subject = 'Your One-Time Password (OTP)';
+        const message = `Your OTP for verification is ${OTP}.`;
+
+        const htmlContent = `
+        <h1>Verification Code</h1>
+        <p>Your OTP for verification is:</p>
+        <h2>${OTP}</h2>
+        <p>This code is valid for 10 minutes. Please do not share it with anyone.</p>
+        <p>If you did not request this OTP, please ignore this email or contact support.</p>
+        <p>Please do not reply to this email. For assistance, visit the <a href="">Contact Us</a> section on our website.</p>
+    `;
+        await sendEmail(user.email, subject, message, htmlContent);
         user.otp = OTP;
         await user.save();
 
@@ -181,7 +211,10 @@ const forgotPassword = async (req, res, next) => {
 const ressetPasswordByOTP = async (req, res, next) => {
     try {
         const { email, otp, newPassword } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            throw new CustomError("Please provide correct email")
+        }
 
         if (user.otp !== otp) throw new CustomError("Enter valid OTP");
 
@@ -274,14 +307,14 @@ const updateRoleAdmin = async (req, res) => {
         });
     }
 };
-const addFavouriteRoute = async (req,res)=>{
+const addFavouriteRoute = async (req, res) => {
     try {
-        const {source,destination} = req.body;
-        if(!source || !destination) {
+        const { source, destination } = req.body;
+        if (!source || !destination) {
             throw new CustomError("Enter source and destination");
         }
-        const user = await User.findOne({username:req.username});
-        user.favouriteRoutes.push([source,destination]);
+        const user = await User.findOne({ username: req.username });
+        user.favouriteRoutes.push([source, destination]);
         await user.save();
         res.status(200).json({
             success: true,
@@ -289,10 +322,19 @@ const addFavouriteRoute = async (req,res)=>{
         });
     } catch (err) {
         res.status(400).json({
-            success:false,
-            message:err.message
+            success: false,
+            message: err.message
         })
     }
+}
+const contactUs = async (req, res) => {
+    email, subject, message = req.body;
+    const username = req.username;
+    await sendEmail(process.env.ADMIN_EMAIL, subject, message);
+    const UserMailSubject = `Thank you ${username} for giving Feedback`;
+    const UserMailMessage = `Dear ${username} Thank you for giving us your valuable feedback for our website. We will look after the matter
+    you have raised: ${message}.`
+    await sendEmail(email, UserMailSubject, UserMailMessage);
 }
 export {
     registerUser,
@@ -308,5 +350,6 @@ export {
     adminGetUser,
     updateRoleAdmin,
     adminGetAllUsers,
-    addFavouriteRoute
+    addFavouriteRoute,
+    contactUs
 };

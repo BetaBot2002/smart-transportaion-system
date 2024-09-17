@@ -10,13 +10,14 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
+  Text,
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { useNavigate } from 'react-router-dom'
 
 const Links = ['Home', 'Routes', 'Stations', 'About us']
 
-const NavLink = ({ children, to,fontSize }) => (
+const NavLink = ({ children, to, fontSize }) => (
   <ChakraLink
     px={2}
     py={1}
@@ -64,8 +65,8 @@ export default function Navbar() {
             </Box>
             <HStack as={'nav'} spacing={5} display={{ base: 'none', md: 'flex' }}>
               {Links.map((link) => (
-                <NavLink key={link} to={`/${link.toLowerCase()}`}>
-                  {link}
+                <NavLink key={link} >
+                  <Text onClick={() => navigate(link)}>{link}</Text>
                 </NavLink>
               ))}
             </HStack>
@@ -80,9 +81,8 @@ export default function Navbar() {
                 bg: useColorModeValue('gray.200', 'gray.700'),
                 color: useColorModeValue('teal.500', 'teal.200'),
               }}
-              href="/login"
             >
-              Login
+              <Text onClick={()=>navigate('/login')}>Login</Text>
             </ChakraLink>
           </Flex>
         </Flex>
@@ -91,8 +91,8 @@ export default function Navbar() {
           <Box pb={4} display={{ md: 'none' }}>
             <Stack as={'nav'} spacing={4}>
               {Links.map((link) => (
-                <NavLink key={link} to={`/${link.toLowerCase()}`}>
-                  {link}
+                <NavLink key={link} >
+                  <Text onClick={() => navigate(link)}>{link}</Text>
                 </NavLink>
               ))}
             </Stack>

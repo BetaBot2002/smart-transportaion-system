@@ -1,8 +1,6 @@
 import nodemailer from "nodemailer";
 
-export const sendEmail = async (email, OTP) => {
-    console.log(process.env.SENDER_EMAIL)
-    console.log(process.env.SENDER_EMAIL_PASSWORD)
+export const sendEmail = async (email, subject, message,htmlContent) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -15,13 +13,13 @@ export const sendEmail = async (email, OTP) => {
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: email,
-            subject: 'Your OTP for Password Reset',
-            text: `Your OTP for password reset is: ${OTP}`,
+            subject: subject,
+            text: message,
+            html:htmlContent
         };
 
         await transporter.sendMail(mailOptions);
-        console.log(`Email sent to ${email}`);
     } catch (error) {
-        console.error(`Error sending email: ${error.message}`);
+        console.log(`Error sending email: ${error.message}`);
     }
 };
