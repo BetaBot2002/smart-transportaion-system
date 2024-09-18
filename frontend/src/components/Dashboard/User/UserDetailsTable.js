@@ -6,20 +6,10 @@ import {
   Td,
   TableContainer,
 } from '@chakra-ui/react';
+import {useSelector,useDispatch} from "react-redux" 
+import { useEffect, useState } from 'react'
 import { EditableComponent } from "./UserEditControl.js"; 
-export function UserDetailsTable() {
-  const isAdmin = true;
-  const user = {
-    name: 'John Doe',
-    username: 'john_doe123',
-    email: 'johndoe@example.com',
-    phoneNumber: 2242829842,
-    role: 'admin', // change to 'user' to see the regular user view
-    city:"Kolkata",
-    nearestMetroStation:"Kanchrapara",
-    nearestRailStation:"Dum Dum",
-    favouriteRoutes: ['Station A to Station B', 'Station C to Station D'],
-  };
+export function UserDetailsTable({user}) {
   
   return (
     <TableContainer>
@@ -37,7 +27,10 @@ export function UserDetailsTable() {
             <Td><strong>Phone Number</strong></Td>
             <Td><EditableComponent value={user.phoneNumber}/></Td>
           </Tr>
-          
+          <Tr>
+            <Td><strong>City</strong></Td>
+            <Td><EditableComponent value={user.city}/></Td>
+          </Tr>
           <Tr>
             <Td><strong>NearestMetroStation</strong></Td>
             <Td><EditableComponent value={user.nearestMetroStation}/></Td>
