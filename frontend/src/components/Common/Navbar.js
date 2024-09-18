@@ -11,9 +11,16 @@ import {
   useColorModeValue,
   Stack,
   Text,
+  Menu,Button,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { useNavigate } from 'react-router-dom'
+import {useSelector,useDispatch} from "react-redux" 
+
 
 const Links = ['Home', 'Routes', 'Stations', 'About us']
 
@@ -41,7 +48,8 @@ const NavLink = ({ children, to, fontSize }) => (
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const navigate = useNavigate()
-
+  const {isAuthenticated} = useSelector(state=>state.GetUser);
+  
   return (
     <>
       <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
@@ -71,7 +79,8 @@ export default function Navbar() {
               ))}
             </HStack>
           </HStack>
-          <Flex alignItems={'center'}>
+        { !isAuthenticated ? 
+        <Flex alignItems={'center'}>
             <ChakraLink
               px={2}
               py={1}
@@ -85,6 +94,31 @@ export default function Navbar() {
               <Text onClick={()=>navigate('/login')}>Login</Text>
             </ChakraLink>
           </Flex>
+          : <Flex alignItems={'center'}>
+        <Menu>
+          <MenuButton
+            as={Button}
+            rounded={'full'}
+            variant={'link'}
+            cursor={'pointer'}
+            minW={0}>
+            <Avatar
+              size={'sm'}
+              src={
+                'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
+              }
+            />
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={()=>navigate('/profile')}>Profile</MenuItem>
+            <MenuItem>Link 2</MenuItem>
+            <MenuDivider />
+            <MenuItem>Link 3</MenuItem>
+          </MenuList>
+        </Menu>
+      </Flex>
+          
+        }
         </Flex>
 
         {isOpen ? (
