@@ -7,27 +7,65 @@ import {
     Text,Menu, MenuButton, MenuItem, MenuList,
     useColorModeValue, useToast
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import {useSelector,useDispatch} from "react-redux" 
+import { loginUserAction } from '../../redux/actions/userActions';
 
 export default function LoginPage() {
 
-    const [inputField, setInputField] = useState("Email");
+    const [inputField, setInputField] = useState("username");
     const [inputFieldValue,setinputFieldValue] = useState("");
     const [password,setPassword] = useState("");
     const toast = useToast();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const {isAuthenticated,error} = useSelector(state=>state.GetUser);
+
+    
+    useEffect(()=>{
+        if(isAuthenticated) {
+            toast({
+                title: 'Success',
+                    description: "Logged in successfully",
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true
+            })
+            setTimeout(()=>{
+                navigate('/home');
+            },1000);
+        }
+        if(error) {
+            toast({
+                title:'invalid',
+                description:error,
+                status:'error',
+                duration:3000,
+                isClosable:true
+            })
+        }
+    },[dispatch,isAuthenticated,error])
     const handleinputsubmit = (e) =>{
         e.preventDefault();
-        if(inputField != "" && password != "") {
-            console.log({inputField,inputFieldValue,password});
-            toast({
-                title: 'Logged in.',
-                description: "explore our features",
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-              })
+        if(inputFieldValue != "" && password != "") {
+            if(inputField==='email'){
+                dispatch(loginUserAction({
+                    email:inputFieldValue,
+                    password:password
+                }))
+                
+            }else if(inputField==='phoneNo') {
+                dispatch(loginUserAction({
+                    phoneNo:inputFieldValue,
+                    password:password
+                }))
+            }else {
+                dispatch(loginUserAction({
+                    username:inputFieldValue,
+                    password:password
+                }))
+            }
         }else {
             toast({
                 title: 'invalid',
@@ -57,8 +95,8 @@ export default function LoginPage() {
                     </MenuButton>
                     <MenuList>
                         <MenuItem onClick={() => setInputField("username")}>Username</MenuItem>
-                        <MenuItem onClick={() => setInputField("Email")}>Email</MenuItem>
-                        <MenuItem onClick={() => setInputField("Phone No")}>Phone No.</MenuItem>
+                        <MenuItem onClick={() => setInputField("email")}>Email</MenuItem>
+                        <MenuItem onClick={() => setInputField("phoneNo")}>Phone No.</MenuItem>
                     </MenuList>
                 </Menu>
                 <Box

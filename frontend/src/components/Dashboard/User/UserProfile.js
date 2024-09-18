@@ -5,20 +5,20 @@ import {
     FormLabel,
     Switch
 } from '@chakra-ui/react';
-
+import {useSelector,useDispatch} from "react-redux" 
+import { useEffect, useState } from 'react'
 import { UserDetailsTable } from './UserDetailsTable.js';
+import { Spinner } from '@chakra-ui/react'
+import { useNavigate } from 'react-router-dom';
+import { getProfileAction } from '../../../redux/actions/userActions.js';
+
 
 export default function UserProfile() {
-    const isAdmin = true;
-    const user = {
-        name: 'John Doe',
-        username: 'john_doe123',
-        email: 'johndoe@example.com',
-        phoneNumber: 2242829842,
-        role: 'admin', // change to 'user' to see the regular user view
-        favouriteRoutes: ['Station A to Station B', 'Station C to Station D'],
-    };
-
+    
+    const dispatch = useDispatch();
+    const {loading, isAuthenticated,user,error} = useSelector(state=>state.GetUser);
+    const isAdmin = user && user.role === 'admin' ? true:false;
+    const navigate = useNavigate();
     const {
         isOpen: isOpenPersonalInformation,
         onToggle: onTogglePersonalInformation,
@@ -33,14 +33,19 @@ export default function UserProfile() {
         isOpen: isOpenAdminActions,
         onToggle: onToggleAdminActions,
     } = useDisclosure();
-
+    useEffect(()=>{
+        dispatch(getProfileAction());
+    },[dispatch])
+    const handleSubmitLogout = ()=> {
+        //handle logout
+    }
     return (
-        <Box p={4} maxW="lg" mx="auto">
+        loading ? <Spinner textAlign={'center'} display={'flex'} alignItems={'center'} justifyContent={'center'} size={'xl'}/> : !user ? <h1>Something went wrong</h1> : <Box p={4} maxW="lg" mx="auto">
             <Stack spacing={6}>
                 {/* User Information */}
                 <Box textAlign="center">
-                    <Avatar size="xl" name={user.name} />
-                    <Heading as="h2" mt={4}>{user.name}</Heading>
+                    <Avatar size="xl" name={user.username} />
+                    <Heading as="h2" mt={4}>{user.username}</Heading>
                     <Text fontSize="lg" color="gray.600">{user.email}</Text>
                     <Text fontSize="sm" color="gray.500">{user.role}</Text>
                 </Box>
@@ -61,7 +66,7 @@ export default function UserProfile() {
                         </Button>
                     </Heading>
                     <Collapse in={isOpenPersonalInformation} animateOpacity>
-                        <UserDetailsTable />
+                        <UserDetailsTable user={user} />
                     </Collapse>
                 </Box>
 
@@ -76,7 +81,7 @@ export default function UserProfile() {
                         <Stack spacing={2} mt={2}>
                             <Button
                                 as='a'
-                                href='/change-password'
+                                onClick={()=>navigate('/change-password')}
                                 colorScheme="teal"
                                 width="full"
                             >
@@ -84,7 +89,7 @@ export default function UserProfile() {
                             </Button>
                             <Button
                                 as='a'
-                                href='/saved-routes'
+                                onClick={()=>navigate('/saved-routes')}
                                 colorScheme="teal"
                                 width="full"
                             >
@@ -92,7 +97,7 @@ export default function UserProfile() {
                             </Button>
                             <Button
                                 as='a'
-                                href='/logout'
+                                onClick={handleSubmitLogout}
                                 colorScheme="red"
                                 width="full"
                             >
@@ -114,7 +119,7 @@ export default function UserProfile() {
                             <Stack spacing={2} mt={2}>
                                 <Button
                                     as='a'
-                                    href='/manage-users'
+                                    onClick={()=>navigate('/manage-user')}
                                     colorScheme="teal"
                                     width="full"
                                 >
@@ -122,7 +127,7 @@ export default function UserProfile() {
                                 </Button>
                                 <Button
                                     as='a'
-                                    href='/add-station'
+                                    onClick={()=>navigate('/add-station')}
                                     colorScheme="teal"
                                     width="full"
                                 >
@@ -130,7 +135,7 @@ export default function UserProfile() {
                                 </Button>
                                 <Button
                                     as='a'
-                                    href='/view-stations'
+                                    onClick={()=>navigate('/view-stations')}
                                     colorScheme="teal"
                                     width="full"
                                 >

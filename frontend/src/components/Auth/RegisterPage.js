@@ -12,14 +12,17 @@ import {
     IconButton,
 } from '@chakra-ui/react'
 import {ViewIcon,ViewOffIcon} from '@chakra-ui/icons'
-import { useState } from 'react'
-
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { registerUserAction } from '../../redux/actions/userActions.js';
+import {useSelector,useDispatch} from "react-redux";
 export default function RegisterPage() {
-
+    const dispatch = useDispatch();
     const [formStep, setFormStep] = useState(1);
     const [showPassword,setShowpassword] = useState(false);
     const [showConfirmPassword,setShowConfirmPassword] = useState(false);
     const totalSteps = 3;
+    const {loading, isAuthenticated,user,error} = useSelector(state=>state.GetUser);
 
     const [formData, setFormData] = useState({
         username: '',
@@ -71,16 +74,32 @@ export default function RegisterPage() {
             })
             return;
         }
-        console.log(formData);
-        toast({
-            title: 'Account created',
-            description: "Explore all our features",
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-        })
+        dispatch(registerUserAction(formData));
     };
-
+    const navigate = useNavigate();
+    useEffect(()=>{
+        if(isAuthenticated) {
+            toast({
+                title: 'Success',
+                    description: "congratulations You have created account",
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true
+            })
+            setTimeout(()=>{
+                navigate('/home');
+            },1000);
+        }
+        if(error) {
+            toast({
+                title:'invalid',
+                description:error,
+                status:'error',
+                duration:3000,
+                isClosable:true
+            })
+        }
+    },[dispatch,isAuthenticated,error])
     return (
         <Flex
             align={'center'}
@@ -92,6 +111,7 @@ export default function RegisterPage() {
                     <Text fontSize={'lg'} color={'gray.600'}>
                         Enjoy all our cool features
                     </Text>
+                    <Text>already account? <Link onClick={()=> navigate('/login')}>Login</Link></Text>
                 </Stack>
                 <Box
                     rounded={'lg'}
@@ -130,25 +150,25 @@ export default function RegisterPage() {
                             <FormControl id="city">
                                 <Select onChange={handleChange} placeholder='Select city'>
                                     {/* here we will add list of city names */}
-                                    <option value='option1'>Option 1</option>
-                                    <option value='option2'>Option 2</option>
-                                    <option value='option3'>Option 3</option>
+                                    <option value='Kolkata'>Kolkata</option>
+                                    <option value='Mumbai'>Mumbai</option>
+                                    <option value='Delhi'>Delhi</option>
                                 </Select>
                             </FormControl>
                             <FormControl id="nearestRailStation">
                                 <Select onChange={handleChange} placeholder='Select nearestRailStation'>
                                     {/* here we will add list of nearestRailStation names */}
-                                    <option value='option1'>Option 1</option>
-                                    <option value='option2'>Option 2</option>
-                                    <option value='option3'>Option 3</option>
+                                    <option value='6687023c562709dfec6e5795'>Option 1</option>
+                                    <option value='66870319b96930c77d54a147'>Option 2</option>
+                                    <option value='668703d9b96930c77d54a18c'>Option 3</option>
                                 </Select>
                             </FormControl>
                             <FormControl id="nearestMetroStation">
                                 <Select onChange={handleChange} placeholder='Select nearestMetroStation'>
                                     {/* here we will add list of nearestMetroStation names */}
-                                    <option value='option1'>Option 1</option>
-                                    <option value='option2'>Option 2</option>
-                                    <option value='option3'>Option 3</option>
+                                    <option value='6687023c562709dfec6e5795'>Option 1</option>
+                                    <option value='66870319b96930c77d54a147'>Option 2</option>
+                                    <option value='668703d9b96930c77d54a18c'>Option 3</option>
                                 </Select>
                             </FormControl>
                             <Button
@@ -189,7 +209,7 @@ export default function RegisterPage() {
                                     <InputRightElement>
                                         <IconButton
                                             icon={!showConfirmPassword ? <ViewOffIcon /> : <ViewIcon />}
-                                            onClick={() => setShowConfirmPassword(!showPassword)}
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                             variant="ghost"
                                         />
                                     </InputRightElement>
