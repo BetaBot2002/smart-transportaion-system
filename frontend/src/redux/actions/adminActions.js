@@ -104,3 +104,4 @@ export const getAllStations = () => async (dispatch) => {
 export const clearErrors = () => (dispatch) => {
   dispatch({ type: CLEAR });
 };
+
