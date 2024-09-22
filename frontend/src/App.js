@@ -13,8 +13,18 @@ import AboutUs from './pages/AboutUs/AboutUs.js';
 import ChangePassword from './components/Dashboard/ChangePassword.js';
 import ViewFavouriteRoutes from './components/Dashboard/ViewFavouriteRoutes.js';
 import Logout from './components/Dashboard/Logout.js';
+import { useEffect } from 'react';
+import { getProfileAction } from './redux/actions/userActions.js';
+import { useDispatch } from 'react-redux';
 
 function App() {
+    const dispatch = useDispatch();
+    const refreshToken = localStorage.getItem("refreshToken");
+    useEffect(()=>{
+        if(refreshToken) {
+            dispatch(getProfileAction());
+        }
+    },[])
     return (
         <Router>
             <Navbar/>
