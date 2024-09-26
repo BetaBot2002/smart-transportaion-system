@@ -12,8 +12,11 @@ import {
     Select,
     useToast,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom';
+import { forgotPasswordAction } from '../../redux/actions/userActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { MdErrorOutline } from 'react-icons/md';
 
 
 export default function ForgotPasswordForm() {
@@ -21,6 +24,8 @@ export default function ForgotPasswordForm() {
     const [inputFieldValue,setinputFieldValue] = useState("");
     const toast = useToast();
     const navigate= useNavigate();
+    const dispatch = useDispatch();
+    const {loading,isForgotPassword, error} = useSelector(state=>state.IsUpdatedUser)
     const handleSubmit = () => {
         if(inputFieldValue === '') {
             toast({
@@ -32,10 +37,43 @@ export default function ForgotPasswordForm() {
             })
             return;
         }
-        console.log({inputField,inputFieldValue});
-        navigate('/reset-password');
+        if(inputField==='email'){
+            dispatch(forgotPasswordAction({
+                email:inputFieldValue,
+            }))
+            
+        }else if(inputField==='phoneNo') {
+            dispatch(forgotPasswordAction({
+                phoneNo:inputFieldValue,
+            }))
+        }else {
+            dispatch(forgotPasswordAction({
+                username:inputFieldValue,
+            }))
+        }
         
     }
+    useEffect(()=>{
+        if(isForgotPassword) {
+            toast({
+                title: 'success',
+                description: "OTP sent to your email",
+                status: 'success',
+                duration: 4000,
+                isClosable: true,
+            })
+            navigate("/verify-otp")
+        }
+        if(error) {
+            toast({
+                title: 'invalid',
+                description: error,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            })
+        }
+    },[isForgotPassword,error])
     return (
         <Flex
             align={'center'}
@@ -54,9 +92,9 @@ export default function ForgotPasswordForm() {
                     Forgot your password?
                 </Heading>
                 <Select onChange={(e)=>setinputField(e.target.value)} placeholder='Select method'>
-                    <option value='Username'>Username</option>
-                    <option value='Email'>Email</option>
-                    <option value='phoneNumber'>phoneNumber</option>
+                    <option value='username'>Username</option>
+                    <option value='email'>Email</option>
+                    <option value='phoneNo'>Phone No.</option>
                 </Select>
                 <FormControl id={inputField}>
                     <Input
