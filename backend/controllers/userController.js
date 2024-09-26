@@ -198,7 +198,8 @@ const forgotPassword = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: "OTP sent to your email",
+            email: user.email,
+            message: "OTP sent to your email"
         });
     } catch (e) {
         res.status(400).json({
@@ -208,16 +209,13 @@ const forgotPassword = async (req, res, next) => {
     }
 };
 
-const ressetPasswordByOTP = async (req, res, next) => {
+const resetPassword = async (req, res, next) => {
     try {
-        const { email, otp, newPassword } = req.body;
+        const { email, newPassword } = req.body;
         const user = await User.findOne({ email: email });
         if (!user) {
             throw new CustomError("Please provide correct email")
         }
-
-        if (user.otp !== otp) throw new CustomError("Enter valid OTP");
-
         user.password = newPassword;
         await user.save();
 
@@ -233,6 +231,28 @@ const ressetPasswordByOTP = async (req, res, next) => {
     }
 };
 
+const verifyOTP = async (req, res, next) => {
+    try{const { email, otp } = req.body
+    const user = await User.findOne({ email: email });
+    if (!user) {
+        throw new CustomError("Please provide correct email")
+    }
+
+    if (user.otp !== otp) throw new CustomError("Enter valid OTP");
+
+    res.status(200).json({
+        success: true,
+        email:user.email,
+        message: "OTP verified successfully"
+    });
+}catch(err) {
+    res.status(400).json({
+        success:false,
+        message:e.message
+    })
+}
+
+}
 const adminDeleteUser = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -343,7 +363,8 @@ export {
     logoutUser,
     updateUser,
     updatePassword,
-    ressetPasswordByOTP,
+    resetPassword,
+    verifyOTP,
     getMe,
     forgotPassword,
     adminDeleteUser,
