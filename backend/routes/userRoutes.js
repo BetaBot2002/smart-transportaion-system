@@ -1,7 +1,10 @@
 import express from "express";
 import {
-  registerUser, loginUser, logoutUser, updateUser, getMe, forgotPassword, adminDeleteUser, addFavouriteRoute,
-  adminGetUser, adminGetAllUsers, updatePassword, ressetPasswordByOTP, updateRoleAdmin, refresh, contactUs
+  registerUser, loginUser, logoutUser, updateUser, getMe, forgotPassword, adminDeleteUser, 
+  addFavouriteRoute, adminGetUser, adminGetAllUsers, updatePassword, updateRoleAdmin, refresh, 
+  contactUs,
+  resetPassword,
+  verifyOTP
 } from "../controllers/userController.js";
 import { isAuthenticatedAccess, isAuthenticatedRefresh, isAuthrorizeRoles } from "../middlewares/Authentication.js";
 
@@ -10,7 +13,8 @@ const router = express.Router();
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
 router.route("/forgot-password").post(forgotPassword);
-router.route("/reset-password").put(ressetPasswordByOTP);
+router.route("/verify-otp").post(verifyOTP);
+router.route("/reset-password").put(resetPassword);
 
 
 router.route("/logout").get(isAuthenticatedRefresh,logoutUser);
