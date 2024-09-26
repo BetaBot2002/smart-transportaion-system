@@ -1,4 +1,7 @@
-import { GET_USER_FAILED, GET_USER_REQUEST, GET_USER_SUCCESS, USER_LOGIN_FAILED, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_REGISTER_FAILED, USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS } from "../consents/userConsents";
+import { GET_USER_FAILED, GET_USER_REQUEST, GET_USER_SUCCESS, USER_FORGOT_PASSWORD_FAILED, USER_FORGOT_PASSWORD_REQUEST,
+	USER_FORGOT_PASSWORD_SUCCESS, USER_LOGIN_FAILED, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGOUT_FAILED, 
+	USER_LOGOUT_SUCCESS, USER_REGISTER_FAILED, USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS, USER_UPDATE_FAILED, USER_UPDATE_REQUEST, USER_UPDATE_SUCCESS, USER_VERIFY_OTP_FAILED,
+	USER_VERIFY_OTP_REQUEST, USER_VERIFY_OTP_SUCCESS } from "../consents/userConsents";
 
 const initialUserState = {
 	loading:false,
@@ -32,18 +35,62 @@ export const getUserReducer = (state = initialUserState, action) => {
 				loading:false,
 				error:action.payload
 			}
+
+		case USER_LOGOUT_SUCCESS: 
+			return initialUserState
+		case USER_LOGOUT_FAILED:
+			return {
+				...state,
+				error:action.payload
+			}
 		default:
 			return state;
 	}
 };
 
+const initialUpdateState = {
+	loading:false,
+	email:null,
+	isForgotPassword:false,
+	isUpdated:false,
+	isotpVerified:false,
+	error:null
+}
 
-export const isUpdatedUserReducer = (state = initialUserState, action) => {
+export const isUpdatedUserReducer = (state = initialUpdateState, action) => {
 	switch (action.type) {
-		case 'IS_UPDATED_USER_REQUEST':
-		case 'IS_UPDATED_USER_SUCCESS':
-		case 'IS_UPDATED_USER_FAILED':
-			return state;
+		case USER_FORGOT_PASSWORD_REQUEST:
+		case USER_VERIFY_OTP_REQUEST:
+		case USER_UPDATE_REQUEST:
+			return {
+				...initialUpdateState,
+				loading:true,
+			}
+		case USER_FORGOT_PASSWORD_SUCCESS:
+			return {
+				...initialUpdateState,
+				isForgotPassword:true,
+				email:action.payload
+			}
+		case USER_VERIFY_OTP_SUCCESS:
+			return {
+				...initialUpdateState,
+				isotpVerified:true,
+				email:action.payload
+			}
+		case USER_UPDATE_SUCCESS:
+			return{
+				...initialUpdateState,
+				isUpdated:true
+			}
+		case USER_FORGOT_PASSWORD_FAILED:
+		case USER_VERIFY_OTP_FAILED:
+		case USER_UPDATE_FAILED:
+			return {
+				...initialUpdateState,
+				error:action.payload
+			}
+
 		default:
 			return state;
 	}
