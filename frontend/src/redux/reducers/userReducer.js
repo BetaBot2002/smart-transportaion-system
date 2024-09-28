@@ -1,4 +1,4 @@
-import { GET_USER_FAILED, GET_USER_REQUEST, GET_USER_SUCCESS, USER_FORGOT_PASSWORD_FAILED, USER_FORGOT_PASSWORD_REQUEST,
+import { CLEARUPDATION, CLEARUSER, GET_USER_FAILED, GET_USER_REQUEST, GET_USER_SUCCESS, USER_FORGOT_PASSWORD_FAILED, USER_FORGOT_PASSWORD_REQUEST,
 	USER_FORGOT_PASSWORD_SUCCESS, USER_LOGIN_FAILED, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGOUT_FAILED, 
 	USER_LOGOUT_SUCCESS, USER_REGISTER_FAILED, USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS, USER_UPDATE_FAILED, USER_UPDATE_REQUEST, USER_UPDATE_SUCCESS, USER_VERIFY_OTP_FAILED,
 	USER_VERIFY_OTP_REQUEST, USER_VERIFY_OTP_SUCCESS } from "../consents/userConsents";
@@ -6,7 +6,9 @@ import { GET_USER_FAILED, GET_USER_REQUEST, GET_USER_SUCCESS, USER_FORGOT_PASSWO
 const initialUserState = {
 	loading:false,
 	isAuthenticated:false,
-	user:null
+	isLoggedOut:false,
+	user:null,
+	error:null
 }
 
 export const getUserReducer = (state = initialUserState, action) => {
@@ -37,12 +39,17 @@ export const getUserReducer = (state = initialUserState, action) => {
 			}
 
 		case USER_LOGOUT_SUCCESS: 
-			return initialUserState
+			return {
+				...initialUserState,
+				isLoggedOut:true
+			}
 		case USER_LOGOUT_FAILED:
 			return {
 				...state,
 				error:action.payload
 			}
+		case CLEARUSER:
+			return initialUserState;
 		default:
 			return state;
 	}
@@ -90,7 +97,8 @@ export const isUpdatedUserReducer = (state = initialUpdateState, action) => {
 				...initialUpdateState,
 				error:action.payload
 			}
-
+		case CLEARUPDATION:
+			return initialUpdateState;
 		default:
 			return state;
 	}

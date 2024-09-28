@@ -1,5 +1,7 @@
 import axios from "axios";
 import {
+    CLEARUSER,
+    CLEARUPDATION,
     GET_USER_FAILED, GET_USER_REQUEST, GET_USER_SUCCESS,
     USER_FORGOT_PASSWORD_FAILED,
     USER_FORGOT_PASSWORD_REQUEST,
@@ -55,7 +57,7 @@ export const registerUserAction = (registrationCredentials) => async (dispatch) 
     } catch (err) {
         dispatch({
             type: USER_REGISTER_FAILED,
-            payload: err.message
+            payload: err.response.data.message
         })
     }
 }
@@ -71,15 +73,15 @@ export const loginUserAction = (loginCredentials) => async (dispatch) => {
         if (!data.success) {
             throw new CustomError(data.message);
         }
-        setToken(data.accessToken, data.refreshToken);
         dispatch({
             type: USER_LOGIN_SUCCESS,
             payload: data.user
         })
+        setToken(data.accessToken, data.refreshToken);
     } catch (err) {
         dispatch({
             type: USER_LOGIN_FAILED,
-            payload: err.message
+            payload: err.response.data.message
         })
         
     }
@@ -106,7 +108,7 @@ export const logoutUserAction = () => async (dispatch) => {
     } catch (err) {
         dispatch({
             type: USER_LOGOUT_FAILED,
-            payload: err.message
+            payload: err.response.data.message
         })
     }
 }
@@ -129,7 +131,7 @@ export const forgotPasswordAction = (forgotPasswordCredentials) => async (dispat
     } catch (err) {
         dispatch({
             type: USER_FORGOT_PASSWORD_FAILED,
-            payload: err.message
+            payload: err.response.data.message
         })
     }
 }
@@ -151,7 +153,7 @@ export const verifyOTPAction = (verifyOTPCredentials) => async (dispatch)=> {
     } catch (err) {
         dispatch({
             type: USER_VERIFY_OTP_FAILED,
-            payload: err.message
+            payload: err.response.data.message
         })
     }
 }
@@ -173,7 +175,7 @@ export const resetPasswordAction = (resetPasswordCredentials) => async (dispatch
     } catch (err) {
         dispatch({
             type: USER_UPDATE_FAILED,
-            payload: err.message
+            payload: err.response.data.message
         })
     }
 }
@@ -201,7 +203,7 @@ export const getProfileAction = () => async (dispatch) => {
     } catch (err) {
         dispatch({
             type: GET_USER_FAILED,
-            payload: err.message
+            payload: err.response.data.message
         })
     }
 }
@@ -232,7 +234,48 @@ export const putUserUpdate = (userUpdateCredentials) => async (dispatch) => {
     } catch (err) {
         dispatch({
             type: USER_UPDATE_FAILED,
-            payload: err.message
+            payload: err.response.data.message
         })
     }
 }
+export const putUserUpdatePassword = (userPasswordUpdateCredentials) => async (dispatch) => {
+    try {
+        dispatch({
+            type: USER_UPDATE_REQUEST
+        })
+        const { accessToken } = getToken();
+        const config = {
+            headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+        const link = backendUrl + "/update/password";
+        const data = (await axios.put(link, userPasswordUpdateCredentials, config)).data;
+        if (!data.success) {
+            throw new CustomError(data.message);
+        }
+
+        dispatch({
+            type: USER_UPDATE_SUCCESS,
+        })
+        setToken(data.accessToken, data.refreshToken);
+    } catch (err) {
+        dispatch({
+            type: USER_UPDATE_FAILED,
+            payload: err.response.data.message
+        })
+    }
+}
+
+
+export const clearUsers = ()=> async (dispatch)=> {
+    dispatch({
+        type:CLEARUSER
+    })
+}   
+export const clearUpdation = ()=> async (dispatch)=> {
+    dispatch({
+        type:CLEARUPDATION
+    })
+}   
