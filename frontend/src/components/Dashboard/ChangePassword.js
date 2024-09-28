@@ -11,15 +11,88 @@ import {
     InputRightElement,
     Link,
     Stack,
+    Text,
     useColorModeValue,
+    useToast,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import {useDispatch,useSelector} from "react-redux";
+import { putUserUpdatePassword } from '../../redux/actions/userActions';
+import { useNavigate } from 'react-router-dom';
 
 export default function ChangePassword() {
-    // State hooks for controlling visibility of each password field
     const [showOldPassword, setShowOldPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const toast= useToast();
+    const {loading,isUpdated,error} = useSelector(state=> state.IsUpdatedUser)
+    const handleSubmit = () => {
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            toast({
+                title: 'Error',
+                description: 'All fields are required.',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            toast({
+                title: 'Error',
+                description: 'New password and confirmation password do not match.',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            toast({
+                title: 'Error',
+                description: 'Password must be at least 6 characters long.',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        dispatch(putUserUpdatePassword({
+            oldPassword:oldPassword,
+            newPassword:newPassword
+        }));
+
+    };
+    useEffect(()=>{
+        if(isUpdated) {
+            toast({
+                title: 'Success',
+                description: 'Password changed successfully.',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+            navigate("/home");
+        }
+        if(error) {
+            toast({
+                title: 'invalid',
+                description: error,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            })
+        }
+    },[isUpdated,error])
 
     return (
         <Flex
@@ -39,15 +112,20 @@ export default function ChangePassword() {
                     Change Password
                 </Heading>
                 <Heading textAlign={'center'} lineHeight={1.1} fontSize={{ base: '0.5xl', md: 'xl' }}>
-                    Email: 
-                    {/* Add email here */}
+                    Email: {/* Add email here */}
                 </Heading>
+
+                {error && <Text color="red.500" fontSize="sm">{error}</Text>}
 
                 {/* Old Password Field */}
                 <FormControl>
                     <FormLabel>Enter Old Password</FormLabel>
                     <InputGroup>
-                        <Input type={showOldPassword ? "text" : "password"} />
+                        <Input
+                            type={showOldPassword ? "text" : "password"}
+                            value={oldPassword}
+                            onChange={(e) => setOldPassword(e.target.value)}
+                        />
                         <InputRightElement>
                             <IconButton
                                 icon={showOldPassword ? <ViewIcon /> : <ViewOffIcon />}
@@ -56,14 +134,18 @@ export default function ChangePassword() {
                             />
                         </InputRightElement>
                     </InputGroup>
-                    <Link fontSize={'small'} color={'blue'} href='/forgot-password'>forgot password</Link>
+                    <Link fontSize={'small'} color={'blue'} href='/forgot-password'>Forgot password?</Link>
                 </FormControl>
 
                 {/* New Password Field */}
                 <FormControl>
                     <FormLabel>Enter New Password</FormLabel>
                     <InputGroup>
-                        <Input type={showNewPassword ? "text" : "password"} />
+                        <Input
+                            type={showNewPassword ? "text" : "password"}
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                        />
                         <InputRightElement>
                             <IconButton
                                 icon={showNewPassword ? <ViewIcon /> : <ViewOffIcon />}
@@ -78,7 +160,11 @@ export default function ChangePassword() {
                 <FormControl>
                     <FormLabel>Confirm New Password</FormLabel>
                     <InputGroup>
-                        <Input type={showConfirmPassword ? "text" : "password"} />
+                        <Input
+                            type={showConfirmPassword ? "text" : "password"}
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
                         <InputRightElement>
                             <IconButton
                                 icon={showConfirmPassword ? <ViewIcon /> : <ViewOffIcon />}
@@ -94,6 +180,7 @@ export default function ChangePassword() {
                     <Button
                         bg={'blue.400'}
                         color={'white'}
+                        onClick={handleSubmit}
                         _hover={{
                             bg: 'blue.500',
                         }}>

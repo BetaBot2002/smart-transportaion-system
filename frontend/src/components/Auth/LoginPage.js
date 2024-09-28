@@ -38,7 +38,7 @@ export default function LoginPage() {
         if (error) {
             toast({
                 title: 'invalid',
-                description: "please login or register",
+                description: error,
                 status: 'error',
                 duration: 3000,
                 isClosable: true
