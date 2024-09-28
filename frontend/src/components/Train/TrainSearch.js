@@ -1,13 +1,20 @@
-import { Input, Box, UnorderedList, ListItem, Button, FormControl, FormLabel } from '@chakra-ui/react';
-import { useState } from 'react';
-
+import { Input, Box, UnorderedList, ListItem, Button, FormControl, FormLabel, useToast } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTrainStatus } from '../../redux/actions/trainActions';
+import { useNavigate } from 'react-router-dom';
+import TrainInfoCard from "./TrainInfoCard.js"
 const trainNumbers = ['12345', '56738', '91011', '12133', '14125'];
 
 export default function TrainSearch() {
     const [openTrainNumbers, setOpenTrainNumbers] = useState(false);
     const [filteredTrainNumbers, setFilteredTrainNumbers] = useState([]);
     const [trainNo, setTrainNo] = useState('');
-
+    const [trainStatus, settrainStatus] = useState();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const toast = useToast();
+    const { loading, data, error } = useSelector(state => state.GetTrainStatus)
     const filterTrainNumbers = (trainInput) => {
         return trainNumbers.filter(train =>
             train.startsWith(trainInput)
@@ -18,9 +25,29 @@ export default function TrainSearch() {
         setTrainNo(train);
         setOpenTrainNumbers(false);
     }
-
+    useEffect(() => {
+        if (data) {
+            toast({
+                title: 'Success',
+                description: "Status found",
+                status: 'success',
+                duration: 3000,
+                isClosable: true
+            })
+        }
+        if (error) {
+            toast({
+                title: 'invalid',
+                description: error,
+                status: 'error',
+                duration: 3000,
+                isClosable: true
+            })
+        }
+    }, [data, error])
     const handleSearch = () => {
-        console.log(`Searching for train number ${trainNo}`);
+        setOpenTrainNumbers(false);
+        dispatch(getTrainStatus(trainNo));
     }
 
     return (
@@ -70,9 +97,14 @@ export default function TrainSearch() {
                 )}
             </FormControl>
 
-            <Button w='100%' colorScheme="teal" onClick={handleSearch}>
+            <Button isLoading={loading ? true : false} w='100%' colorScheme="teal" onClick={handleSearch}>
                 Search
             </Button>
+            {data && data.train && data.train.data &&  data.train.success? (
+                <TrainInfoCard  data={data.train.data}/>
+            ):(
+                <h2>No train found</h2>
+            )}
         </Box>
     );
 }

@@ -3,7 +3,7 @@ import LoginPage from './components/Auth/LoginPage.js';
 import RegisterPage from './components/Auth/RegisterPage.js';
 import Test from "./Test.js";
 import ForgotPasswordForm from './components/Auth/ForgotPasswordForm.js';
-import ResetPasswordForm from './components/Auth/ResetPasswordForm.js';
+import VerifyOtp from './components/Auth/VerifyOtp.js';
 import Navbar from './components/Common/Navbar.js';
 import Footer from './components/Common/Footer.js';
 import HomePage from './pages/Home/HomePage.js';
@@ -13,8 +13,18 @@ import AboutUs from './pages/AboutUs/AboutUs.js';
 import ChangePassword from './components/Dashboard/ChangePassword.js';
 import ViewFavouriteRoutes from './components/Dashboard/ViewFavouriteRoutes.js';
 import Logout from './components/Dashboard/Logout.js';
+import { useEffect } from 'react';
+import { getProfileAction } from './redux/actions/userActions.js';
+import { useDispatch } from 'react-redux';
 
 function App() {
+    const dispatch = useDispatch();
+    const refreshToken = localStorage.getItem("refreshToken");
+    useEffect(()=>{
+        if(refreshToken) {
+            dispatch(getProfileAction());
+        }
+    },[])
     return (
         <Router>
             <Navbar/>
@@ -22,7 +32,7 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-                <Route path="/reset-password" element={<ResetPasswordForm/>} />
+                <Route path="/verify-otp" element={<VerifyOtp/>} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/routes" element={<RoutePage />} />
 

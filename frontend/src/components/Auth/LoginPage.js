@@ -4,69 +4,68 @@ import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import {
     Flex, Box, FormControl, FormLabel, Link,
     Input, Checkbox, Stack, Button, Heading,
-    Text,Menu, MenuButton, MenuItem, MenuList,
+    Text, Menu, MenuButton, MenuItem, MenuList,
     useColorModeValue, useToast
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import {useSelector,useDispatch} from "react-redux" 
+import { useSelector, useDispatch } from "react-redux"
 import { loginUserAction } from '../../redux/actions/userActions';
 
 export default function LoginPage() {
 
     const [inputField, setInputField] = useState("username");
-    const [inputFieldValue,setinputFieldValue] = useState("");
-    const [password,setPassword] = useState("");
+    const [inputFieldValue, setinputFieldValue] = useState("");
+    const [password, setPassword] = useState("");
     const toast = useToast();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const {isAuthenticated,error} = useSelector(state=>state.GetUser);
+    const { loading, isAuthenticated, error } = useSelector(state => state.GetUser);
 
-    
-    useEffect(()=>{
-        if(isAuthenticated) {
+
+    useEffect(() => {
+        if (isAuthenticated) {
+
+            navigate('/home');
             toast({
                 title: 'Success',
-                    description: "Logged in successfully",
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true
+                description: "Logged in successfully",
+                status: 'success',
+                duration: 3000,
+                isClosable: true
             })
-            setTimeout(()=>{
-                navigate('/home');
-            },1000);
         }
-        if(error) {
+        if (error) {
             toast({
-                title:'invalid',
-                description:error,
-                status:'error',
-                duration:3000,
-                isClosable:true
+                title: 'invalid',
+                description: error,
+                status: 'error',
+                duration: 3000,
+                isClosable: true
             })
         }
-    },[dispatch,isAuthenticated,error])
-    const handleinputsubmit = (e) =>{
+    }, [dispatch, isAuthenticated, error])
+    const handleinputsubmit = (e) => {
         e.preventDefault();
-        if(inputFieldValue != "" && password != "") {
-            if(inputField==='email'){
+        if (inputFieldValue != "" && password != "") {
+            if (inputField === 'email') {
                 dispatch(loginUserAction({
-                    email:inputFieldValue,
-                    password:password
+                    email: inputFieldValue,
+                    password: password
                 }))
-                
-            }else if(inputField==='phoneNo') {
+
+            } else if (inputField === 'phoneNo') {
                 dispatch(loginUserAction({
-                    phoneNo:inputFieldValue,
-                    password:password
+                    phoneNo: inputFieldValue,
+                    password: password
                 }))
-            }else {
+            } else {
                 dispatch(loginUserAction({
-                    username:inputFieldValue,
-                    password:password
+                    username: inputFieldValue,
+                    password: password
                 }))
             }
-        }else {
+        } else {
             toast({
                 title: 'invalid',
                 description: "enter all credentials",
@@ -91,7 +90,7 @@ export default function LoginPage() {
                 </Stack>
                 <Menu>
                     <MenuButton as={Button} colorScheme="blue">
-                        Login using <ArrowDownIcon/>
+                        Login using <ArrowDownIcon />
                     </MenuButton>
                     <MenuList>
                         <MenuItem onClick={() => setInputField("username")}>Username</MenuItem>
@@ -107,11 +106,11 @@ export default function LoginPage() {
                     <Stack spacing={4}>
                         <FormControl id="email">
                             <FormLabel>{inputField}</FormLabel>
-                            <Input onChange={(e)=>setinputFieldValue(e.target.value)} type="email" />
+                            <Input onChange={(e) => setinputFieldValue(e.target.value)} type="email" />
                         </FormControl>
                         <FormControl id="password">
                             <FormLabel>Password</FormLabel>
-                            <Input onChange={(e)=>setPassword(e.target.value)} type="password" />
+                            <Input onChange={(e) => setPassword(e.target.value)} type="password" />
                         </FormControl>
                         <Stack spacing={10}>
                             <Stack
@@ -123,19 +122,20 @@ export default function LoginPage() {
                             </Stack>
                             <Text>
                                 New User?{' '}
-                                <Link color='teal.500'onClick={()=>navigate('/register')}>
+                                <Link color='teal.500' onClick={() => navigate('/register')}>
                                     Register
                                 </Link>
                             </Text>
                             <Button
+                                isLoading={loading?true:false}
                                 bg={'blue.400'}
-                                color={'white'}
                                 onClick={handleinputsubmit}
+                                color={'white'}
                                 _hover={{
                                     bg: 'blue.500',
-                                }}>
-                                Sign in
-                            </Button>
+                                }}
+                                spinnerPlacement='start'
+                            >Sign in</Button>
                         </Stack>
                     </Stack>
                 </Box>

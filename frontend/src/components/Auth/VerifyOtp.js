@@ -1,6 +1,5 @@
-'use client'
 
-import { Center, Heading } from '@chakra-ui/react'
+import { Center, Heading, useToast } from '@chakra-ui/react'
 import {
     Button,
     FormControl,
@@ -10,15 +9,54 @@ import {
     HStack,
 } from '@chakra-ui/react'
 import { PinInput, PinInputField } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { verifyOTPAction } from '../../redux/actions/userActions'
+import { useNavigate } from 'react-router-dom'
 
-export default function ResetPasswordForm() {
+export default function VerifyOtp() {
     const [OTP, setOTP] = useState("");
-
+    const toast = useToast();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { loading,isotpVerified,email,error } = useSelector(state=>state.IsUpdatedUser)
     const handleSubmit = () => {
-        console.log("Entered OTP is:", OTP);
+        if(OTP.length==6) {
+            dispatch(verifyOTPAction({
+                email:email,
+                otp:OTP
+            }));
+        }else {
+            toast({
+                title:'invalid',
+                description:"please enter valid otp",
+                status:'error',
+                duration:3000,
+                isClosable:true
+            })
+        }
     }
-
+    useEffect(()=>{
+        if(error) {
+            toast({
+                title:'invalid',
+                description:error,
+                status:'error',
+                duration:3000,
+                isClosable:true
+            })
+        }
+        if(isotpVerified) {
+            toast({
+                title:'success',
+                description:"OTP verification successful",
+                status:'success',
+                duration:3000,
+                isClosable:true
+            })
+            navigate('/reset-password');
+        }
+    },[isotpVerified,error])
     return (
         <Flex
             align={'center'}
@@ -56,6 +94,8 @@ export default function ResetPasswordForm() {
                                 otp
                                 value={OTP}
                                 onChange={(value) => setOTP(value)} >
+                                <PinInputField />
+                                <PinInputField />
                                 <PinInputField />
                                 <PinInputField />
                                 <PinInputField />

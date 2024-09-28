@@ -1,6 +1,6 @@
 import { Tabs, TabList, TabPanels, Tab, TabPanel, Box } from '@chakra-ui/react';
 import StationSearch from './StationSearch.js';
-import TrainSearch from './TrainSearch.js';
+import TrainSearch from '../Train/TrainSearch.js';
 import SearchHistory from './SearchHistory.js';
 
 export default function RoutePage() {
