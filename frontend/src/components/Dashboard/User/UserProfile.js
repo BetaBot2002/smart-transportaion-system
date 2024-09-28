@@ -3,20 +3,22 @@ import {
     Collapse, Avatar, Stack, Divider,
     FormControl, useDisclosure,
     FormLabel,
-    Switch
+    Switch,
+    useToast
 } from '@chakra-ui/react';
 import {useSelector,useDispatch} from "react-redux" 
 import { useEffect, useState } from 'react'
 import { UserDetailsTable } from './UserDetailsTable.js';
 import { Spinner } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
-import { getProfileAction } from '../../../redux/actions/userActions.js';
+import { getProfileAction, logoutUserAction } from '../../../redux/actions/userActions.js';
 
 
 export default function UserProfile() {
     
     const dispatch = useDispatch();
-    const {loading, isAuthenticated,user,error} = useSelector(state=>state.GetUser);
+    const toast = useToast();
+    const {loading, isAuthenticated,isLoggedOut,user,error} = useSelector(state=>state.GetUser);
     const isAdmin = user && user.role === 'admin' ? true:false;
     const navigate = useNavigate();
     const {
@@ -37,8 +39,29 @@ export default function UserProfile() {
         dispatch(getProfileAction());
     },[dispatch])
     const handleSubmitLogout = ()=> {
-        //handle logout
+        dispatch(logoutUserAction());
     }
+    useEffect(()=>{
+        if(isLoggedOut) {
+            toast({
+                title: 'success',
+                description: "Logout successfully",
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            })
+            navigate("/home");
+        }
+        if(error) {
+            toast({
+                title: 'invalid',
+                description: "Logout unsuccessful",
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            })
+        }
+    },[isLoggedOut,error])
     return (
         loading ? <Spinner textAlign={'center'} display={'flex'} alignItems={'center'} justifyContent={'center'} size={'xl'}/> : !user ? <h1>Something went wrong</h1> : <Box p={4} maxW="lg" mx="auto">
             <Stack spacing={6}>

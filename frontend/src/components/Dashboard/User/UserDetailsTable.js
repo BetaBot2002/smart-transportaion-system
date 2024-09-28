@@ -21,7 +21,7 @@ import {
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 import { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { putUserUpdate } from "../../../redux/actions/userActions";
+import { clearUpdation, putUserUpdate } from "../../../redux/actions/userActions";
 import { useNavigate } from "react-router-dom";
 
 export function UserDetailsTable({user}) {
@@ -72,7 +72,6 @@ export function UserDetailsTable({user}) {
 		);
 	}
 	
-	// Initialize userData with user props
 	const [userData, setUserData] = useState({
 		username: user.username,
 		email: user.email,
