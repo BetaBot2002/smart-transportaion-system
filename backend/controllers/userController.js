@@ -148,7 +148,7 @@ const updatePassword = async (req, res, next) => {
     }
 };
 
-const getMe = async (req, res, next) => {
+const getMe = async (req, res) => {
     try {
         const user = await User.findOne({ username: req.username });
         res.status(200).json({
