@@ -22,9 +22,9 @@ import {
     USER_VERIFY_OTP_REQUEST,
     USER_VERIFY_OTP_SUCCESS
 } from "../consents/userConsents";
-import CustomError from "../../../../backend/utils/customError.js";
+import CustomError from "../../customError.js";
 
-const backendUrl = "http://localhost:5000/user"
+export const userBackendUrl = "http://localhost:5000/user"
 
 export const getToken = () => {
     const accessToken = localStorage.getItem("accessToken");
@@ -39,7 +39,7 @@ export const setToken = (accessToken, refreshToken) => {
 }
 export const registerUserAction = (registrationCredentials) => async (dispatch) => {
     try {
-        const link = backendUrl + "/register";
+        const link = userBackendUrl + "/register";
         dispatch({
             type: USER_REGISTER_REQUEST
         })
@@ -64,7 +64,7 @@ export const registerUserAction = (registrationCredentials) => async (dispatch) 
 
 export const loginUserAction = (loginCredentials) => async (dispatch) => {
     try {
-        const link = backendUrl + "/login";
+        const link = userBackendUrl + "/login";
         dispatch({
             type: USER_LOGIN_REQUEST
         })
@@ -88,7 +88,7 @@ export const loginUserAction = (loginCredentials) => async (dispatch) => {
 }
 export const logoutUserAction = () => async (dispatch) => {
     try {
-        const link = backendUrl + "/logout";
+        const link = userBackendUrl + "/logout";
         dispatch({
             type: USER_LOGOUT_REQUEST
         })
@@ -118,7 +118,7 @@ export const forgotPasswordAction = (forgotPasswordCredentials) => async (dispat
             type:USER_FORGOT_PASSWORD_REQUEST
         })
         const config = { headers: { "Content-type": "application/json" } };
-        var link = backendUrl + "/forgot-password";
+        var link = userBackendUrl + "/forgot-password";
         const data = (await axios.post(link, forgotPasswordCredentials, config)).data;
         if (!data.success) {
             throw new CustomError(data.message);
@@ -137,7 +137,7 @@ export const forgotPasswordAction = (forgotPasswordCredentials) => async (dispat
 }
 export const verifyOTPAction = (verifyOTPCredentials) => async (dispatch)=> {
     try {
-        const link = backendUrl + "/verify-otp";
+        const link = userBackendUrl + "/verify-otp";
         dispatch({
             type: USER_VERIFY_OTP_REQUEST
         })
@@ -159,7 +159,7 @@ export const verifyOTPAction = (verifyOTPCredentials) => async (dispatch)=> {
 }
 export const resetPasswordAction = (resetPasswordCredentials) => async (dispatch) => {
     try {
-        const link = backendUrl + "/reset-password";
+        const link = userBackendUrl + "/reset-password";
         dispatch({
             type: USER_UPDATE_REQUEST
         })
@@ -190,7 +190,7 @@ export const getProfileAction = () => async (dispatch) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         };
-        const link = backendUrl + "/me";
+        const link = userBackendUrl + "/me";
         const data = (await axios.get(link,config)).data;
         if(!data.success) {
             throw new CustomError(data.message);
@@ -220,7 +220,7 @@ export const putUserUpdate = (userUpdateCredentials) => async (dispatch) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         };
-        const link = backendUrl + "/update/me";
+        const link = userBackendUrl + "/update/me";
         const data = (await axios.put(link,userUpdateCredentials,config)).data;
         if(!data.success) {
             throw new CustomError(data.message);
@@ -250,7 +250,7 @@ export const putUserUpdatePassword = (userPasswordUpdateCredentials) => async (d
                 Authorization: `Bearer ${accessToken}`,
             },
         };
-        const link = backendUrl + "/update/password";
+        const link = userBackendUrl + "/update/password";
         const data = (await axios.put(link, userPasswordUpdateCredentials, config)).data;
         if (!data.success) {
             throw new CustomError(data.message);
