@@ -5,15 +5,18 @@ import {
     GET_ALL_STATION_REQUEST, GET_ALL_STATION_SUCCESS, GET_ALL_STATION_FAILED,
     GET_TRAIN_STATUS_REQUEST, GET_TRAIN_STATUS_SUCCESS, GET_TRAIN_STATUS_FAILED,
     GET_ALL_AVAILABLE_TRAINS_REQUEST, GET_ALL_AVAILABLE_TRAINS_SUCCESS, GET_ALL_AVAILABLE_TRAINS_FAILED,
-    GET_ALL_TRAIN_NO_REQUEST,
-    GET_ALL_TRAIN_NO_SUCCESS,
-    GET_ALL_TRAIN_NO_FAILED,
-    CLEAR_GET_SHORTEST_PATH
+    CLEAR_GET_SHORTEST_PATH,
+    GET_LRU_TRAINS_REQUEST,
+    GET_LRU_TRAINS_SUCCESS,
+    GET_LRU_TRAINS_FAILED,
+    SET_LRU_TRAINS_REQUEST,
+    SET_LRU_TRAINS_SUCCESS,
+    SET_LRU_TRAINS_FAILED
 } from "../consents/trainConsents.js";
-import CustomError from "../../../../backend/utils/customError.js";
-import { getToken,setToken } from "./userActions.js";
+import CustomError from "../../customError.js";
+import { getToken,setToken, userBackendUrl } from "./userActions.js";
 
-const backendUrl = "http://localhost:5000/station";
+export const stationBackendUrl = "http://localhost:5000/station";
 
 export const getShortestPath = (source, destination) => async (dispatch) => {
     try {
@@ -25,7 +28,7 @@ export const getShortestPath = (source, destination) => async (dispatch) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         };
-        const { data } = await axios.post(`${backendUrl}/get-route`, { source, destination },config);
+        const { data } = await axios.post(`${stationBackendUrl}/get-route`, { source, destination },config);
         console.log(data);
         
         if(!data.success) {
@@ -46,7 +49,7 @@ export const getStation = (stationName) => async (dispatch) => {
     try {
         dispatch({ type: GET_STATION_REQUEST });
 
-        const { data } = await axios.get(`${backendUrl}/get-station-database-details?station_name=${stationName}`);
+        const { data } = await axios.get(`${stationBackendUrl}/get-station-database-details?station_name=${stationName}`);
         dispatch({ type: GET_STATION_SUCCESS, payload: data });
 
     } catch (error) {
@@ -58,20 +61,54 @@ export const getAllStations = () => async (dispatch) => {
     try {
         dispatch({ type: GET_ALL_STATION_REQUEST });
 
-        const { data } = await axios.get(`${backendUrl}/get-all-stations`);
+        const { data } = await axios.get(`${stationBackendUrl}/get-all-stations`);
         dispatch({ type: GET_ALL_STATION_SUCCESS, payload: data });
 
     } catch (error) {
-        dispatch({ type: GET_ALL_STATION_FAILED, payload: error.response.data.message });
+        dispatch({ type: GET_ALL_STATION_FAILED, payload: error.response.data });
     }
 };
+export const getLRUtrains = () => async (dispatch) => {
+    try {
+        dispatch({ type: GET_LRU_TRAINS_REQUEST });
+        const {accessToken,refreshToken} = getToken();
+        const config = {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+        const { data } = await axios.get(`${userBackendUrl}/get-lru-trains`,config);
+        dispatch({ type: GET_LRU_TRAINS_SUCCESS, payload: data.trains });
+
+    } catch (error) {
+        dispatch({ type: GET_LRU_TRAINS_FAILED, payload: error.response.data });
+    }
+};
+export const setLRUtrains = (train) => async (dispatch) => {
+    try {
+        dispatch({ type: SET_LRU_TRAINS_REQUEST });
+        const {accessToken,refreshToken} = getToken();
+        const config = {
+            headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+        const { data } = await axios.post(`${userBackendUrl}/set-lru-trains`,{train},config);
+        dispatch({ type: SET_LRU_TRAINS_SUCCESS, payload: data.trains });
+
+    } catch (error) {
+        dispatch({ type: SET_LRU_TRAINS_FAILED, payload: error.response.data });
+    }
+};
+
 
 export const getTrainStatus = (trainNo) => async (dispatch) => {
     try {
         dispatch({ type: GET_TRAIN_STATUS_REQUEST });
-
-        const { data } = await axios.get(`${backendUrl}/get-train-details?trainNo=${trainNo}`);
-        dispatch({ type: GET_TRAIN_STATUS_SUCCESS, payload: data });
+        
+        const { data } = await axios.get(`${stationBackendUrl}/get-train-details?trainNo=${trainNo}`);
+        dispatch({ type: GET_TRAIN_STATUS_SUCCESS, payload: data.train });
         
     } catch (error) {
         dispatch({ type: GET_TRAIN_STATUS_FAILED, payload: error.response.data.message });
@@ -82,7 +119,7 @@ export const getAvailableTrainsBetweenStations = (from, to, date) => async (disp
     try {
         dispatch({ type: GET_ALL_AVAILABLE_TRAINS_REQUEST });
 
-        const { data } = await axios.get(`${backendUrl}/get-list-of-trains/${date}?from=${from}&to=${to}`);
+        const { data } = await axios.get(`${stationBackendUrl}/get-list-of-trains/${date}?from=${from}&to=${to}`);
         dispatch({ type: GET_ALL_AVAILABLE_TRAINS_SUCCESS, payload: data });
 
     } catch (error) {

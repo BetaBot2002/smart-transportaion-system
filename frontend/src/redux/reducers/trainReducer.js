@@ -4,10 +4,13 @@ import {
     GET_ALL_STATION_REQUEST, GET_ALL_STATION_SUCCESS, GET_ALL_STATION_FAILED,
     GET_TRAIN_STATUS_REQUEST, GET_TRAIN_STATUS_SUCCESS, GET_TRAIN_STATUS_FAILED,
     GET_ALL_AVAILABLE_TRAINS_REQUEST, GET_ALL_AVAILABLE_TRAINS_SUCCESS, GET_ALL_AVAILABLE_TRAINS_FAILED,
-    GET_ALL_TRAIN_NO_REQUEST,
-    GET_ALL_TRAIN_NO_SUCCESS,
-    GET_ALL_TRAIN_NO_FAILED,
-    CLEAR_GET_SHORTEST_PATH
+    CLEAR_GET_SHORTEST_PATH,
+    GET_LRU_TRAINS_REQUEST,
+    GET_LRU_TRAINS_SUCCESS,
+    GET_LRU_TRAINS_FAILED,
+    SET_LRU_TRAINS_REQUEST,
+    SET_LRU_TRAINS_SUCCESS,
+    SET_LRU_TRAINS_FAILED
 } from "../consents/trainConsents.js";
 
 const initialTrainState = {
@@ -51,6 +54,21 @@ export const getAllStationReducer = (state = initialTrainState, action) => {
         case GET_ALL_STATION_SUCCESS:
             return { ...state, loading: false, data: action.payload.stations };
         case GET_ALL_STATION_FAILED:
+            return { ...state, loading: false, error: action.payload };
+        default:
+            return state;
+    }
+};
+export const getSearchHistoryReducer = (state = initialTrainState, action) => {
+    switch (action.type) {
+        case GET_LRU_TRAINS_REQUEST:
+        case SET_LRU_TRAINS_REQUEST:
+            return { ...state, loading: true };
+        case GET_LRU_TRAINS_SUCCESS:
+        case SET_LRU_TRAINS_SUCCESS:
+            return { ...state, loading: false, data: action.payload };
+        case GET_LRU_TRAINS_FAILED:
+        case SET_LRU_TRAINS_FAILED:
             return { ...state, loading: false, error: action.payload };
         default:
             return state;

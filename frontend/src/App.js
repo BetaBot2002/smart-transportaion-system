@@ -16,6 +16,7 @@ import Logout from './components/Dashboard/Logout.js';
 import { useEffect } from 'react';
 import { getProfileAction } from './redux/actions/userActions.js';
 import { useDispatch } from 'react-redux';
+import { getAllStations, getLRUtrains } from './redux/actions/trainActions.js';
 
 function App() {
     const dispatch = useDispatch();
@@ -24,7 +25,10 @@ function App() {
         if(refreshToken) {
             dispatch(getProfileAction());
         }
+        dispatch(getAllStations());
+        dispatch(getLRUtrains());
     },[])
+
     return (
         <Router>
             <Navbar/>
