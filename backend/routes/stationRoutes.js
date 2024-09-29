@@ -1,6 +1,6 @@
 import express from 'express';
 import { createStation, getRoute, getAllStations,getTrainDetails,
-    getTrainInBetweenStations ,getDatabaseStationDetails,getAlltrainsNo,
+    getTrainInBetweenStations ,getDatabaseStationDetails,
     deleteStation,getTrainList, updateStation} from '../controllers/stationController.js';
 
 import { isAuthenticatedAccess,isAuthrorizeRoles } from '../middlewares/Authentication.js';
