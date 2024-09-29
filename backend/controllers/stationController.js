@@ -72,9 +72,13 @@ const getRoute = async (req, res) => {
 		const routeObject = Object.fromEntries(route);
 		const routeJSON = JSON.stringify(routeObject, null, 2);
 
-		res.status(200).json(routeObject[destination]);
+		res.status(200).json({
+			success:true,
+			route:routeObject[destination]
+		});
 	}catch(err) {
 		res.status(500).json({
+			success:false,
 			message:err.message
 		})
 	}
@@ -131,7 +135,7 @@ const updateStation = async (req, res) => {
 
 const getAllStations = async (req, res) => {
 	try {
-		const stations = await Station.find({});
+		const stations = await Station.find({},['station_name','station_type']);
 		res.status(200).json({
 			stations
 		});
