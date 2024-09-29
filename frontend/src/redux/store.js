@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 
 import { 
 getShortestPathReducer, getStationReducer, getAllStationReducer,
-getTrainStatusReducer, getAllAvailableTrainsReducer
+getTrainStatusReducer, getAllAvailableTrainsReducer, getAllTrainNoReducer
  } from './reducers/trainReducer.js'
 
  import { 
@@ -21,6 +21,7 @@ const store = configureStore({
     GetShortestPath: getShortestPathReducer,
     GetStation: getStationReducer,
     GetAllStation: getAllStationReducer,
+    GetAllTrainNo: getAllTrainNoReducer,
     GetTrainStatus: getTrainStatusReducer,
     GetAllAvailableTrains: getAllAvailableTrainsReducer,
     GetUserRole: getUserRoleReducer,
