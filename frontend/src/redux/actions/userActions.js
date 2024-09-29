@@ -26,14 +26,14 @@ import CustomError from "../../../../backend/utils/customError.js";
 
 const backendUrl = "http://localhost:5000/user"
 
-const getToken = () => {
+export const getToken = () => {
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
     return {
         accessToken, refreshToken
     }
 }
-const setToken = (accessToken, refreshToken) => {
+export const setToken = (accessToken, refreshToken) => {
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
 }
