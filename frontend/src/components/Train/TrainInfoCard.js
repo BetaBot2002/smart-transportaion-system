@@ -57,7 +57,7 @@ const TrainInfoCard = ({ data }) => {
                     <HStack>
                         {data.running_days.split("").map((day, index) => (
                             <Badge key={index} colorScheme={day === '1' ? "green" : "gray"} p={1}>
-                                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index]}
+                                {['S', 'M', 'T', 'W', 'T', 'F', 'S'][index]}
                             </Badge>
                         ))}
                     </HStack>
