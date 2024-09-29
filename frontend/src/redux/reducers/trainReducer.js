@@ -82,16 +82,3 @@ export const getAllAvailableTrainsReducer = (state = initialTrainState, action) 
             return state;
     }
 };
-
-export const getAllTrainNoReducer = (state = initialTrainState, action) => {
-    switch (action.type) {
-        case GET_ALL_TRAIN_NO_REQUEST:
-            return { ...state, loading: true };
-        case GET_ALL_TRAIN_NO_SUCCESS:
-            return { ...state, loading: false, data: action.payload };
-        case GET_ALL_TRAIN_NO_FAILED:
-            return { ...state, loading: false, error: action.payload };
-        default:
-            return state;
-    }
-}

@@ -90,13 +90,3 @@ export const getAvailableTrainsBetweenStations = (from, to, date) => async (disp
     }
 };
 
-export const getAllTrainNos = ()=>async (dispatch)=> {
-    try {
-        dispatch({ type: GET_ALL_TRAIN_NO_REQUEST });
-
-        const { data } = await axios.get(`${backendUrl}/get-all-train-no`);
-        dispatch({ type: GET_ALL_TRAIN_NO_SUCCESS, payload: data });
-    } catch (err) {
-        dispatch({ type: GET_ALL_TRAIN_NO_FAILED, payload: err.response.data.message });
-    }
-}
