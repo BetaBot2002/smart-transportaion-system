@@ -10,7 +10,7 @@ import {
   } from "@chakra-ui/react";
   import { useEffect, useState } from "react";
   import { useDispatch, useSelector } from "react-redux";
-  import { getTrainStatus } from "../../redux/actions/trainActions";
+  import { getTrainStatus, setLRUtrains } from "../../redux/actions/trainActions";
   import { useNavigate } from "react-router-dom";
   import TrainInfoCard from "./TrainInfoCard.js";
   import trainFile from '../../assets/trainNoList.txt'
@@ -41,20 +41,13 @@ import {
     };
     
     const handleTrainSelection = (train) => {
-      setTrainNo(train.slice(0,5));
+      setTrainNo(train);
       setOpenTrainNumbers(false);
     };
   
     useEffect(() => {
-      if (data) {
-        toast({
-          title: "Success",
-          description: "Status found",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
+      
+      
       if (error) {
         toast({
           title: "Invalid",
@@ -64,11 +57,12 @@ import {
           isClosable: true,
         });
       }
-    }, [data, error]);
+    }, [error]);
   
     const handleSearch = () => {
       setOpenTrainNumbers(false);
-      dispatch(getTrainStatus(trainNo));
+      dispatch(getTrainStatus(trainNo.slice(0,5)));
+      dispatch(setLRUtrains(trainNo));
     };
   
     return (
@@ -126,11 +120,7 @@ import {
         >
           Search
         </Button>
-        {data && data.train && data.train.data && data.train.success ? (
-          <TrainInfoCard data={data.train.data} />
-        ) : (
-          <h2>No train found</h2>
-        )}
+        {data && data.data && <TrainInfoCard data={data.data} /> }
       </Box>
     );
   }
