@@ -50,15 +50,9 @@ const userSchema = new Schema({
     required: [true, 'Nearest metro station is required'],
     trim: true
   },
-  frequentlyUsedTrainStations: {
-    type: [Schema.Types.ObjectId],
-    ref: "Station",
-    default: []
-  },
-  frequentlyUsedMetroStations: {
-    type: [Schema.Types.ObjectId],
-    ref: "Station",
-    default: []
+  lruTrains:{
+    type:[String],
+    default:[]
   },
   favouriteRoutes:{
     type:[[Schema.Types.ObjectId,Schema.Types.ObjectId]],
