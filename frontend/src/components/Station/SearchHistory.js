@@ -1,38 +1,54 @@
-import { Box, Heading, Text, Flex, IconButton } from '@chakra-ui/react';
-import { DeleteIcon } from '@chakra-ui/icons';
+import { Box, Text, Flex, IconButton, useDisclosure, Collapse } from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
+import { useDispatch, useSelector } from "react-redux";
+import { getTrainStatus } from '../../redux/actions/trainActions';
+import TrainInfoCard from '../Train/TrainInfoCard';
+import { useState } from 'react';
 
 export default function SearchHistory() {
-    const trainNumbersWithNames = ['12345 Sealdah-Gede local', '56738 Sealdah-Shantipur local','91011 Sealdah-Dum Dum local', '12133 Sealdah-Gede local', '14125 Sealdah-Naihati local'];
+  const { data: trains, error: err1 } = useSelector(state => state.GetSearchHistory);
+  const { loading, data: train, error: err2 } = useSelector(state => state.GetTrainStatus);
+  const [expandedIndex, setExpandedIndex] = useState(null);
+  const dispatch = useDispatch();
 
-    const weekdayLetter = ['S ','M ','T ','W ','T ','F ','S '];
-    //take the redux station and map the history
-    //implement the delete feature
-    return (
-        <Box>
-            <Heading as="h3" size="lg" mb={4}>
-                Search History
-            </Heading>
-            {trainNumbersWithNames.length > 0 ? (
-                trainNumbersWithNames.map((entry, index) => (
-                    <Box key={index} mb={3} p={3} border='1px solid gray' borderRadius="md" backgroundColor='white'>
-                        <Flex justify="space-between" align="center">
-                            <Flex flexDirection={'column'}>
-                                <Text>{entry}</Text>
-                                <Flex>{weekdayLetter.map((letter)=> <Text fontSize={15}>{letter}</Text> )}</Flex>
-                            </Flex>
-                            <IconButton
-                                aria-label="Delete"
-                                icon={<DeleteIcon />}
-                                variant="outline"
-                                colorScheme="red"
-                                size="sm"
-                            />
-                        </Flex>
-                    </Box>
-                ))
-            ) : (
-                <Text>No search history available.</Text>
-            )}
-        </Box>
-    );
+  const handleSearch = (trainName, index) => {
+    if (expandedIndex !== index) {
+      const trainNo = trainName.slice(0, 5);
+      dispatch(getTrainStatus(trainNo));
+      setExpandedIndex(index);
+    } else {
+      setExpandedIndex(null); 
+    }
+  };
+
+  return (
+    <Box>
+      {trains && trains.length > 0 ? (
+        trains.map((entry, index) => (
+          <Box key={index} mb={3} p={3} border='1px solid gray' borderRadius="md" backgroundColor='white'>
+            <Flex justify="space-between" align="center">
+              <Flex flexDirection="column">
+                <Text>{entry}</Text>
+              </Flex>
+              <IconButton
+                aria-label="Search"
+                icon={<SearchIcon />}
+                variant="outline"
+                colorScheme="teal"
+                size="sm"
+                onClick={() => handleSearch(entry, index)}
+              />
+            </Flex>
+            <Collapse in={expandedIndex === index} animateOpacity>
+              {train && train.data && (
+                <TrainInfoCard data={train.data} />
+              )}
+            </Collapse>
+          </Box>
+        ))
+      ) : (
+        <Text>No search history available.</Text>
+      )}
+    </Box>
+  );
 }

@@ -4,7 +4,9 @@ import {
   addFavouriteRoute, adminGetUser, adminGetAllUsers, updatePassword, updateRoleAdmin, refresh, 
   contactUs,
   resetPassword,
-  verifyOTP
+  verifyOTP,
+  setlruTrains,
+  getlruTrains
 } from "../controllers/userController.js";
 import { isAuthenticatedAccess, isAuthenticatedRefresh, isAuthrorizeRoles } from "../middlewares/Authentication.js";
 
@@ -24,6 +26,8 @@ router.route("/me").get(isAuthenticatedAccess,getMe);
 router.route("/refresh").get(isAuthenticatedRefresh,refresh);
 router.route("/save-favourite-route").post(isAuthenticatedAccess,addFavouriteRoute);
 router.route("/contact-us").post(isAuthenticatedAccess,contactUs);
+router.route("/get-lru-trains").get(isAuthenticatedAccess,getlruTrains);
+router.route("/set-lru-trains").post(isAuthenticatedAccess,setlruTrains);
 
 
 router.route("/admin/delete/:id").delete(isAuthenticatedAccess,isAuthrorizeRoles,adminDeleteUser);

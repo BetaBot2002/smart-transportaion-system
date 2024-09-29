@@ -7,13 +7,13 @@ import { isAuthenticatedAccess,isAuthrorizeRoles } from '../middlewares/Authenti
 const router = express.Router();
 
 router.route('/admin/station-create').post(isAuthenticatedAccess,isAuthrorizeRoles,createStation);
-router.route('/admin/get-all-stations').get(isAuthenticatedAccess,isAuthrorizeRoles,getAllStations);
 router.route('/admin/station-delete').delete(isAuthenticatedAccess,isAuthrorizeRoles,deleteStation);
 
 
 router.route('/get-route').post(isAuthenticatedAccess,getRoute);
 router.route('/get-train-details').get(getTrainDetails);
-router.route('/get-station-database-details').get(isAuthenticatedAccess,getDatabaseStationDetails);
+router.route('/get-station-database-details').get(getDatabaseStationDetails);
+router.route('/get-all-stations').get(getAllStations);
 router.route('/get-train-between').get(getTrainInBetweenStations);
 router.route('/get-list-of-trains/:date').get(getTrainList);
 

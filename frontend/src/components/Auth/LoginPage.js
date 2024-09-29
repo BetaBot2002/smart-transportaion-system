@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux"
 import { loginUserAction } from '../../redux/actions/userActions';
+import { getLRUtrains } from '../../redux/actions/trainActions';
 
 export default function LoginPage() {
 
@@ -25,7 +26,7 @@ export default function LoginPage() {
 
     useEffect(() => {
         if (isAuthenticated) {
-
+            dispatch(getLRUtrains());
             navigate('/home');
             toast({
                 title: 'Success',

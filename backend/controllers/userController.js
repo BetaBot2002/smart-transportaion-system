@@ -232,25 +232,26 @@ const resetPassword = async (req, res, next) => {
 };
 
 const verifyOTP = async (req, res, next) => {
-    try{const { email, otp } = req.body
-    const user = await User.findOne({ email: email });
-    if (!user) {
-        throw new CustomError("Please provide correct email")
+    try {
+        const { email, otp } = req.body
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            throw new CustomError("Please provide correct email")
+        }
+
+        if (user.otp !== otp) throw new CustomError("Enter valid OTP");
+
+        res.status(200).json({
+            success: true,
+            email: user.email,
+            message: "OTP verified successfully"
+        });
+    } catch (err) {
+        res.status(400).json({
+            success: false,
+            message: e.message
+        })
     }
-
-    if (user.otp !== otp) throw new CustomError("Enter valid OTP");
-
-    res.status(200).json({
-        success: true,
-        email:user.email,
-        message: "OTP verified successfully"
-    });
-}catch(err) {
-    res.status(400).json({
-        success:false,
-        message:e.message
-    })
-}
 
 }
 const adminDeleteUser = async (req, res, next) => {
@@ -348,13 +349,68 @@ const addFavouriteRoute = async (req, res) => {
     }
 }
 const contactUs = async (req, res) => {
-    email, subject, message = req.body;
-    const username = req.username;
-    await sendEmail(process.env.ADMIN_EMAIL, subject, message);
-    const UserMailSubject = `Thank you ${username} for giving Feedback`;
-    const UserMailMessage = `Dear ${username} Thank you for giving us your valuable feedback for our website. We will look after the matter
+    try {
+        email, subject, message = req.body;
+        const username = req.username;
+        await sendEmail(process.env.ADMIN_EMAIL, subject, message);
+        const UserMailSubject = `Thank you ${username} for giving Feedback`;
+        const UserMailMessage = `Dear ${username} Thank you for giving us your valuable feedback for our website. We will look after the matter
     you have raised: ${message}.`
-    await sendEmail(email, UserMailSubject, UserMailMessage);
+        await sendEmail(email, UserMailSubject, UserMailMessage);
+        res.status(200).json({
+            success: true,
+            message: "mail sent to the user"
+        });
+    } catch (err) {
+        res.status(400).json({
+            success: false,
+            message: err.message
+        });
+    }
+}
+const setlruTrains = async (req, res) => {
+    try {
+        const username = req.username;
+        const train = req.body.train;
+        const user = await User.findOne({ username: username })
+        let trains = user.lruTrains
+        if(trains.indexOf(train) !== -1) {
+            trains.splice(trains.indexOf(train),1);
+        } 
+        if(trains.length===5) {
+            trains.pop();
+        }
+        trains.unshift(train);
+        user.lruTrains = trains;
+        await user.save()
+        res.status(200).json({
+            success: true,
+            message: "lru trains changed successfully",
+            trains
+        });
+    } catch (err) {
+        res.status(400).json({
+            success: false,
+            message: err.message
+        });
+    }
+}
+const getlruTrains = async (req, res) => {
+    try {
+        const username = req.username;
+        const user = await User.findOne({ username: username })
+        const trains = user.lruTrains
+        res.status(200).json({
+            success: true,
+            message: "LRU stations found successfully",
+            trains
+        });
+    } catch (err) {
+        res.status(400).json({
+            success: false,
+            message: err.message
+        });
+    }
 }
 export {
     registerUser,
@@ -372,5 +428,7 @@ export {
     updateRoleAdmin,
     adminGetAllUsers,
     addFavouriteRoute,
-    contactUs
+    contactUs,
+    getlruTrains,
+    setlruTrains
 };
