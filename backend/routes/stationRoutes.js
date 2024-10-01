@@ -1,7 +1,8 @@
 import express from 'express';
 import { createStation, getRoute, getAllStations,getTrainDetails,
     getTrainInBetweenStations ,getDatabaseStationDetails,
-    deleteStation,getTrainList, updateStation} from '../controllers/stationController.js';
+    deleteStation,getTrainList, updateStation,
+    getTrainRoute} from '../controllers/stationController.js';
 
 import { isAuthenticatedAccess,isAuthrorizeRoles } from '../middlewares/Authentication.js';
 const router = express.Router();
@@ -12,6 +13,7 @@ router.route('/admin/station-delete').delete(isAuthenticatedAccess,isAuthrorizeR
 
 router.route('/get-route').post(isAuthenticatedAccess,getRoute);
 router.route('/get-train-details').get(getTrainDetails);
+router.route('/get-train-routes').get(getTrainRoute);
 router.route('/get-station-database-details').get(getDatabaseStationDetails);
 router.route('/get-all-stations').get(getAllStations);
 router.route('/get-train-between').get(getTrainInBetweenStations);
