@@ -294,7 +294,7 @@ const adminGetUser = async (req, res, next) => {
 
 const adminGetAllUsers = async (req, res, next) => {
     try {
-        const users = await User.find({});
+        const users = await User.find({},['username','email']);
         res.status(200).json({
             success: true,
             users,
@@ -309,8 +309,8 @@ const adminGetAllUsers = async (req, res, next) => {
 
 const updateRoleAdmin = async (req, res) => {
     try {
-        const { username } = req.body;
-        const user = await User.findOne({ username });
+        const { id } = req.body;
+        const user = await User.findById(id);
 
         if (!user) throw new CustomError("User does not exist");
 
@@ -319,7 +319,7 @@ const updateRoleAdmin = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: "User converted to admin",
+            message: "User Updated to admin",
         });
     } catch (err) {
         res.status(400).json({
