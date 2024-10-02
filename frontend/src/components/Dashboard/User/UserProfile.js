@@ -6,16 +6,17 @@ import {
     Switch,
     useToast
 } from '@chakra-ui/react';
-import {useSelector,useDispatch} from "react-redux" 
-import { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from 'react';
 import { UserDetailsTable } from './UserDetailsTable.js';
-import { Spinner } from '@chakra-ui/react'
+import { Spinner } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { getProfileAction, logoutUserAction } from '../../../redux/actions/userActions.js';
+import { getAllUsers } from '../../../redux/actions/adminActions.js';
 
 
 export default function UserProfile() {
-    
+
     const dispatch = useDispatch();
     const toast = useToast();
     const {loading, isAuthenticated,isLoggedOut,user,error} = useSelector(state=>state.GetUser);
@@ -35,33 +36,12 @@ export default function UserProfile() {
         isOpen: isOpenAdminActions,
         onToggle: onToggleAdminActions,
     } = useDisclosure();
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(getProfileAction());
-    },[dispatch])
-    const handleSubmitLogout = ()=> {
+    }, [dispatch])
+    const handleSubmitLogout = () => {
         dispatch(logoutUserAction());
     }
-    useEffect(()=>{
-        if(isLoggedOut) {
-            toast({
-                title: 'success',
-                description: "Logout successfully",
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-            })
-            navigate("/home");
-        }
-        if(error) {
-            toast({
-                title: 'invalid',
-                description: "Logout unsuccessful",
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            })
-        }
-    },[isLoggedOut,error])
     return (
         loading ? <Spinner textAlign={'center'} display={'flex'} alignItems={'center'} justifyContent={'center'} size={'xl'}/> : !user ? <h1>Something went wrong</h1> : <Box p={4} maxW="lg" mx="auto">
             <Stack spacing={6}>
@@ -84,7 +64,7 @@ export default function UserProfile() {
                 {/* Personal Information Section */}
                 <Box>
                     <Heading textAlign="center" as="h3" size="md" mb={4}>
-                        <Button onClick={onTogglePersonalInformation} width="full" colorScheme="teal" variant="outline">
+                        <Button onClick={onTogglePersonalInformation} width="full" colorScheme="teal" variant="outline" cursor="pointer">
                             Personal Information
                         </Button>
                     </Heading>
@@ -96,7 +76,7 @@ export default function UserProfile() {
                 {/* Account Actions Section */}
                 <Box>
                     <Heading textAlign="center" as="h3" size="md" mb={4}>
-                        <Button onClick={onToggleAccountActions} width="full" colorScheme="teal" variant="outline">
+                        <Button onClick={onToggleAccountActions} width="full" colorScheme="teal" variant="outline" cursor="pointer">
                             Account Actions
                         </Button>
                     </Heading>
@@ -104,17 +84,19 @@ export default function UserProfile() {
                         <Stack spacing={2} mt={2}>
                             <Button
                                 as='a'
-                                onClick={()=>navigate('/change-password')}
+                                onClick={() => navigate('/change-password')}
                                 colorScheme="teal"
                                 width="full"
+                                cursor="pointer"
                             >
                                 Change Password
                             </Button>
                             <Button
                                 as='a'
-                                onClick={()=>navigate('/saved-routes')}
+                                onClick={() => navigate('/saved-routes')}
                                 colorScheme="teal"
                                 width="full"
+                                cursor="pointer"
                             >
                                 View Saved Routes
                             </Button>
@@ -123,6 +105,7 @@ export default function UserProfile() {
                                 onClick={handleSubmitLogout}
                                 colorScheme="red"
                                 width="full"
+                                cursor="pointer"
                             >
                                 Logout
                             </Button>
@@ -134,7 +117,7 @@ export default function UserProfile() {
                 {isAdmin && (
                     <Box>
                         <Heading textAlign="center" as="h3" size="md" mb={4}>
-                            <Button onClick={onToggleAdminActions} width="full" colorScheme="teal" variant="outline">
+                            <Button onClick={onToggleAdminActions} width="full" colorScheme="teal" variant="outline" cursor="pointer">
                                 Admin Actions
                             </Button>
                         </Heading>
@@ -142,27 +125,32 @@ export default function UserProfile() {
                             <Stack spacing={2} mt={2}>
                                 <Button
                                     as='a'
-                                    onClick={()=>navigate('/manage-user')}
+                                    onClick={()=>{
+                                        navigate('/admin/manage-user');
+                                    }}
                                     colorScheme="teal"
                                     width="full"
+                                    cursor="pointer"
                                 >
                                     Manage Users
                                 </Button>
                                 <Button
                                     as='a'
-                                    onClick={()=>navigate('/add-station')}
+                                    onClick={() => navigate('/admin/add-station')}
                                     colorScheme="teal"
                                     width="full"
+                                    cursor="pointer"
                                 >
-                                    Add New Station
+                                    Manage Stations
                                 </Button>
                                 <Button
                                     as='a'
-                                    onClick={()=>navigate('/view-stations')}
+                                    onClick={() => navigate('/admin/view-stations')}
                                     colorScheme="teal"
                                     width="full"
+                                    cursor="pointer"
                                 >
-                                    View All Stations
+                                    Add New Station
                                 </Button>
                             </Stack>
                         </Collapse>
