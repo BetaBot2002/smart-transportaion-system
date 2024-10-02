@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux"
-import { loginUserAction } from '../../redux/actions/userActions';
+import { clearUsers, loginUserAction } from '../../redux/actions/userActions';
 import { getLRUtrains } from '../../redux/actions/trainActions';
 
 export default function LoginPage() {
@@ -44,6 +44,7 @@ export default function LoginPage() {
                 duration: 3000,
                 isClosable: true
             })
+            dispatch(clearUsers());
         }
     }, [dispatch, isAuthenticated, error])
     const handleinputsubmit = (e) => {
