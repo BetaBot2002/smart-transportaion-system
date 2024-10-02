@@ -5,7 +5,7 @@ import SearchHistory from './SearchHistory.js';
 
 export default function RoutePage() {
   return (
-    <Box p={4} mt={10} maxW="lg" mx="auto">
+    <Box p={4} mt={10} maxW="xl" mx="auto">
       <Tabs size='md' align='center' variant='enclosed'>
         <TabList>
           <Tab>Station Search</Tab>
