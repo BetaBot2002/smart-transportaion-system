@@ -6,13 +6,10 @@ getTrainStatusReducer, getAllAvailableTrainsReducer, getSearchHistoryReducer
  } from './reducers/trainReducer.js'
 
  import { 
-  getUserRoleReducer, isDeletedUserReducer, getAllUserReducer, isDeletedStationReducer,
-isUpdatedStationReducer, IsCreatedStationReducer
+  isDeletedUserReducer, getAllUserReducer, isDeletedStationReducer, isCreatedStationReducer
  } from './reducers/adminReducer.js'
 
-import { getUserReducer,
-  isUpdatedUserReducer,
-} from './reducers/userReducer.js'
+import { getUserReducer, isUpdatedUserReducer } from './reducers/userReducer.js'
 
 const store = configureStore({
   reducer: {
@@ -24,13 +21,12 @@ const store = configureStore({
     GetSearchHistory:getSearchHistoryReducer,
     GetTrainStatus: getTrainStatusReducer,
     GetAllAvailableTrains: getAllAvailableTrainsReducer,
-    GetUserRole: getUserRoleReducer,
 
     IsUpdatedUser: isUpdatedUserReducer,
     IsDeletedUser: isDeletedUserReducer,
     IsDeletedStation: isDeletedStationReducer,
-    IsUpdatedStation: isUpdatedStationReducer,
-    IsCreatedStation: IsCreatedStationReducer
+    IsUpdatedStation: isDeletedStationReducer,
+    IsCreatedStation: isCreatedStationReducer
   }
 })
 
