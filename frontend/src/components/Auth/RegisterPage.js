@@ -86,9 +86,7 @@ export default function RegisterPage() {
                     duration: 3000,
                     isClosable: true
             })
-            setTimeout(()=>{
-                navigate('/home');
-            },1000);
+            navigate('/home');
         }
         if(error) {
             toast({
@@ -216,6 +214,7 @@ export default function RegisterPage() {
                                 </InputGroup>
                             </FormControl>
                             <Button
+                                isLoading={loading?true:false}
                                 onClick={handleSubmit}
                                 bg={'blue.400'}
                                 color={'white'}

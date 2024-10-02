@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from "react-redux"
 import { logoutUserAction } from '../../redux/actions/userActions'
 import DeepImage from "../../assets/deep_photo.jpg";
+import { useEffect } from 'react'
 
 
 const Links = ['Home', 'Routes', 'Stations', 'About us']
@@ -50,8 +51,13 @@ const NavLink = ({ children, to, fontSize }) => (
 export default function Navbar() {
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const navigate = useNavigate()
-	const { isAuthenticated } = useSelector(state => state.GetUser);
+	const { isAuthenticated, isLoggedOut } = useSelector(state => state.GetUser);
 	const dispatch = useDispatch();
+	useEffect(()=>{
+		if(isLoggedOut) {
+			window.location.reload();
+		}
+	},[isLoggedOut])
 	const handleLogout = () => {
 		dispatch(logoutUserAction());
 	}

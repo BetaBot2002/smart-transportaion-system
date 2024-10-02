@@ -17,6 +17,7 @@ import { useEffect } from 'react';
 import { getProfileAction } from './redux/actions/userActions.js';
 import { useDispatch } from 'react-redux';
 import { getAllStations, getLRUtrains } from './redux/actions/trainActions.js';
+import ManageUser from './components/Dashboard/Admin/ManageUser.js';
 
 function App() {
     const dispatch = useDispatch();
@@ -42,10 +43,11 @@ function App() {
 
                 <Route path="/profile" element={<UserProfile/>}/>
                 <Route path="/About Us" element={<AboutUs/>}/>
-                <Route path="/test" element={<Test/>}/>
+                <Route path="/admin/manage-user" element={<ManageUser/>}/>
                 <Route path="/logout" element={<Logout/>}/>
                 <Route path='/change-password' element={<ChangePassword/>}/>
                 <Route path='/saved-routes' element={<ViewFavouriteRoutes/>}/>
+                <Route path="/test" element={<Test/>}/>
 
             </Routes>
             <Footer/>

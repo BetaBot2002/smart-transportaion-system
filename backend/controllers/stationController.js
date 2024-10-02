@@ -155,6 +155,18 @@ const getTrainDetails = async (req, res) => {
 		res.status(500).json(err.message);
 	}
 }
+const getTrainRoute = async (req, res) => {
+	try {
+		const trainNo = req.query.trainNo;
+		const train = (await axios.get(`https://indian-rail-api.onrender.com/trains/getRoute?trainNo=${trainNo}`)).data.data;
+		res.status(200).json({
+			success: true,
+			train
+		});
+	} catch (err) {
+		res.status(500).json(err.message);
+	}
+}
 const getTrainInBetweenStations = async (req, res) => {
 	try {
 		const from = req.query.from_station;
@@ -210,6 +222,6 @@ const getTrainList = async (req,res)=>{
 	}
 }
 export {
-	createStation, getRoute, getAllStations, getTrainDetails, getTrainList,
+	createStation, getRoute, getAllStations, getTrainDetails, getTrainList,getTrainRoute,
 	getDatabaseStationDetails, getTrainInBetweenStations, deleteStation,updateStation
 };
