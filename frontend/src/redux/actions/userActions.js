@@ -20,7 +20,10 @@ import {
     USER_UPDATE_SUCCESS,
     USER_VERIFY_OTP_FAILED,
     USER_VERIFY_OTP_REQUEST,
-    USER_VERIFY_OTP_SUCCESS
+    USER_VERIFY_OTP_SUCCESS,
+    CONTACT_US_REQUEST,
+    CONTACT_US_SUCCESS,
+    CONTACT_US_FAILED
 } from "../consents/userConsents";
 import CustomError from "../../customError.js";
 
@@ -267,7 +270,35 @@ export const putUserUpdatePassword = (userPasswordUpdateCredentials) => async (d
         })
     }
 }
+export const contactUsAction = (body)=>async (dispatch)=> {
+    try {
+        dispatch({
+            type: CONTACT_US_REQUEST
+        })
+        const { accessToken } = getToken();
+        const config = {
+            headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+        const link = userBackendUrl + "/contact-us";
+        const data = (await axios.post(link, body, config)).data;
+        if (!data.success) {
+            throw new CustomError(data.message);
+        }
 
+        dispatch({
+            type: CONTACT_US_SUCCESS,
+            payload:data.success
+        })
+    } catch (err) {
+        dispatch({
+            type: CONTACT_US_FAILED,
+            payload: err.response.data.message          
+        })
+    }
+}
 
 export const clearUsers = ()=> async (dispatch)=> {
     dispatch({
