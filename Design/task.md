@@ -1,6 +1,6 @@
 v1/
 1. Google oAuth
-2. Admin actions
+2. Admin actions(create station remain)
 3. JWT refresh token checker
 4. Protected Route
 5. Adjacency list update {replace station name with objectid}
