@@ -18,6 +18,7 @@ import { getProfileAction } from './redux/actions/userActions.js';
 import { useDispatch } from 'react-redux';
 import { getAllStations, getLRUtrains } from './redux/actions/trainActions.js';
 import ManageUser from './components/Dashboard/Admin/ManageUser.js';
+import ManageStation from './components/Dashboard/Admin/ManageStation.js';
 
 function App() {
     const dispatch = useDispatch();
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/forgot-password" element={<ForgotPasswordForm />} />
                 <Route path="/verify-otp" element={<VerifyOtp/>} />
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/" element={<HomePage />} />
                 <Route path="/routes" element={<RoutePage />} />
 
                 <Route path="/profile" element={<UserProfile/>}/>
@@ -47,7 +49,7 @@ function App() {
                 <Route path="/logout" element={<Logout/>}/>
                 <Route path='/change-password' element={<ChangePassword/>}/>
                 <Route path='/saved-routes' element={<ViewFavouriteRoutes/>}/>
-                <Route path="/test" element={<Test/>}/>
+                <Route path="/admin/manage-station" element={<ManageStation/>}/>
 
             </Routes>
             <Footer/>
