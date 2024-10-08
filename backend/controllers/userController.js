@@ -150,7 +150,17 @@ const updatePassword = async (req, res, next) => {
 
 const getMe = async (req, res) => {
     try {
-        const user = await User.findOne({ username: req.username });
+        const user = await User.findOne({ username: req.username })
+            .populate('nearestRailStation', 'station_name')
+            .populate('nearestMetroStation', 'station_name')
+            .select('-password'); 
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found',
+            });
+        }
+
         res.status(200).json({
             success: true,
             user,
@@ -162,6 +172,7 @@ const getMe = async (req, res) => {
         });
     }
 };
+
 
 const generateOTP = () => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -350,7 +361,11 @@ const addFavouriteRoute = async (req, res) => {
 }
 const contactUs = async (req, res) => {
     try {
-        email, subject, message = req.body;
+        const {email, subject, message} = req.body;
+        const user = await User.findOne({email:email});
+        if(!user) {
+            throw new CustomError("Enter valid email id");
+        }
         const username = req.username;
         await sendEmail(process.env.ADMIN_EMAIL, subject, message);
         const UserMailSubject = `Thank you ${username} for giving Feedback`;
