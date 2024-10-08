@@ -1,5 +1,5 @@
 import Station from "../models/stationModel.js";
-import findShortestPath from "../utils/findShortestPath.js";
+import findShortestPath, { PriorityQueue } from "../utils/findShortestPath.js";
 import CustomError from "../utils/customError.js";
 import axios from "axios";
 
@@ -55,34 +55,7 @@ const createStation = async (req, res) => {
 	}
 };
 
-const getRoute = async (req, res) => {
-	try{	
-		const source = req.body.source;
-		const destination = req.body.destination;
-		const source_station = await Station.findOne({station_name:source});
-		if(!source_station) {
-			throw new CustomError("Source station does not exists");
-		}
-		const destination_station = await Station.findOne({station_name:destination});
-		if(!destination_station) {
-			throw new CustomError("destination station does not exists");
-		}
-		const route = await findShortestPath(source, destination);
 
-		const routeObject = Object.fromEntries(route);
-		const routeJSON = JSON.stringify(routeObject, null, 2);
-
-		res.status(200).json({
-			success:true,
-			route:routeObject[destination]
-		});
-	}catch(err) {
-		res.status(500).json({
-			success:false,
-			message:err.message
-		})
-	}
-};
 const updateStation = async (req, res) => {
 	try {
 		const stationId = req.params.id;
@@ -135,7 +108,7 @@ const updateStation = async (req, res) => {
 
 const getAllStations = async (req, res) => {
 	try {
-		const stations = await Station.find({},['station_name','station_type']);
+		const stations = await Station.find({}, ['station_name', 'station_type']);
 		res.status(200).json({
 			stations
 		});
@@ -181,14 +154,25 @@ const getTrainInBetweenStations = async (req, res) => {
 }
 const getDatabaseStationDetails = async (req, res) => {
 	try {
-		const station = await Station.find({ station_name: new RegExp(req.query.station_name, 'i') });
+		console.log(req.params);
+		const stationName = req.params.stationName;
+		console.log(stationName);
+
+		const station = await Station.findOne({ station_name: stationName });
+		console.log(station);
 
 		if (!station) {
 			throw new CustomError("station not found");
 		}
-		res.status(200).json({ station });
+		res.status(200).json({
+			success: true,
+			station
+		});
 	} catch (err) {
-		res.status(400).json(err.message);
+		res.status(400).json({
+			success: true,
+			message: err.message
+		});
 	}
 }
 const deleteStation = async (req, res) => {
@@ -207,21 +191,76 @@ const deleteStation = async (req, res) => {
 
 		res.status(200).json({ message: "Stations deleted successfully", deletedCount: result.deletedCount });
 	} catch (err) {
-		res.status(500).json({message:err.message});
+		res.status(500).json({ message: err.message });
 	}
 }
-const getTrainList = async (req,res)=>{
+const getTrainList = async (req, res) => {
 	try {
-		const {from, to} = req.query;
-		const {date} = req.params;
+		const { from, to } = req.query;
+		const { date } = req.params;
 		const trainList = (await axios.get(`https://indian-rail-api.onrender.com/trains/getTrainOn?from=${from}&to=${to}&date=${date}`)).data;
-		res.status(200).json({ success:true,trainList,message:"train list successfully" });
+		res.status(200).json({ success: true, trainList, message: "train list successfully" });
 
 	} catch (err) {
-		res.status(500).json({message:err.message});
+		res.status(500).json({ message: err.message });
 	}
 }
+
+const getRoute = async (req, res) => {
+	try {
+		const allStations = await Station.find({});
+		const stations = await Station.find({}, ['station_name']);
+		const stationNames = stations.map(station => station.station_name);
+
+		const adjacencyList = Array.from({ length: stationNames.length }, () => []);
+
+		// Build the adjacency list
+		for (const [index, station] of stationNames.entries()) {
+			const stationDB = allStations[index]; // Using index directly
+
+			// Push connected metro stations
+			if (stationDB.connected_metro_stations) {
+				stationDB.connected_metro_stations.forEach(st => {
+					adjacencyList[index].push([stationNames.indexOf(st[0]), parseFloat(st[1])]);
+				});
+			}
+
+			// Push connected railway stations
+			if (stationDB.connected_railway_stations) {
+				stationDB.connected_railway_stations.forEach(st => {
+					adjacencyList[index].push([stationNames.indexOf(st[0]), parseFloat(st[1])]);
+				});
+			}
+		}
+
+		const { source, destination } = req.body;
+		const sourceIndex = stationNames.indexOf(source);
+		const destinationIndex = stationNames.indexOf(destination);
+
+		if (sourceIndex === -1 || destinationIndex === -1) {
+			return res.json({
+				success: false,
+				message: "Station not found"
+			});
+		}
+
+		const resultArray = await findShortestPath(sourceIndex,allStations,adjacencyList);
+
+		res.json({
+			success: true,
+			distancesAndPaths: resultArray.filter(station => station.index === destinationIndex)
+		});
+
+	} catch (error) {
+		res.json({
+			success: false,
+			error: error.message
+		});
+	}
+};
+
+
 export {
-	createStation, getRoute, getAllStations, getTrainDetails, getTrainList,getTrainRoute,
-	getDatabaseStationDetails, getTrainInBetweenStations, deleteStation,updateStation
+	createStation, getRoute, getAllStations, getTrainDetails, getTrainList, getTrainRoute,
+	getDatabaseStationDetails, getTrainInBetweenStations, deleteStation, updateStation
 };
