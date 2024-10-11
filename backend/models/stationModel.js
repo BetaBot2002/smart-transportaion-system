@@ -15,7 +15,7 @@ const stationSchema = new Schema ({
         maxlength: [10, "Station code cannot exceed 10 characters"]
     },
     isActive:{
-        type:Number,
+        type:Boolean,
         //active=1, notActive=0
         default:1
     },
