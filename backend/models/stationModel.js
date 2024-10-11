@@ -17,7 +17,7 @@ const stationSchema = new Schema ({
     isActive:{
         type:Boolean,
         //active=1, notActive=0
-        default:1
+        default:true,
     },
     station_type:{
         type:String,
