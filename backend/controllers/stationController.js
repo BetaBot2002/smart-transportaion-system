@@ -108,7 +108,7 @@ const updateStation = async (req, res) => {
 
 const getAllStations = async (req, res) => {
 	try {
-		const stations = await Station.find({}, ['station_name', 'station_type']);
+		const stations = await Station.find({isActive:true}, ['station_name', 'station_type']);
 		res.status(200).json({
 			stations
 		});
@@ -154,12 +154,9 @@ const getTrainInBetweenStations = async (req, res) => {
 }
 const getDatabaseStationDetails = async (req, res) => {
 	try {
-		console.log(req.params);
 		const stationName = req.params.stationName;
-		console.log(stationName);
 
 		const station = await Station.findOne({ station_name: stationName });
-		console.log(station);
 
 		if (!station) {
 			throw new CustomError("station not found");
@@ -221,14 +218,14 @@ const getRoute = async (req, res) => {
 			// Push connected metro stations
 			if (stationDB.connected_metro_stations) {
 				stationDB.connected_metro_stations.forEach(st => {
-					adjacencyList[index].push([stationNames.indexOf(st[0]), parseFloat(st[1])]);
+					adjacencyList[index].push([stationNames.indexOf(st[0]), parseFloat(parseFloat(st[1]).toFixed(2))]);
 				});
 			}
 
 			// Push connected railway stations
 			if (stationDB.connected_railway_stations) {
 				stationDB.connected_railway_stations.forEach(st => {
-					adjacencyList[index].push([stationNames.indexOf(st[0]), parseFloat(st[1])]);
+					adjacencyList[index].push([stationNames.indexOf(st[0]), parseFloat(parseFloat(st[1]).toFixed(2))]);
 				});
 			}
 		}
