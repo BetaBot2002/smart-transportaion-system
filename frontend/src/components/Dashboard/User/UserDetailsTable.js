@@ -83,7 +83,7 @@ export function UserDetailsTable({user}) {
 	const dispatch = useDispatch();
 	const toast = useToast();
 	const navigate = useNavigate();
-	const handleNewInputSubmit = (e) => {
+	const handleNewInputSubmit =  (e) => {
 		e.preventDefault();
 		dispatch(putUserUpdate(userData));
 	};
@@ -118,7 +118,19 @@ export function UserDetailsTable({user}) {
 					<Button
 						width={'100%'}
 						bg={'blue.400'}
-						onClick={handleNewInputSubmit}
+						onClick={()=>{
+							setUserData({
+								...userData,
+								nearestMetroStation:user.nearestMetroStation._id,
+								nearestRailStation:user.nearestRailStation._id
+							})
+							handleNewInputSubmit()
+							setUserData({
+								...userData,
+								nearestMetroStation:user.nearestMetroStation.station_name,
+								nearestRailStation:user.nearestRailStation.station_name
+							})
+						}}
 						color={'white'}
 						_hover={{
 							bg: 'blue.500',
