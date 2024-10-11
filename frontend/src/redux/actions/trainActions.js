@@ -33,7 +33,7 @@ export const getShortestPath = (source, destination) => async (dispatch) => {
         if(!data.success) {
             throw new CustomError(data.message);
         }
-        dispatch({ type: GET_SHORTEST_PATH_SUCCESS, payload: data.route });
+        dispatch({ type: GET_SHORTEST_PATH_SUCCESS, payload: data.distancesAndPaths });
 
     } catch (error) {
         dispatch({ type: GET_SHORTEST_PATH_FAILED, payload: error.response.data.message});

@@ -1,5 +1,5 @@
 import { Tabs, TabList, TabPanels, Tab, TabPanel, Box } from '@chakra-ui/react';
-import StationSearch from './StationSearch.js';
+import StationSearch from './RouteSearch.js';
 import TrainSearch from '../Train/TrainSearch.js';
 import SearchHistory from './SearchHistory.js';
 
