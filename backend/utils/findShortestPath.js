@@ -32,7 +32,7 @@ const findShortestPath = async (sourceIndex, allStations,adjacencyList) => {
 
 
 			adjacencyList[stationIndex]?.forEach(([nextIndex, nextDistance]) => {
-				if (allStations.at(nextIndex).isActive === 1) {
+				if (allStations.at(nextIndex).isActive === true) {
 					const current = mp.get(stationIndex)[1];
 
 					// Update the path if we find a shorter distance
