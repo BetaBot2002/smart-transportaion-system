@@ -153,7 +153,7 @@ const getMe = async (req, res) => {
         const user = await User.findOne({ username: req.username })
             .populate('nearestRailStation', 'station_name')
             .populate('nearestMetroStation', 'station_name')
-            .select('-password'); 
+            .select(['-password','-otp']); 
         if (!user) {
             return res.status(404).json({
                 success: false,
