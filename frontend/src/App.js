@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from './components/Auth/LoginPage.js'; 
+import LoginPage from './components/Auth/LoginPage.js';
 import RegisterPage from './components/Auth/RegisterPage.js';
 import Test from "./Test.js";
 import ForgotPasswordForm from './components/Auth/ForgotPasswordForm.js';
@@ -19,40 +19,48 @@ import { useDispatch } from 'react-redux';
 import { getAllStations, getLRUtrains } from './redux/actions/trainActions.js';
 import ManageUser from './components/Dashboard/Admin/ManageUser.js';
 import ManageStation from './components/Dashboard/Admin/ManageStation.js';
+import GetShortestPath  from './components/Train/GetShortestPath.js';
+import { Alert, AlertIcon } from '@chakra-ui/react';
+
 
 function App() {
     const dispatch = useDispatch();
     const refreshToken = localStorage.getItem("refreshToken");
-    useEffect(()=>{
-        if(refreshToken) {
+    useEffect(() => {
+        if (refreshToken) {
             dispatch(getProfileAction());
         }
         dispatch(getAllStations());
         dispatch(getLRUtrains());
-    },[])
+    }, [])
 
     return (
         <Router>
-            <Navbar/>
+            <Alert status='info'>
+                <AlertIcon />
+                Website is under construction. If you find any error fill contact us form!
+            </Alert>
+            <Navbar />
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-                <Route path="/verify-otp" element={<VerifyOtp/>} />
+                <Route path="/verify-otp" element={<VerifyOtp />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/" element={<HomePage />} />
                 <Route path="/routes" element={<RoutePage />} />
+                <Route path="/get-shortest-path" element={<GetShortestPath />} />
 
-                <Route path="/profile" element={<UserProfile/>}/>
-                <Route path="/About Us" element={<AboutUs/>}/>
-                <Route path="/admin/manage-user" element={<ManageUser/>}/>
-                <Route path="/logout" element={<Logout/>}/>
-                <Route path='/change-password' element={<ChangePassword/>}/>
-                <Route path='/saved-routes' element={<ViewFavouriteRoutes/>}/>
-                <Route path="/admin/manage-station" element={<ManageStation/>}/>
+                <Route path="/profile" element={<UserProfile />} />
+                <Route path="/About Us" element={<AboutUs />} />
+                <Route path="/admin/manage-user" element={<ManageUser />} />
+                <Route path="/logout" element={<Logout />} />
+                <Route path='/change-password' element={<ChangePassword />} />
+                <Route path='/saved-routes' element={<ViewFavouriteRoutes />} />
+                <Route path="/admin/manage-station" element={<ManageStation />} />
 
             </Routes>
-            <Footer/>
+            <Footer />
         </Router>
     );
 }
