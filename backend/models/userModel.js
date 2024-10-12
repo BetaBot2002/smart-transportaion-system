@@ -13,7 +13,6 @@ const userSchema = new Schema({
   },
   phoneNumber: {
     type: String,
-    required: [true, 'Phone number is required'],
     unique: true,
     validate: [phoneNumber => phoneNumber.length === 10,"Please enter valid phone number"]
   },
