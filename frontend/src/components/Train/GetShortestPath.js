@@ -29,7 +29,7 @@ const lineColorMap = {
 	Blue: 'blue.500',
 	Green: 'green.500',
 	Pink: 'pink.500',
-	Orange:'orange.500',
+	Orange: 'orange.500',
 	blue: 'blue.500',
 	black: 'black',
 	purple: 'purple.500',
@@ -44,7 +44,6 @@ export default function GetShortestPath() {
 	const [openDestinationStations, setOpenDestinationStations] = useState(false);
 	const [filteredSource, setFilteredSource] = useState([]);
 	const [filteredDestination, setFilteredDestination] = useState([]);
-	const hasMounted = useRef(0);
 	const dispatch = useDispatch();
 	const toast = useToast();
 	const [stations, setStations] = useState(null);
@@ -80,31 +79,6 @@ export default function GetShortestPath() {
 			})
 		}
 	}, [err1]);
-	useEffect(() => {
-
-		if (source.length > 0) {
-			setOpenSourceStations(true);
-			setOpenDestinationStations(false);
-			const stationss = filterStations(source);
-			setFilteredSource(stationss);
-		} else {
-			setOpenSourceStations(false);
-			setFilteredSource([]);
-		}
-	}, [source]);
-	useEffect(() => {
-
-		if (destination.length > 0) {
-			setOpenSourceStations(false);
-			setOpenDestinationStations(true);
-			const stationss = filterStations(destination);
-			setFilteredDestination(stationss);
-		} else {
-			setOpenDestinationStations(false);
-			setFilteredDestination([]);
-		}
-	}, [destination]);
-
 
 	const handleSourceSelection = (stationName) => {
 		setsource(stationName);
@@ -136,20 +110,20 @@ export default function GetShortestPath() {
 	}
 
 	return (
-		loading1 ? (
-			<Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-				<Spinner size="xl" />
-			</Box>
-		) : (
-			<>
-			<VStack m={4} display={'flex'} justifyContent={'center'} alignItems="center">
+		<>
+				<VStack m={4} display={'flex'} justifyContent={'center'} alignItems="center">
 					<InputGroup>
 						<InputLeftAddon w={'120px'}>Source</InputLeftAddon>
 						<Input
 							maxW={'100%'}
 
 							value={source}
-							onChange={(e) => setsource(e.target.value)}
+							onChange={(e) => {
+								setsource(e.target.value)
+								setFilteredSource(filterStations(e.target.value))
+								if (e.target.value.length != 0) setOpenSourceStations(true);
+								else setOpenSourceStations(false);
+							}}
 							placeholder='From'
 						/>
 					</InputGroup>
@@ -184,7 +158,7 @@ export default function GetShortestPath() {
 							</UnorderedList>
 						</Box>
 					)}
-                <MdOutlineSwapVerticalCircle size={35} cursor={'pointer'} onClick={handleStationSwap}/>
+					<MdOutlineSwapVerticalCircle size={35} cursor={'pointer'} onClick={handleStationSwap} />
 
 					<InputGroup>
 						<InputLeftAddon w={'120px'}>Destination</InputLeftAddon>
@@ -192,7 +166,12 @@ export default function GetShortestPath() {
 							maxW={'100%'}
 							placeholder="To"
 							value={destination}
-							onChange={(e) => setdestination(e.target.value)}
+							onChange={(e) => {
+								setdestination(e.target.value);
+								setFilteredDestination(filterStations(e.target.value));
+								if (e.target.value.length != 0) setOpenDestinationStations(true);
+								else setOpenDestinationStations(false);
+							}}
 						/>
 					</InputGroup>
 
@@ -230,71 +209,76 @@ export default function GetShortestPath() {
 						Search
 					</Button>
 				</VStack>
-			{stations && <Box ml={{ base: '10%', md: '20%', xl: '30%' }} mr={'20px'} mt={4}>
-				<Box maxW={'500px'} border={'5px solid teal'} borderRadius={'9px'} boxShadow={'0 0 8px rgba(0, 0, 0, 0.2)'}>
-					<Stepper
-						index={activeStep}
-						orientation="vertical"
-						gap={gap}
-						size="lg"
-						height="100%"
-					>
-						{stations?.path?.map(([stationName, lineColors], index) => {
-							const boxStyle = lineColors.length > 1
-								? {
-									bgGradient: `linear(to-r, ${lineColors
-										.map((color) => lineColorMap[color] || 'gray.400')
-										.join(', ')})`,
-								}
-								: {
-									bg: lineColorMap[lineColors[0]] || 'gray.400',
-								};
+				{loading1 ? (
+			<Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+				<Spinner size="xl" />
+			</Box>
+		) : (
+				stations && <Box ml={{ base: '10%', md: '20%', xl: '30%' }} mr={'20px'} mt={4}>
+					<Box maxW={'500px'} border={'5px solid teal'} borderRadius={'9px'} boxShadow={'0 0 8px rgba(0, 0, 0, 0.2)'}>
+						<Stepper
+							index={activeStep}
+							orientation="vertical"
+							gap={gap}
+							size="lg"
+							height="100%"
+						>
+							{stations?.path?.map(([stationName, lineColors], index) => {
+								const boxStyle = lineColors.length > 1
+									? {
+										bgGradient: `linear(to-r, ${lineColors
+											.map((color) => lineColorMap[color] || 'gray.400')
+											.join(', ')})`,
+									}
+									: {
+										bg: lineColorMap[lineColors[0]] || 'gray.400',
+									};
 
-							return (
-								<Step key={index}>
-									<StepIndicator
-										boxSize={8}
-										borderRadius="50%"
-										bg="teal.500"
-										color="white"
-										fontWeight="bold"
-									>
-										{index + 1}
-									</StepIndicator>
-
-									<Box maxW={'100%'} flexShrink="0" p={2} borderRadius="md" shadow="md" {...boxStyle}>
-										<StepTitle fontSize="lg" fontWeight="bold" color="white">
-											{stationName}
-										</StepTitle>
-										<StepDescription fontSize="md" color="whiteAlpha.800">
-											Lines: {lineColors.join(', ')}
-										</StepDescription>
-									</Box>
-
-									{index < stations.path.length - 1 && (
-										<Box
-											height="10px"
-											display="flex"
-											justifyContent="center"
-											alignItems="center"
+								return (
+									<Step key={index}>
+										<StepIndicator
+											boxSize={8}
+											borderRadius="50%"
+											bg="teal.500"
+											color="white"
+											fontWeight="bold"
 										>
-											<StepSeparator
-												sx={{
-													width: '5px',
-													height: '100%',
-													borderRadius: 'md',
-													bgGradient: 'linear(to-b, teal.400, teal.200)',
-												}}
-											/>
+											{index + 1}
+										</StepIndicator>
+
+										<Box maxW={'100%'} flexShrink="0" p={2} borderRadius="md" shadow="md" {...boxStyle}>
+											<StepTitle fontSize="lg" fontWeight="bold" color="white">
+												{stationName}
+											</StepTitle>
+											<StepDescription fontSize="md" color="whiteAlpha.800">
+												Lines: {lineColors.join(', ')}
+											</StepDescription>
 										</Box>
-									)}
-								</Step>
-							);
-						})}
-					</Stepper>
-				</Box>
-			</Box>}
+
+										{index < stations.path.length - 1 && (
+											<Box
+												height="10px"
+												display="flex"
+												justifyContent="center"
+												alignItems="center"
+											>
+												<StepSeparator
+													sx={{
+														width: '5px',
+														height: '100%',
+														borderRadius: 'md',
+														bgGradient: 'linear(to-b, teal.400, teal.200)',
+													}}
+												/>
+											</Box>
+										)}
+									</Step>
+								);
+							})}
+						</Stepper>
+					</Box>
+				</Box>)}
 			</>
 		)
-	);
+
 }
