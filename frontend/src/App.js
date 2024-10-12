@@ -15,12 +15,12 @@ import ViewFavouriteRoutes from './components/Dashboard/ViewFavouriteRoutes.js';
 import Logout from './components/Dashboard/Logout.js';
 import { useEffect } from 'react';
 import { getProfileAction } from './redux/actions/userActions.js';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getAllStations, getLRUtrains } from './redux/actions/trainActions.js';
 import ManageUser from './components/Dashboard/Admin/ManageUser.js';
 import ManageStation from './components/Dashboard/Admin/ManageStation.js';
 import GetShortestPath  from './components/Train/GetShortestPath.js';
-import { Alert, AlertIcon } from '@chakra-ui/react';
+import { Alert, AlertIcon, Box, Spinner } from '@chakra-ui/react';
 
 
 function App() {
@@ -33,6 +33,9 @@ function App() {
         dispatch(getAllStations());
         dispatch(getLRUtrains());
     }, [])
+	const { loading: loading1, error: err2, data: data1 = [] } = useSelector(state => state.GetAllStation);
+    const { loading: loading2, data: trains, error: err1 } = useSelector(state => state.GetSearchHistory);
+
 
     return (
         <Router>
@@ -41,6 +44,11 @@ function App() {
                 Website is under construction. If you find any error fill contact us form!
             </Alert>
             <Navbar />
+            {loading1 || loading2 ? (
+			<Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+				<Spinner size="xl" />
+			</Box>
+		) :
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
@@ -60,6 +68,7 @@ function App() {
                 <Route path="/admin/manage-station" element={<ManageStation />} />
 
             </Routes>
+            }  
             <Footer />
         </Router>
     );
