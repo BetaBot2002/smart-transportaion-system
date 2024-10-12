@@ -119,7 +119,6 @@ export default function LoginPage() {
                                 direction={{ base: 'column', sm: 'row' }}
                                 align={'start'}
                                 justify={'space-between'}>
-                                <Checkbox>Remember me</Checkbox>
                                 <Text color={'blue.400'}><Link href='/forgot-password'>Forgot password?</Link></Text>
                             </Stack>
                             <Text>
