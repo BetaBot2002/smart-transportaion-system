@@ -4,25 +4,40 @@ import {
     Flex, Box, FormControl, FormLabel, Link,
     Input, Stack, Button, Heading,
     Text, Menu, MenuButton, MenuItem, MenuList,
-    Progress,Select,
+    Progress, Select,
     useColorModeValue,
     useToast,
     InputGroup,
     InputRightElement,
     IconButton,
+    InputLeftAddon,
+    UnorderedList,
+    ListItem,
 } from '@chakra-ui/react'
-import {ViewIcon,ViewOffIcon} from '@chakra-ui/icons'
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { registerUserAction } from '../../redux/actions/userActions.js';
-import {useSelector,useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 export default function RegisterPage() {
     const dispatch = useDispatch();
     const [formStep, setFormStep] = useState(1);
-    const [showPassword,setShowpassword] = useState(false);
-    const [showConfirmPassword,setShowConfirmPassword] = useState(false);
+    const [showPassword, setShowpassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const totalSteps = 3;
-    const {loading, isAuthenticated,user,error} = useSelector(state=>state.GetUser);
+    const { loading, isAuthenticated, user, error } = useSelector(state => state.GetUser);
+    const { loading: loading2, error: err2, data } = useSelector(state => state.GetAllStation);
+    const [filteredRailStations, setFilteredRailStations] = useState();
+    const [openRailStations, setOpenRailStations] = useState(false);
+    const [nearestRailStation, setNearestRailStation] = useState('');
+    const [nearestMetroStation, setNearestMetroStation] = useState('');
+    const [filteredMetroStations, setFilteredMetroStations] = useState([]);
+    const [openMetroStations, setOpenMetroStations] = useState(false);
+
+    const filterStations = (stationInput, type) => {
+        return data
+            .filter(station => station.station_type !== type && station.station_name.toLowerCase().startsWith(stationInput.toLowerCase()));
+    }
 
     const [formData, setFormData] = useState({
         username: '',
@@ -49,11 +64,12 @@ export default function RegisterPage() {
             ...formData,
             [id]: value,
         });
+
     };
     const toast = useToast();
     const handleSubmit = () => {
-        for(const key in formData) {
-            if(formData[key] === '') {
+        for (const key in formData) {
+            if (formData[key] === '') {
                 toast({
                     title: 'invalid',
                     description: "Enter all credentials",
@@ -64,7 +80,7 @@ export default function RegisterPage() {
                 return;
             }
         }
-        if(formData.confirmPassword !== formData.password) {
+        if (formData.confirmPassword !== formData.password) {
             toast({
                 title: 'invalid',
                 description: "password mismacth",
@@ -75,29 +91,30 @@ export default function RegisterPage() {
             return;
         }
         dispatch(registerUserAction(formData));
+
     };
     const navigate = useNavigate();
-    useEffect(()=>{
-        if(isAuthenticated) {
+    useEffect(() => {
+        if (isAuthenticated) {
             toast({
                 title: 'Success',
-                    description: "congratulations You have created account",
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true
+                description: "congratulations You have created account",
+                status: 'success',
+                duration: 3000,
+                isClosable: true
             })
             navigate('/home');
         }
-        if(error) {
+        if (error) {
             toast({
-                title:'invalid',
-                description:error,
-                status:'error',
-                duration:3000,
-                isClosable:true
+                title: 'invalid',
+                description: error,
+                status: 'error',
+                duration: 3000,
+                isClosable: true
             })
         }
-    },[dispatch,isAuthenticated,error])
+    }, [dispatch, isAuthenticated, error])
     return (
         <Flex
             align={'center'}
@@ -109,7 +126,7 @@ export default function RegisterPage() {
                     <Text fontSize={'lg'} color={'gray.600'}>
                         Enjoy all our cool features
                     </Text>
-                    <Text>already account? <Link onClick={()=> navigate('/login')}>Login</Link></Text>
+                    <Text>already account? <Link onClick={() => navigate('/login')}>Login</Link></Text>
                 </Stack>
                 <Box
                     rounded={'lg'}
@@ -147,28 +164,129 @@ export default function RegisterPage() {
                         <Stack spacing={4}>
                             <FormControl id="city">
                                 <Select onChange={handleChange} placeholder='Select city'>
-                                    {/* here we will add list of city names */}
-                                    <option value='Kolkata'>Kolkata</option>
-                                    <option value='Mumbai'>Mumbai</option>
-                                    <option value='Delhi'>Delhi</option>
+                                    <option value="Kolkata">Kolkata</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Mumbai">Mumbai</option>
+                                    <option value="Bangalore">Bangalore</option>
+                                    <option value="Chennai">Chennai</option>
+                                    <option value="Hyderabad">Hyderabad</option>
+                                    <option value="Pune">Pune</option>
+                                    <option value="Ahmedabad">Ahmedabad</option>
+                                    <option value="Lucknow">Lucknow</option>
+                                    <option value="Kanpur">Kanpur</option>
+                                    <option value="Nagpur">Nagpur</option>
+                                    <option value="Patna">Patna</option>
+                                    <option value="Guwahati">Guwahati</option>
                                 </Select>
                             </FormControl>
-                            <FormControl id="nearestRailStation">
-                                <Select onChange={handleChange} placeholder='Select nearestRailStation'>
-                                    {/* here we will add list of nearestRailStation names */}
-                                    <option value='6687023c562709dfec6e5795'>Option 1</option>
-                                    <option value='66870319b96930c77d54a147'>Option 2</option>
-                                    <option value='668703d9b96930c77d54a18c'>Option 3</option>
-                                </Select>
+                            <FormControl >
+                                <Text as={'b'} mb='8px'>NearestRailStation:</Text>
+                                <InputGroup>
+                                    <Input
+                                        maxW={'100%'}
+                                        value={nearestRailStation}
+                                        onChange={(e) => {
+                                            setNearestRailStation(e.target.value);
+                                            setFilteredRailStations(filterStations(e.target.value, 'Metro'))
+                                            if (e.target.value.length != 0) setOpenRailStations(true);
+                                            else setOpenRailStations(false)
+                                        }}
+                                        placeholder='From'
+                                    />
+                                </InputGroup>
+
+                                {openRailStations && (
+                                    <Box
+                                        bg='white'
+                                        boxShadow={'0 0 8px rgba(0, 0, 0, 0.2)'}
+                                        border='1px solid gray'
+                                        w='100%'
+                                        p={2}
+                                        mt={1}
+                                        borderRadius="md"
+                                        maxH="150px"
+                                        overflowY="auto"
+                                    >
+                                        <UnorderedList id="nearestRailStation" styleType="none">
+                                            {filteredRailStations.map((station, index) => (
+                                                <ListItem
+                                                    key={index}
+                                                    onClick={() => {
+                                                        setFormData({
+                                                            ...formData,
+                                                            nearestRailStation: station._id,
+                                                        });
+                                                        setOpenRailStations(false);
+                                                        setNearestRailStation(station.station_name);
+                                                    }}
+                                                    cursor="pointer"
+                                                    p={2}
+                                                    borderRadius="md"
+                                                    _hover={{ backgroundColor: "teal.100" }}
+                                                    _active={{ backgroundColor: "teal.200" }}
+                                                >
+                                                    {`${station.station_name} - ${station.station_type}`}
+                                                </ListItem>
+                                            ))}
+
+                                        </UnorderedList>
+                                    </Box>
+                                )}
                             </FormControl>
-                            <FormControl id="nearestMetroStation">
-                                <Select onChange={handleChange} placeholder='Select nearestMetroStation'>
-                                    {/* here we will add list of nearestMetroStation names */}
-                                    <option value='6687023c562709dfec6e5795'>Option 1</option>
-                                    <option value='66870319b96930c77d54a147'>Option 2</option>
-                                    <option value='668703d9b96930c77d54a18c'>Option 3</option>
-                                </Select>
+                            <FormControl>
+                                <Text as={'b'} mb='8px'>NearestMetroStation:</Text>
+                                <InputGroup>
+                                    <Input
+                                        maxW={'100%'}
+                                        value={nearestMetroStation}
+                                        onChange={(e) => {
+                                            setNearestMetroStation(e.target.value);
+                                            setFilteredMetroStations(filterStations(e.target.value, 'Railway'));
+                                            if (e.target.value.length !== 0) setOpenMetroStations(true);
+                                            else setOpenMetroStations(false);
+                                        }}
+                                        placeholder='From'
+                                    />
+                                </InputGroup>
+
+                                {openMetroStations && (
+                                    <Box
+                                        bg='white'
+                                        boxShadow={'0 0 8px rgba(0, 0, 0, 0.2)'}
+                                        border='1px solid gray'
+                                        w='100%'
+                                        p={2}
+                                        mt={1}
+                                        borderRadius="md"
+                                        maxH="150px"
+                                        overflowY="auto"
+                                    >
+                                        <UnorderedList id="nearestMetroStation" styleType="none">
+                                            {filteredMetroStations.map((station, index) => (
+                                                <ListItem
+                                                    key={index}
+                                                    onClick={() => {
+                                                        setFormData({
+                                                            ...formData,
+                                                            nearestMetroStation: station._id,
+                                                        });
+                                                        setOpenMetroStations(false);
+                                                        setNearestMetroStation(station.station_name);
+                                                    }}
+                                                    cursor="pointer"
+                                                    p={2}
+                                                    borderRadius="md"
+                                                    _hover={{ backgroundColor: "teal.100" }}
+                                                    _active={{ backgroundColor: "teal.200" }}
+                                                >
+                                                    {`${station.station_name} - ${station.station_type}`}
+                                                </ListItem>
+                                            ))}
+                                        </UnorderedList>
+                                    </Box>
+                                )}
                             </FormControl>
+
                             <Button
                                 onClick={nextStep}
                                 bg={'blue.400'}
@@ -190,7 +308,7 @@ export default function RegisterPage() {
                             <FormControl id="password">
                                 <FormLabel>Password</FormLabel>
                                 <InputGroup>
-                                <Input type={showPassword?"text":"password"} value={formData.password} onChange={handleChange} />
+                                    <Input type={showPassword ? "text" : "password"} value={formData.password} onChange={handleChange} />
                                     <InputRightElement>
                                         <IconButton
                                             icon={!showPassword ? <ViewOffIcon /> : <ViewIcon />}
@@ -203,7 +321,7 @@ export default function RegisterPage() {
                             <FormControl id="confirmPassword">
                                 <FormLabel>Confirm Password</FormLabel>
                                 <InputGroup>
-                                <Input type={showConfirmPassword?"text":"password"} value={formData.confirmPassword} onChange={handleChange} />
+                                    <Input type={showConfirmPassword ? "text" : "password"} value={formData.confirmPassword} onChange={handleChange} />
                                     <InputRightElement>
                                         <IconButton
                                             icon={!showConfirmPassword ? <ViewOffIcon /> : <ViewIcon />}
@@ -214,7 +332,7 @@ export default function RegisterPage() {
                                 </InputGroup>
                             </FormControl>
                             <Button
-                                isLoading={loading?true:false}
+                                isLoading={loading ? true : false}
                                 onClick={handleSubmit}
                                 bg={'blue.400'}
                                 color={'white'}

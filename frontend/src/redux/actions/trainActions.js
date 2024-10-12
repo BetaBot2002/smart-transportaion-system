@@ -29,12 +29,11 @@ export const getShortestPath = (source, destination) => async (dispatch) => {
             },
         };
         const { data } = await axios.post(`${stationBackendUrl}/get-route`, { source, destination },config);
-        console.log(data);
         
         if(!data.success) {
             throw new CustomError(data.message);
         }
-        dispatch({ type: GET_SHORTEST_PATH_SUCCESS, payload: data.route });
+        dispatch({ type: GET_SHORTEST_PATH_SUCCESS, payload: data.distancesAndPaths });
 
     } catch (error) {
         dispatch({ type: GET_SHORTEST_PATH_FAILED, payload: error.response.data.message});
@@ -48,9 +47,10 @@ export const clearGetshortestPath = ()=> async(dispatch)=> {
 export const getStation = (stationName) => async (dispatch) => {
     try {
         dispatch({ type: GET_STATION_REQUEST });
-
-        const { data } = await axios.get(`${stationBackendUrl}/get-station-database-details?station_name=${stationName}`);
-        dispatch({ type: GET_STATION_SUCCESS, payload: data });
+        
+        const { data } = await axios.get(`${stationBackendUrl}/get-station-database-details/${stationName.station_name}`);
+        
+        dispatch({ type: GET_STATION_SUCCESS, payload: data.station });
 
     } catch (error) {
         dispatch({ type: GET_STATION_FAILED, payload: error.response.data.message });

@@ -19,50 +19,41 @@ class PriorityQueue {
     }
 }
 
-const findShortestPath = async (source, destination) => {
+const findShortestPath = async (sourceIndex, allStations,adjacencyList) => {
     try {
-        const routeMap = new Map();
-        const pq = new PriorityQueue();
+        const mp = new Map();
+		const pq = new PriorityQueue();
 
-        pq.push([0, source]);
-        routeMap.set(source, [0, [source]]);
+		pq.push([0, sourceIndex]);
+		mp.set(sourceIndex, [0, [sourceIndex]]);
 
-        while (!pq.empty()) {
-            const [weight, station] = pq.pop();
-            const stationObj = await Station.findOne({ station_name: station });
+		while (!pq.empty()) {
+			const [distance, stationIndex] = pq.pop();
 
-            if (!stationObj) {
-                continue;
-            }
 
-            stationObj.connected_metro_stations.forEach(connectedStation => {
-                const nextStation = connectedStation[0];
-                const nextDistance = parseInt(connectedStation[1]);
+			adjacencyList[stationIndex]?.forEach(([nextIndex, nextDistance]) => {
+				if (allStations.at(nextIndex).isActive === true) {
+					const current = mp.get(stationIndex)[1];
 
-                if (!routeMap.has(nextStation) || routeMap.get(nextStation)[0] > weight + nextDistance) {
-                    const tempPath = routeMap.get(station)[1].slice();
-                    tempPath.push(nextStation);
-                    routeMap.set(nextStation, [weight + nextDistance, tempPath]);
-                    pq.push([weight + nextDistance, nextStation]);
-                }
-            });
-
-            stationObj.connected_railway_stations.forEach(connectedStation => {
-                const nextStation = connectedStation[0];
-                const nextDistance = parseInt(connectedStation[1]);
-
-                if (!routeMap.has(nextStation) || routeMap.get(nextStation)[0] > weight + nextDistance) {
-                    const tempPath = routeMap.get(station)[1].slice();
-                    tempPath.push(nextStation);
-                    routeMap.set(nextStation, [weight + nextDistance, tempPath]);
-                    pq.push([weight + nextDistance, nextStation]);
-                }
-            });
-        }
-
-        return routeMap || "No path found";
+					// Update the path if we find a shorter distance
+					if (!mp.has(nextIndex) || distance + nextDistance < mp.get(nextIndex)[0]) {
+						mp.set(nextIndex, [distance + nextDistance, [...current, nextIndex]]);
+						pq.push([distance + nextDistance, nextIndex]);
+					}
+				}
+			});
+		}
+        const resultArray = Array.from(mp.entries()).map(([index, [distance, path]]) => {
+			return {
+				index,
+				distance,
+				path: path.map(stationIndex => [allStations.at(stationIndex).station_name, allStations.at(stationIndex).line_color_code]) 
+			};
+		});
+        return resultArray;
     } catch (err) {
         return err.message || "Error finding shortest path";
     }
 };
+export {PriorityQueue};
 export default findShortestPath;

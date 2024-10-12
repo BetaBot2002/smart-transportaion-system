@@ -14,6 +14,11 @@ const stationSchema = new Schema ({
         unique: [true, "Station code must be unique"],
         maxlength: [10, "Station code cannot exceed 10 characters"]
     },
+    isActive:{
+        type:Boolean,
+        //active=1, notActive=0
+        default:true,
+    },
     station_type:{
         type:String,
         required: [true, "Station type is required"],

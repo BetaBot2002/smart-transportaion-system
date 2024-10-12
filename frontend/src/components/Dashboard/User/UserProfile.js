@@ -136,7 +136,7 @@ export default function UserProfile() {
                                 </Button>
                                 <Button
                                     as='a'
-                                    onClick={() => navigate('/admin/add-station')}
+                                    onClick={() => navigate('/admin/manage-station')}
                                     colorScheme="teal"
                                     width="full"
                                     cursor="pointer"
@@ -145,7 +145,7 @@ export default function UserProfile() {
                                 </Button>
                                 <Button
                                     as='a'
-                                    onClick={() => navigate('/admin/view-stations')}
+                                    onClick={() => navigate('/admin/add-new-station')}
                                     colorScheme="teal"
                                     width="full"
                                     cursor="pointer"

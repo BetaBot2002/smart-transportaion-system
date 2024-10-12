@@ -26,7 +26,7 @@ import { useNavigate } from "react-router-dom";
 
 export function UserDetailsTable({user}) {
 	const {loading,isUpdated,error } = useSelector(state=>state.IsUpdatedUser);
-	
+    
 	function EditableComponent({ id, value }) {
 
 		function EditableControls() {
@@ -77,13 +77,13 @@ export function UserDetailsTable({user}) {
 		email: user.email,
 		phoneNumber: user.phoneNumber,
 		city: user.city,
-		nearestMetroStation: user.nearestMetroStation,
-		nearestRailStation: user.nearestRailStation
+		nearestMetroStation: user.nearestMetroStation.station_name,
+		nearestRailStation: user.nearestRailStation.station_name
 	});
 	const dispatch = useDispatch();
 	const toast = useToast();
 	const navigate = useNavigate();
-	const handleNewInputSubmit = (e) => {
+	const handleNewInputSubmit =  (e) => {
 		e.preventDefault();
 		dispatch(putUserUpdate(userData));
 	};
@@ -110,6 +110,7 @@ export function UserDetailsTable({user}) {
 		}
 	},[isUpdated,error])
 
+	
 	return (
 		<TableContainer>
 			<Table variant>
@@ -117,7 +118,19 @@ export function UserDetailsTable({user}) {
 					<Button
 						width={'100%'}
 						bg={'blue.400'}
-						onClick={handleNewInputSubmit}
+						onClick={()=>{
+							setUserData({
+								...userData,
+								nearestMetroStation:user.nearestMetroStation._id,
+								nearestRailStation:user.nearestRailStation._id
+							})
+							handleNewInputSubmit()
+							setUserData({
+								...userData,
+								nearestMetroStation:user.nearestMetroStation.station_name,
+								nearestRailStation:user.nearestRailStation.station_name
+							})
+						}}
 						color={'white'}
 						_hover={{
 							bg: 'blue.500',
@@ -144,11 +157,13 @@ export function UserDetailsTable({user}) {
 					</Tr>
 					<Tr>
 						<Td><strong>Nearest Metro Station</strong></Td>
-						<Td><EditableComponent id={"nearestMetroStation"} value={userData.nearestMetroStation} /></Td>
+						{/* <Td><EditableComponent id={"nearestMetroStation"} value={userData.nearestMetroStation} /></Td> */}
+						<Td textAlign={'center'}>{userData.nearestMetroStation}</Td>
 					</Tr>
 					<Tr>
 						<Td><strong>Nearest Rail Station</strong></Td>
-						<Td><EditableComponent id={"nearestRailStation"} value={userData.nearestRailStation} /></Td>
+						{/* <Td><EditableComponent id={"nearestRailStation"} value={userData.nearestRailStation} /></Td> */}
+						<Td textAlign={'center'}>{userData.nearestRailStation} </Td>
 					</Tr>
 				</Tbody>
 			</Table>

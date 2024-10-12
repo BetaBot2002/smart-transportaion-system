@@ -21,7 +21,6 @@ export default function StationSearch() {
     const navigate = useNavigate();
     const toast = useToast();
     const { loading:loading1, error:err1, data = [] } = useSelector(state => state.GetAllStation);
-    const {loading:loading2,error:err2,data:stations} = useSelector(state=>state.GetShortestPath)
 
     const filterStations = (stationInput) => {
         return data
@@ -29,50 +28,7 @@ export default function StationSearch() {
     }
 
 
-    useEffect(() => {
-        if (source.length > 0) {
-            setOpenSourceStations(true);
-            setOpenDestinationStations(false);
-            const stations = filterStations(source);
-            setFilteredSource(stations);
-        } else {
-            setOpenSourceStations(false);
-            setFilteredSource([]);
-        }
-    }, [source, data]); 
-    useEffect(() => {
-        if (destination.length > 0) {
-            setOpenSourceStations(false);
-            setOpenDestinationStations(true);
-            const stations = filterStations(destination);
-            setFilteredDestination(stations);
-        } else {
-            setOpenDestinationStations(false);
-            setFilteredDestination([]);
-        }
-    }, [destination, data]);
-
-    useEffect(() => {
-        if(stations) {
-            toast({
-                title: 'success',
-                description: "data come",
-                status: 'success',
-                duration: 3000,
-                isClosable: true
-            })
-        }
-        if(err2 ) {
-            toast({
-                title: 'invalid',
-                description: err2,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            })
-            dispatch(clearGetshortestPath());
-        }
-    }, [err2, stations]);
+       
     const handleSourceSelection = (stationName) => {
         setSource(stationName);
         setOpenSourceStations(false);
@@ -95,6 +51,7 @@ export default function StationSearch() {
             return;
         }
         dispatch(getShortestPath(source,destination));
+        navigate('/get-shortest-path');
     }
     const handleStationSwap = ()=>{
         const temp  = source;
@@ -113,7 +70,12 @@ export default function StationSearch() {
                     <FormLabel>Source</FormLabel>
                     <Input
                         type='text'
-                        onChange={(e) => setSource(e.target.value)}
+                        onChange={(e) => {
+                            setSource(e.target.value)
+                            setFilteredSource(filterStations(e.target.value))
+                            if(e.target.value.length!=0) setOpenSourceStations(true);
+                            else setOpenSourceStations(false);
+                        }}
                         value={source}
                         placeholder='Source'
                         autoComplete="off"
@@ -156,7 +118,13 @@ export default function StationSearch() {
                     <FormLabel>Destination</FormLabel>
                     <Input
                         type='text'
-                        onChange={(e) => setDestination(e.target.value)}
+                        onChange={(e) => {
+                            setDestination(e.target.value);
+                            setFilteredDestination(filterStations(e.target.value));
+                            if(e.target.value.length!=0) setOpenDestinationStations(true);
+                            else setOpenDestinationStations(false);
+                            
+                        }}
                         value={destination}
                         placeholder='Destination'
                         autoComplete="off"
@@ -193,7 +161,7 @@ export default function StationSearch() {
                     )}
                 </FormControl>
 
-                <Button isLoading={loading2?true:false} w='100%' colorScheme="teal" onClick={handleSearch}>
+                <Button w='100%' colorScheme="teal" onClick={handleSearch}>
                     Search
                 </Button>
             </Box>
