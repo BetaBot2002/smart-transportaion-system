@@ -16,7 +16,10 @@ const sendToken = (res, user, accessToken, refreshToken) => {
 const registerUser = async (req, res, next) => {
     try {
         const { username, phoneNumber, email, password, city, nearestRailStation, nearestMetroStation } = req.body;
-
+        const existUser = await User.findOne({username:username});
+        if(existUser) {
+            throw new CustomError("User already exists with your credentials");
+        }
         const user = await User.create(req.body);
         const { accessToken, refreshToken } = signUser(user.username);
         await sendEmail(
