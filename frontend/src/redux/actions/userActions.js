@@ -23,7 +23,10 @@ import {
     USER_VERIFY_OTP_SUCCESS,
     CONTACT_US_REQUEST,
     CONTACT_US_SUCCESS,
-    CONTACT_US_FAILED
+    CONTACT_US_FAILED,
+    GOOGLE_LOGIN_REQUEST,
+    GOOGLE_LOGIN_SUCCESS,
+    GOOGLE_LOGIN_FAILED
 } from "../consents/userConsents";
 import CustomError from "../../customError.js";
 
@@ -40,6 +43,29 @@ export const setToken = (accessToken, refreshToken) => {
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
 }
+
+export const googleLoginAction = (code) => async (dispatch) => {
+    try {
+        dispatch({ type: GOOGLE_LOGIN_REQUEST });
+        
+        const { data } = await axios.get(`${userBackendUrl}/auth/google?code=${code}`);
+
+        dispatch({
+            type: GOOGLE_LOGIN_SUCCESS,
+            payload: data.user,
+        });
+        setToken(data.accessToken, data.refreshToken);
+
+    } catch (error) {
+        dispatch({
+            type: GOOGLE_LOGIN_FAILED,
+            payload: error.response && error.response.data.message 
+                ? error.response.data.message 
+                : error.message,
+        });
+
+    }
+};
 export const registerUserAction = (registrationCredentials) => async (dispatch) => {
     try {
         const link = userBackendUrl + "/register";
