@@ -11,6 +11,10 @@ const userSchema = new Schema({
     minlength: [3, 'Username must be at least 3 characters long'],
     maxlength: [50, 'Username cannot exceed 50 characters']
   },
+  imageUrl:{
+    type:String,
+    default:""
+  },
   phoneNumber: {
     type: String,
     unique: true,
@@ -25,7 +29,6 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters long']
   },
   otp:{
@@ -34,20 +37,15 @@ const userSchema = new Schema({
   },
   city: {
     type: String,
-    required: [true, 'City is required'],
     trim: true
   },
   nearestRailStation: {
     type: Schema.Types.ObjectId,
     ref: "Station",
-    required: [true, 'Nearest rail station is required'],
-    trim: true
   },
   nearestMetroStation: {
     type: Schema.Types.ObjectId,
     ref: "Station",
-    required: [true, 'Nearest metro station is required'],
-    trim: true
   },
   lruTrains:{
     type:[String],
@@ -67,9 +65,10 @@ const userSchema = new Schema({
 });
 
 userSchema.pre('save', async function(next) {
-  if (this.isModified('password') || this.isNew) {
+
+  if (this.password && (this.isModified('password') || this.isNew)) {
     const salt = await genSalt(2);
-    this.password = await hash(this.password, salt);
+    this.password = hash(this.password, salt);
   }
   next();
 });
