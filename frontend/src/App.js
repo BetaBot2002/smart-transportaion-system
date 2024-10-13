@@ -21,6 +21,8 @@ import ManageUser from './components/Dashboard/Admin/ManageUser.js';
 import ManageStation from './components/Dashboard/Admin/ManageStation.js';
 import GetShortestPath  from './components/Train/GetShortestPath.js';
 import { Alert, AlertIcon, Box, Spinner } from '@chakra-ui/react';
+import PageNotFound from './pages/PageNotFound.js';
+import {  GoogleOAuthProvider } from '@react-oauth/google';
 
 
 function App() {
@@ -29,13 +31,20 @@ function App() {
     useEffect(() => {
         if (refreshToken) {
             dispatch(getProfileAction());
+            dispatch(getLRUtrains());
         }
         dispatch(getAllStations());
-        dispatch(getLRUtrains());
     }, [])
 	const { loading: loading1, error: err2, data: data1 = [] } = useSelector(state => state.GetAllStation);
     const { loading: loading2, data: trains, error: err1 } = useSelector(state => state.GetSearchHistory);
 
+    function GoogleLogin () {
+        return (
+			<GoogleOAuthProvider clientId="146756462672-ldk10gufg7c3v9jun37p6hme4he803ia.apps.googleusercontent.com">
+                <LoginPage/>
+            </GoogleOAuthProvider>
+        )
+    }
 
     return (
         <Router>
@@ -50,7 +59,8 @@ function App() {
 			</Box>
 		) :
             <Routes>
-                <Route path="/login" element={<LoginPage />} />
+                <Route path='*' element={<PageNotFound/>}/>
+                <Route path="/login" element={<GoogleLogin />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordForm />} />
                 <Route path="/verify-otp" element={<VerifyOtp />} />

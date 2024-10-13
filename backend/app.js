@@ -1,3 +1,6 @@
+import dotenv from "dotenv"
+dotenv.config()
+
 import express from 'express';
 import station from './routes/stationRoutes.js';
 import user from "./routes/userRoutes.js"

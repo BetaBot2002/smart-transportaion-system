@@ -1,22 +1,52 @@
 import blackListedToken from "../models/blackListedToken.js";
 import User from "../models/userModel.js";
 import CustomError from "../utils/customError.js";
+import { OauthClient } from "../utils/googleConfig.js";
 import { newAccessToken, signUser } from "../utils/jwt.helper.js";
 import { sendEmail } from "../utils/SendMail.js";
-
-const sendToken = (res, user, accessToken, refreshToken) => {
-    res.status(200).json({
+import axios from 'axios'
+export const sendToken = (res, user, accessToken, refreshToken) => {
+    res.status(201).json({
         success: true,
         accessToken: accessToken,
         refreshToken: refreshToken,
         user
     });
 };
+const googleLogin = async (req,res)=>{
+    try {
+        const {code} = req.query;
+        const googleRes = await OauthClient.getToken(code);
+        OauthClient.setCredentials(googleRes.tokens);
+        const {data} = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`)
+        const {email,name,picture} = data;
+        let user = await User.findOne({email:email});
+        if(!user) {
+            user = await User.create({
+                username:name,
+                email:email,
+                imageUrl:picture
+            })
+        }
+        
+        const {accessToken,refreshToken}=signUser(user.username);
+        sendToken(res,user,accessToken,refreshToken);
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message,
+        })
+    }
+}
+
 
 const registerUser = async (req, res, next) => {
     try {
         const { username, phoneNumber, email, password, city, nearestRailStation, nearestMetroStation } = req.body;
-
+        const existUser = await User.findOne({username:username});
+        if(existUser) {
+            throw new CustomError("User already exists with your credentials");
+        }
         const user = await User.create(req.body);
         const { accessToken, refreshToken } = signUser(user.username);
         await sendEmail(
@@ -445,5 +475,6 @@ export {
     addFavouriteRoute,
     contactUs,
     getlruTrains,
-    setlruTrains
+    setlruTrains,
+    googleLogin
 };
