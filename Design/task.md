@@ -6,7 +6,7 @@ v1/
 6. Shortest path algo update (dijkstra algo(time,distance) / dynamic Programming(time,distance)) remember float value and add line colour and station code. 
 11. dockerize 
 
-sinchan - 1 3 4 
+sinchan - 1 4 
 deep - 
 
 
