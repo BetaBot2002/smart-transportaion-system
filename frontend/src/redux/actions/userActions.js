@@ -29,19 +29,13 @@ import {
     GOOGLE_LOGIN_FAILED
 } from "../consents/userConsents";
 import CustomError from "../../customError.js";
+import { setAccessToken, setRefreshToken } from "../../utils/jwt.helper.js";
 
 export const userBackendUrl = "http://localhost:5000/user"
 
-export const getToken = () => {
-    const accessToken = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
-    return {
-        accessToken, refreshToken
-    }
-}
 export const setToken = (accessToken, refreshToken) => {
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
+    setAccessToken(accessToken);
+    setRefreshToken(refreshToken);
 }
 
 export const googleLoginAction = (code) => async (dispatch) => {
