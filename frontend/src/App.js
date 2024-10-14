@@ -19,10 +19,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllStations, getLRUtrains } from './redux/actions/trainActions.js';
 import ManageUser from './components/Dashboard/Admin/ManageUser.js';
 import ManageStation from './components/Dashboard/Admin/ManageStation.js';
-import GetShortestPath  from './components/Train/GetShortestPath.js';
+import GetShortestPath from './components/Train/GetShortestPath.js';
 import { Alert, AlertIcon, Box, Spinner } from '@chakra-ui/react';
 import PageNotFound from './pages/PageNotFound.js';
-import {  GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import Protected from './utils/protectedRoutes.js';
 
 
 function App() {
@@ -35,13 +36,13 @@ function App() {
         }
         dispatch(getAllStations());
     }, [])
-	const { loading: loading1, error: err2, data: data1 = [] } = useSelector(state => state.GetAllStation);
+    const { loading: loading1, error: err2, data: data1 = [] } = useSelector(state => state.GetAllStation);
     const { loading: loading2, data: trains, error: err1 } = useSelector(state => state.GetSearchHistory);
 
-    function GoogleLogin () {
+    function GoogleLogin() {
         return (
-			<GoogleOAuthProvider clientId="146756462672-ldk10gufg7c3v9jun37p6hme4he803ia.apps.googleusercontent.com">
-                <LoginPage/>
+            <GoogleOAuthProvider clientId="146756462672-ldk10gufg7c3v9jun37p6hme4he803ia.apps.googleusercontent.com">
+                <LoginPage />
             </GoogleOAuthProvider>
         )
     }
@@ -54,31 +55,91 @@ function App() {
             </Alert>
             <Navbar />
             {loading1 || loading2 ? (
-			<Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-				<Spinner size="xl" />
-			</Box>
-		) :
-            <Routes>
-                <Route path='*' element={<PageNotFound/>}/>
-                <Route path="/login" element={<GoogleLogin />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-                <Route path="/verify-otp" element={<VerifyOtp />} />
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/" element={<HomePage />} />
-                <Route path="/routes" element={<RoutePage />} />
-                <Route path="/get-shortest-path" element={<GetShortestPath />} />
+                <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                    <Spinner size="xl" />
+                </Box>
+            ) :
+                <Routes>
+                    <Route path='*' element={<PageNotFound />} />
+                    <Route path="/login" element={
+                        <Protected needLoggedIn={false}>
+                            <GoogleLogin />
+                        </Protected>
+                    } />
+                    <Route path="/register" element={
+                        <Protected needLoggedIn={false}>
+                            <RegisterPage />
+                        </Protected>
+                    } />
+                    <Route path="/forgot-password" element={
+                        <Protected needLoggedIn={false}>
+                            <ForgotPasswordForm />
+                        </Protected>
+                    } />
+                    <Route path="/verify-otp" element={
+                        <Protected needLoggedIn={false}>
+                            <VerifyOtp />
+                        </Protected>
+                    } />
 
-                <Route path="/profile" element={<UserProfile />} />
-                <Route path="/About Us" element={<AboutUs />} />
-                <Route path="/admin/manage-user" element={<ManageUser />} />
-                <Route path="/logout" element={<Logout />} />
-                <Route path='/change-password' element={<ChangePassword />} />
-                <Route path='/saved-routes' element={<ViewFavouriteRoutes />} />
-                <Route path="/admin/manage-station" element={<ManageStation />} />
+                    <Route path="/home" element={
+                        <Protected needLoggedIn={false}>
+                            <HomePage />
+                        </Protected>
+                    } />
+                    <Route path="/" element={
+                        <Protected needLoggedIn={false}>
+                            <HomePage />
+                        </Protected>
+                    } />
 
-            </Routes>
-            }  
+                    <Route path="/routes" element={
+                        <Protected needLoggedIn={true}>
+                            <RoutePage />
+                        </Protected>
+                    } />
+                    <Route path="/get-shortest-path" element={
+                        <Protected needLoggedIn={true}>
+                            <GetShortestPath />
+                        </Protected>
+                    } />
+                    <Route path="/profile" element={
+                        <Protected needLoggedIn={true}>
+                            <UserProfile />
+                        </Protected>
+                    } />
+                    <Route path="/About Us" element={
+                        <Protected needLoggedIn={false}>
+                            <AboutUs />
+                        </Protected>
+                    } />
+                    <Route path="/admin/manage-user" element={
+                        <Protected needLoggedIn={true}>
+                            <ManageUser />
+                        </Protected>
+                    } />
+                    <Route path="/logout" element={
+                        <Protected needLoggedIn={true}>
+                            <Logout />
+                        </Protected>
+                    } />
+                    <Route path='/change-password' element={
+                        <Protected needLoggedIn={true}>
+                            <ChangePassword />
+                        </Protected>
+                    } />
+                    <Route path='/saved-routes' element={
+                        <Protected needLoggedIn={true}>
+                            <ViewFavouriteRoutes />
+                        </Protected>
+                    } />
+                    <Route path="/admin/manage-station" element={
+                        <Protected needLoggedIn={true}>
+                            <ManageStation />
+                        </Protected>
+                    } />
+                </Routes>
+            }
             <Footer />
         </Router>
     );
