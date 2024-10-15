@@ -17,21 +17,23 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import {useDispatch,useSelector} from "react-redux";
-import { putForgotPasswordUpdateAction, putUserUpdatePassword } from '../../redux/actions/userActions';
+import { putUserUpdatePassword } from '../../redux/actions/userActions';
 import { useNavigate } from 'react-router-dom';
 
 export default function ChangePassword() {
+    const [showOldPassword, setShowOldPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const toast= useToast();
-    const {loading,email,isUpdated,error} = useSelector(state=> state.IsUpdatedUser)
+    const {loading,isUpdated,error} = useSelector(state=> state.IsUpdatedUser)
     const handleSubmit = () => {
-        if (!newPassword || !confirmPassword) {
+        if (!oldPassword || !newPassword || !confirmPassword) {
             toast({
                 title: 'Error',
                 description: 'All fields are required.',
@@ -64,8 +66,8 @@ export default function ChangePassword() {
             return;
         }
 
-        dispatch(putForgotPasswordUpdateAction({
-            email:email,
+        dispatch(putUserUpdatePassword({
+            oldPassword:oldPassword,
             newPassword:newPassword
         }));
 
@@ -79,7 +81,7 @@ export default function ChangePassword() {
                 duration: 5000,
                 isClosable: true,
             });
-            navigate("/login");
+            navigate("/home");
         }
         if(error) {
             toast({
@@ -110,10 +112,30 @@ export default function ChangePassword() {
                     Change Password
                 </Heading>
                 <Heading textAlign={'center'} lineHeight={1.1} fontSize={{ base: '0.5xl', md: 'xl' }}>
-                    Email: {email}
+                    Email: {/* Add email here */}
                 </Heading>
 
                 {error && <Text color="red.500" fontSize="sm">{error}</Text>}
+
+                {/* Old Password Field */}
+                <FormControl>
+                    <FormLabel>Enter Old Password</FormLabel>
+                    <InputGroup>
+                        <Input
+                            type={showOldPassword ? "text" : "password"}
+                            value={oldPassword}
+                            onChange={(e) => setOldPassword(e.target.value)}
+                        />
+                        <InputRightElement>
+                            <IconButton
+                                icon={showOldPassword ? <ViewIcon /> : <ViewOffIcon />}
+                                onClick={() => setShowOldPassword(!showOldPassword)}
+                                variant="ghost"
+                            />
+                        </InputRightElement>
+                    </InputGroup>
+                    <Link fontSize={'small'} color={'blue'} href='/forgot-password'>Forgot password?</Link>
+                </FormControl>
 
                 {/* New Password Field */}
                 <FormControl>
@@ -156,7 +178,6 @@ export default function ChangePassword() {
                 {/* Submit Button */}
                 <Stack spacing={6}>
                     <Button
-                    isLoading={loading}
                         bg={'blue.400'}
                         color={'white'}
                         onClick={handleSubmit}

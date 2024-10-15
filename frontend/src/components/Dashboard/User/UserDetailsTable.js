@@ -83,13 +83,9 @@ export function UserDetailsTable({user}) {
 	const dispatch = useDispatch();
 	const toast = useToast();
 	const navigate = useNavigate();
-	const handleNewInputSubmit =  () => {
-		
-		dispatch(putUserUpdate({
-			...userData,
-			nearestMetroStation:user.nearestMetroStation._id,
-			nearestRailStation:user.nearestRailStation._id
-		}));
+	const handleNewInputSubmit =  (e) => {
+		e.preventDefault();
+		dispatch(putUserUpdate(userData));
 	};
 	
 	useEffect(()=>{
@@ -101,7 +97,6 @@ export function UserDetailsTable({user}) {
                 duration: 3000,
                 isClosable: true,
             })
-			dispatch(clearUpdation());
 			navigate("/profile");
 		}
 		if(error) {
@@ -121,10 +116,21 @@ export function UserDetailsTable({user}) {
 			<Table variant>
 				<TableCaption>
 					<Button
-						isLoading={loading}
 						width={'100%'}
 						bg={'blue.400'}
-						onClick={handleNewInputSubmit}
+						onClick={()=>{
+							setUserData({
+								...userData,
+								nearestMetroStation:user.nearestMetroStation._id,
+								nearestRailStation:user.nearestRailStation._id
+							})
+							handleNewInputSubmit()
+							setUserData({
+								...userData,
+								nearestMetroStation:user.nearestMetroStation.station_name,
+								nearestRailStation:user.nearestRailStation.station_name
+							})
+						}}
 						color={'white'}
 						_hover={{
 							bg: 'blue.500',

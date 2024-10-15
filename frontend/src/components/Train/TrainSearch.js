@@ -10,7 +10,7 @@ import {
   } from "@chakra-ui/react";
   import { useEffect, useState } from "react";
   import { useDispatch, useSelector } from "react-redux";
-  import { getLRUtrains, getTrainStatus, setLRUtrains } from "../../redux/actions/trainActions";
+  import { getTrainStatus, setLRUtrains } from "../../redux/actions/trainActions";
   import { useNavigate } from "react-router-dom";
   import TrainInfoCard from "./TrainInfoCard.js";
   import trainFile from '../../assets/trainNoList.txt'
@@ -58,9 +58,7 @@ import {
         });
       }
     }, [error]);
-    useEffect(()=>{
-      dispatch(getLRUtrains());
-    },[])
+  
     const handleSearch = () => {
       setOpenTrainNumbers(false);
       dispatch(getTrainStatus(trainNo.slice(0,5)));

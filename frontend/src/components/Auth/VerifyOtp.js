@@ -106,7 +106,6 @@ export default function VerifyOtp() {
                 </FormControl>
                 <Stack spacing={6}>
                     <Button
-                    isLoading={loading}
                         bg={'blue.400'}
                         color={'white'}
                         onClick={handleSubmit}

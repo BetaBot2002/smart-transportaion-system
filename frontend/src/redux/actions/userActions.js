@@ -296,32 +296,6 @@ export const putUserUpdatePassword = (userPasswordUpdateCredentials) => async (d
         })
     }
 }
-export const putForgotPasswordUpdateAction = (userPasswordUpdateCredentials) => async (dispatch) => {
-    try {
-        dispatch({
-            type: USER_UPDATE_REQUEST
-        })
-        const config = {
-            headers: {
-                "Content-type": "application/json",
-            },
-        };
-        const link = userBackendUrl + "/reset-password";
-        const data = (await axios.put(link, userPasswordUpdateCredentials, config)).data;
-        if (!data.success) {
-            throw new CustomError(data.message);
-        }
-
-        dispatch({
-            type: USER_UPDATE_SUCCESS,
-        })
-    } catch (err) {
-        dispatch({
-            type: USER_UPDATE_FAILED,
-            payload: err.response.data.message
-        })
-    }
-}
 export const contactUsAction = (body)=>async (dispatch)=> {
     try {
         dispatch({
