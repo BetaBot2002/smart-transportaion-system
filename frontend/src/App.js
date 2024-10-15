@@ -23,16 +23,18 @@ import GetShortestPath from './components/Train/GetShortestPath.js';
 import { Alert, AlertIcon, Box, Spinner } from '@chakra-ui/react';
 import PageNotFound from './pages/PageNotFound.js';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import CompleteRegistration from './components/Auth/CompleteRegistration.js';
 import Protected from './utils/protectedRoutes.js';
 
 
 function App() {
     const dispatch = useDispatch();
     const refreshToken = localStorage.getItem("refreshToken");
+
+    const { loading: loading1, error: err2, data: data1 = [] } = useSelector(state => state.GetAllStation);
     useEffect(() => {
         if (refreshToken) {
             dispatch(getProfileAction());
-            dispatch(getLRUtrains());
         }
         dispatch(getAllStations());
     }, [])
@@ -51,10 +53,11 @@ function App() {
         <Router>
             <Alert status='info'>
                 <AlertIcon />
-                Website is under construction. If you find any error fill contact us form!
+                For the first you need to wait for 60 seconds since we have deployed backend free.
+                If ther is any error please reach out us via contact us form in home page
             </Alert>
             <Navbar />
-            {loading1 || loading2 ? (
+            {loading1 ? (
                 <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
                     <Spinner size="xl" />
                 </Box>

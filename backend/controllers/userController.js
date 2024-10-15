@@ -290,7 +290,7 @@ const verifyOTP = async (req, res, next) => {
     } catch (err) {
         res.status(400).json({
             success: false,
-            message: e.message
+            message: err.message
         })
     }
 
@@ -326,7 +326,7 @@ const adminGetUser = async (req, res, next) => {
             user,
         });
     } catch (e) {
-        res.status(400).json({
+        res.status(404).json({
             success: false,
             message: e.message,
         });

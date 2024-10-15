@@ -33,7 +33,6 @@ const userSchema = new Schema({
   },
   otp:{
     type:String,
-    default:""
   },
   city: {
     type: String,
