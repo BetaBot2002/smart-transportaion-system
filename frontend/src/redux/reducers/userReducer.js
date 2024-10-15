@@ -82,17 +82,20 @@ export const isUpdatedUserReducer = (state = initialUpdateState, action) => {
 			return {
 				...initialUpdateState,
 				isForgotPassword:true,
+				loading:false,
 				email:action.payload
 			}
 		case USER_VERIFY_OTP_SUCCESS:
 			return {
 				...initialUpdateState,
+				loading:false,
 				isotpVerified:true,
 				email:action.payload
 			}
 		case USER_UPDATE_SUCCESS:
 			return{
-				...initialUpdateState,
+				...state,
+				loading:false,
 				isUpdated:true
 			}
 		case CONTACT_US_SUCCESS:
@@ -106,7 +109,8 @@ export const isUpdatedUserReducer = (state = initialUpdateState, action) => {
 		case USER_UPDATE_FAILED:
 		case CONTACT_US_FAILED:
 			return {
-				...initialUpdateState,
+				...state,
+				loading:false,
 				error:action.payload
 			}
 		case CLEARUPDATION:

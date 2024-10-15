@@ -25,16 +25,30 @@ export default function LoginPage() {
 
 
 	useEffect(() => {
-		if (isAuthenticated) {
+		if (isAuthenticated && user) {
 			dispatch(getLRUtrains());
-			navigate('/home');
-			toast({
-				title: 'Success',
-				description: "Logged in successfully",
-				status: 'success',
-				duration: 3000,
-				isClosable: true
-			})
+			if(user.city) {
+				navigate('/home');
+				toast({
+					title: 'Success',
+					description: "Logged in successfully",
+					status: 'success',
+					duration: 3000,
+					isClosable: true
+				})
+			}
+			else {
+				navigate('/complete-profile');
+				toast({
+					title: 'Success',
+					description: "Google Login successful",
+					status: 'success',
+					duration: 3000,
+					isClosable: true
+				})
+			}
+
+			
 		}
 		if (error) {
 			toast({
@@ -119,9 +133,7 @@ export default function LoginPage() {
 			<Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
 				<Stack align={'center'}>
 					<Heading fontSize={'4xl'}>Sign in to your account</Heading>
-					<Text fontSize={'lg'} color={'gray.600'}>
-						enjoy all our cool features
-					</Text>
+					
 				</Stack>
 				<Button
 					leftIcon={<Icon as={FcGoogle} boxSize="25px" />}
