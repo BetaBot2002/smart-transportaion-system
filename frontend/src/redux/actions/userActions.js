@@ -29,7 +29,7 @@ import {
     GOOGLE_LOGIN_FAILED
 } from "../consents/userConsents";
 import CustomError from "../../customError.js";
-import { setAccessToken, setRefreshToken } from "../../utils/jwt.helper.js";
+import { getAccessToken, getRefreshToken, setAccessToken, setRefreshToken } from "../../utils/jwt.helper.js";
 
 export const userBackendUrl = "http://localhost:5000/user"
 
@@ -37,6 +37,139 @@ export const setToken = (accessToken, refreshToken) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
 }
+export const registerUserAction = (registrationCredentials) => async (dispatch) => {
+    try {
+        const link = userBackendUrl + "/register";
+        dispatch({
+            type: USER_REGISTER_REQUEST,
+        });
+        const config = { headers: { "Content-type": "application/json" } };
+        const data = (await axios.post(link, registrationCredentials, config)).data;
+        if (!data.success) {
+            throw new CustomError(data.message);
+        }
+        dispatch({
+            type: USER_REGISTER_SUCCESS,
+            payload: data.user,
+        });
+        setToken(data.accessToken, data.refreshToken);
+    } catch (err) {
+        dispatch({
+            type: USER_REGISTER_FAILED,
+            payload: err.response.data.message,
+        });
+    }
+};
+
+export const loginUserAction = (loginCredentials) => async (dispatch) => {
+    try {
+        const link = userBackendUrl + "/login";
+        dispatch({
+            type: USER_LOGIN_REQUEST,
+        });
+        const config = { headers: { "Content-type": "application/json" } };
+        const data = (await axios.post(link, loginCredentials, config)).data;
+        if (!data.success) {
+            throw new CustomError(data.message);
+        }
+        dispatch({
+            type: USER_LOGIN_SUCCESS,
+            payload: data.user,
+        });
+        setToken(data.accessToken, data.refreshToken);
+    } catch (err) {
+        dispatch({
+            type: USER_LOGIN_FAILED,
+            payload: err.response.data.message,
+        });
+    }
+};
+
+export const verifyOTPAction = (verifyOTPCredentials) => async (dispatch) => {
+    try {
+        const link = userBackendUrl + "/verify-otp";
+        dispatch({
+            type: USER_VERIFY_OTP_REQUEST,
+        });
+        const config = { headers: { "Content-type": "application/json" } };
+        const data = (await axios.post(link, verifyOTPCredentials, config)).data;
+        if (!data.success) {
+            throw new CustomError(data.message);
+        }
+        dispatch({
+            type: USER_VERIFY_OTP_SUCCESS,
+            payload: data.email,
+        });
+        setToken(data.accessToken, data.refreshToken);
+    } catch (err) {
+        dispatch({
+            type: USER_VERIFY_OTP_FAILED,
+            payload: err.response.data.message,
+        });
+    }
+};
+
+export const putUserUpdate = (userUpdateCredentials) => async (dispatch) => {
+    try {
+        dispatch({
+            type: USER_UPDATE_REQUEST,
+        });
+        const accessToken = await getAccessToken();
+        const config = {
+            headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+        const link = userBackendUrl + "/update/me";
+        const data = (await axios.put(link, userUpdateCredentials, config)).data;
+        if (!data.success) {
+            throw new CustomError(data.message);
+        }
+
+        dispatch({
+            type: USER_UPDATE_SUCCESS,
+            payload: data.user,
+        });
+        setToken(data.accessToken, data.refreshToken);
+    } catch (err) {
+        dispatch({
+            type: USER_UPDATE_FAILED,
+            payload: err.response.data.message,
+        });
+    }
+};
+
+export const putUserUpdatePassword = (userPasswordUpdateCredentials) => async (dispatch) => {
+    try {
+        dispatch({
+            type: USER_UPDATE_REQUEST,
+        });
+        const accessToken = await getAccessToken();
+        const config = {
+            headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+        const link = userBackendUrl + "/update/password";
+        const data = (await axios.put(link, userPasswordUpdateCredentials, config)).data;
+        if (!data.success) {
+            throw new CustomError(data.message);
+        }
+
+        dispatch({
+            type: USER_UPDATE_SUCCESS,
+        });
+        setToken(data.accessToken, data.refreshToken);
+    } catch (err) {
+        dispatch({
+            type: USER_UPDATE_FAILED,
+            payload: err.response.data,
+        });
+    }
+};
+
 
 export const googleLoginAction = (code) => async (dispatch) => {
     try {
@@ -60,62 +193,14 @@ export const googleLoginAction = (code) => async (dispatch) => {
 
     }
 };
-export const registerUserAction = (registrationCredentials) => async (dispatch) => {
-    try {
-        const link = userBackendUrl + "/register";
-        dispatch({
-            type: USER_REGISTER_REQUEST
-        })
-        const config = { headers: { "Content-type": "application/json" } };
-        const data = (await axios.post(link, registrationCredentials, config)).data;
-        if (!data.success) {
-            throw new CustomError(data.message);
-        }
-        dispatch({
-            type: USER_REGISTER_SUCCESS,
-            payload: data.user
-        })
-        setToken(data.accessToken, data.refreshToken);
 
-    } catch (err) {
-        dispatch({
-            type: USER_REGISTER_FAILED,
-            payload: err.response.data.message
-        })
-    }
-}
-
-export const loginUserAction = (loginCredentials) => async (dispatch) => {
-    try {
-        const link = userBackendUrl + "/login";
-        dispatch({
-            type: USER_LOGIN_REQUEST
-        })
-        const config = { headers: { "Content-type": "application/json" } };
-        const data = (await axios.post(link, loginCredentials, config)).data;
-        if (!data.success) {
-            throw new CustomError(data.message);
-        }
-        dispatch({
-            type: USER_LOGIN_SUCCESS,
-            payload: data.user
-        })
-        setToken(data.accessToken, data.refreshToken);
-    } catch (err) {
-        dispatch({
-            type: USER_LOGIN_FAILED,
-            payload: err.response.data.message
-        })
-        
-    }
-}
 export const logoutUserAction = () => async (dispatch) => {
     try {
         const link = userBackendUrl + "/logout";
         dispatch({
             type: USER_LOGOUT_REQUEST
         })
-        const {accessToken,refreshToken} = getToken();
+        const refreshToken = getRefreshToken();
         const config = { headers: {
             Authorization: `Bearer ${refreshToken}`,
         } };
@@ -123,8 +208,8 @@ export const logoutUserAction = () => async (dispatch) => {
         if (!data.success) {
             throw new CustomError(data.message);
         }
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
         dispatch({
             type: USER_LOGOUT_SUCCESS,
         })
@@ -158,28 +243,6 @@ export const forgotPasswordAction = (forgotPasswordCredentials) => async (dispat
         })
     }
 }
-export const verifyOTPAction = (verifyOTPCredentials) => async (dispatch)=> {
-    try {
-        const link = userBackendUrl + "/verify-otp";
-        dispatch({
-            type: USER_VERIFY_OTP_REQUEST
-        })
-        const config = { headers: { "Content-type": "application/json" } };
-        const data = (await axios.post(link, verifyOTPCredentials, config)).data;
-        if (!data.success) {
-            throw new CustomError(data.message);
-        }
-        dispatch({
-            type: USER_VERIFY_OTP_SUCCESS,
-            payload: data.email
-        })
-    } catch (err) {
-        dispatch({
-            type: USER_VERIFY_OTP_FAILED,
-            payload: err.response.data.message
-        })
-    }
-}
 export const resetPasswordAction = (resetPasswordCredentials) => async (dispatch) => {
     try {
         const link = userBackendUrl + "/reset-password";
@@ -207,7 +270,7 @@ export const getProfileAction = () => async (dispatch) => {
         dispatch({
             type: GET_USER_REQUEST
         })
-        const { accessToken, refreshToken } = getToken();
+        const accessToken = await getAccessToken();
         const config = {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -224,78 +287,23 @@ export const getProfileAction = () => async (dispatch) => {
             payload: data.user
         })
     } catch (err) {
-        dispatch({
-            type: GET_USER_FAILED,
-            payload: err.response.data.message
-        })
-    }
-}
-
-export const putUserUpdate = (userUpdateCredentials) => async (dispatch) => {
-    try {
-        dispatch({
-            type: USER_UPDATE_REQUEST
-        })
-        const { accessToken, refreshToken } = getToken();
-        const config = {
-            headers: {
-                "Content-type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-            },
-        };
-        const link = userBackendUrl + "/update/me";
-        const data = (await axios.put(link,userUpdateCredentials,config)).data;
-        if(!data.success) {
-            throw new CustomError(data.message);
-        }
+        console.log(err);
         
         dispatch({
-            type: USER_UPDATE_SUCCESS,
-            payload: data.user
-        })
-        setToken(data.accessToken,data.refreshToken)
-    } catch (err) {
-        dispatch({
-            type: USER_UPDATE_FAILED,
-            payload: err.response.data.message
+            type: GET_USER_FAILED,
+            payload: err.response.data
         })
     }
 }
-export const putUserUpdatePassword = (userPasswordUpdateCredentials) => async (dispatch) => {
-    try {
-        dispatch({
-            type: USER_UPDATE_REQUEST
-        })
-        const { accessToken } = getToken();
-        const config = {
-            headers: {
-                "Content-type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-            },
-        };
-        const link = userBackendUrl + "/update/password";
-        const data = (await axios.put(link, userPasswordUpdateCredentials, config)).data;
-        if (!data.success) {
-            throw new CustomError(data.message);
-        }
 
-        dispatch({
-            type: USER_UPDATE_SUCCESS,
-        })
-        setToken(data.accessToken, data.refreshToken);
-    } catch (err) {
-        dispatch({
-            type: USER_UPDATE_FAILED,
-            payload: err.response.data.message
-        })
-    }
-}
+
 export const contactUsAction = (body)=>async (dispatch)=> {
     try {
         dispatch({
             type: CONTACT_US_REQUEST
         })
-        const { accessToken } = getToken();
+        const accessToken = await getAccessToken();
+
         const config = {
             headers: {
                 "Content-type": "application/json",
