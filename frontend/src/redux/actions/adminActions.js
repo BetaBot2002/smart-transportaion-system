@@ -18,7 +18,7 @@ import {
   IS_DELETED_STATION_FAILED
 } from "../consents/adminConsents";
 import CustomError from "../../customError.js";
-import { getToken } from "./userActions.js";
+import { getAccessToken } from "../../utils/jwt.helper.js";
 
 const backendUrlUser = "http://localhost:5000/user";
 const backendUrlStation = "http://localhost:5000/station";
@@ -28,10 +28,9 @@ export const deleteUser = (id) => async (dispatch) => {
   try {
     dispatch({ type: IS_DELETED_USER_REQUEST });
     
-    const { accessToken } = getToken();
     const config = {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${await getAccessToken()}`,
       },
     };
 
@@ -56,10 +55,9 @@ export const getAllUsers = () => async (dispatch) => {
   try {
     dispatch({ type: GET_ALL_USER_REQUEST });
 
-    const { accessToken } = getToken();
     const config = {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${await getAccessToken()}`,
       },
     };
 
@@ -83,10 +81,9 @@ export const getSingleUser = (id) => async (dispatch) => {
   try {
     dispatch({ type: GET_ALL_USER_REQUEST });
 
-    const { accessToken } = getToken();
     const config = {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${await getAccessToken()}`,
       },
     };
 
@@ -111,11 +108,10 @@ export const updateRoleAdmin = (id) => async (dispatch) => {
   try {
     dispatch({ type: UPDATE_ROLE_REQUEST });
 
-    const { accessToken } = getToken();
     const config = {
       headers: {
         "Content-type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${await getAccessToken()}`,
       },
     };
 
@@ -142,11 +138,10 @@ export const createStation = (stations) => async (dispatch) => {
   try {
     dispatch({ type: IS_CREATED_STATION_REQUEST });
 
-    const { accessToken, refreshToken } = getToken();
     const config = {
       headers: {
         "Content-type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${await getAccessToken()}`,
       },
     };
 
@@ -167,11 +162,10 @@ export const deleteStation = (stationNames) => async (dispatch) => {
   try {
     dispatch({ type: IS_DELETED_STATION_REQUEST });
 
-    const { accessToken, refreshToken } = getToken();
     const config = {
       headers: {
         "Content-type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${await getAccessToken()}`,
       },
     };
 

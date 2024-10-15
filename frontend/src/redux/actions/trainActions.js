@@ -14,18 +14,18 @@ import {
     SET_LRU_TRAINS_FAILED
 } from "../consents/trainConsents.js";
 import CustomError from "../../customError.js";
-import { getToken,setToken, userBackendUrl } from "./userActions.js";
+import { userBackendUrl } from "./userActions.js";
+import { getAccessToken } from "../../utils/jwt.helper.js";
 
 export const stationBackendUrl = "http://localhost:5000/station";
 
 export const getShortestPath = (source, destination) => async (dispatch) => {
     try {
         dispatch({ type: GET_SHORTEST_PATH_REQUEST });
-        const { accessToken, refreshToken } = getToken();
         const config = {
             headers: {
                 "Content-type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${await getAccessToken()}`,
             },
         };
         const { data } = await axios.post(`${stationBackendUrl}/get-route`, { source, destination },config);
@@ -71,10 +71,9 @@ export const getAllStations = () => async (dispatch) => {
 export const getLRUtrains = () => async (dispatch) => {
     try {
         dispatch({ type: GET_LRU_TRAINS_REQUEST });
-        const {accessToken,refreshToken} = getToken();
         const config = {
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${await getAccessToken()}`,
             },
         };
         const { data } = await axios.get(`${userBackendUrl}/get-lru-trains`,config);
@@ -87,11 +86,10 @@ export const getLRUtrains = () => async (dispatch) => {
 export const setLRUtrains = (train) => async (dispatch) => {
     try {
         dispatch({ type: SET_LRU_TRAINS_REQUEST });
-        const {accessToken,refreshToken} = getToken();
         const config = {
             headers: {
                 "Content-type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${await getAccessToken()}`,
             },
         };
         const { data } = await axios.post(`${userBackendUrl}/set-lru-trains`,{train},config);

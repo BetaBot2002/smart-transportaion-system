@@ -24,7 +24,7 @@ import { Alert, AlertIcon, Box, Spinner } from '@chakra-ui/react';
 import PageNotFound from './pages/PageNotFound.js';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import CompleteRegistration from './components/Auth/CompleteRegistration.js';
-import ProtectedRoute from './protectedRoutes.js';
+import Protected from './utils/protectedRoutes.js';
 
 
 function App() {
@@ -37,8 +37,10 @@ function App() {
             dispatch(getProfileAction());
         }
         dispatch(getAllStations());
-
     }, [])
+    const { loading: loading1, error: err2, data: data1 = [] } = useSelector(state => state.GetAllStation);
+    const { loading: loading2, data: trains, error: err1 } = useSelector(state => state.GetSearchHistory);
+
     function GoogleLogin() {
         return (
             <GoogleOAuthProvider clientId="146756462672-ldk10gufg7c3v9jun37p6hme4he803ia.apps.googleusercontent.com">
@@ -62,26 +64,83 @@ function App() {
             ) :
                 <Routes>
                     <Route path='*' element={<PageNotFound />} />
-                    <Route path="/login" element={<GoogleLogin />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/complete-profile" element={<CompleteRegistration />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-                    <Route path="/verify-otp" element={<VerifyOtp />} />
-                    <Route path="/home" element={<HomePage />} />
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/routes" element={<RoutePage />} />
-                    <Route path="/get-shortest-path" element={<GetShortestPath />} />
-                    <Route path="/About Us" element={<AboutUs />} />
+                    <Route path="/login" element={
+                        <Protected needLoggedIn={false}>
+                            <GoogleLogin />
+                        </Protected>
+                    } />
+                    <Route path="/register" element={
+                        <Protected needLoggedIn={false}>
+                            <RegisterPage />
+                        </Protected>
+                    } />
+                    <Route path="/forgot-password" element={
+                        <Protected needLoggedIn={false}>
+                            <ForgotPasswordForm />
+                        </Protected>
+                    } />
+                    <Route path="/verify-otp" element={
+                        <Protected needLoggedIn={false}>
+                            <VerifyOtp />
+                        </Protected>
+                    } />
 
+                    <Route path="/home" element={
+                        <Protected needLoggedIn={false}>
+                            <HomePage />
+                        </Protected>
+                    } />
+                    <Route path="/" element={
+                        <Protected needLoggedIn={false}>
+                            <HomePage />
+                        </Protected>
+                    } />
 
-                    <Route path="/profile" element={<ProtectedRoute element={<UserProfile />} />} />
-                    <Route path="/admin/manage-user" element={<ProtectedRoute element={<ManageUser />} />} />
-                    <Route path="/logout" element={<ProtectedRoute element={<Logout />} />} />
-                    <Route path="/reset-password" element={<ProtectedRoute element={<ChangePassword />} />} />
-                    <Route path="/saved-routes" element={<ProtectedRoute element={<ViewFavouriteRoutes />} />} />
-                    <Route path="/admin/manage-station" element={<ProtectedRoute element={<ManageStation />} />} />
-
-
+                    <Route path="/routes" element={
+                        <Protected needLoggedIn={true}>
+                            <RoutePage />
+                        </Protected>
+                    } />
+                    <Route path="/get-shortest-path" element={
+                        <Protected needLoggedIn={true}>
+                            <GetShortestPath />
+                        </Protected>
+                    } />
+                    <Route path="/profile" element={
+                        <Protected needLoggedIn={true}>
+                            <UserProfile />
+                        </Protected>
+                    } />
+                    <Route path="/About Us" element={
+                        <Protected needLoggedIn={false}>
+                            <AboutUs />
+                        </Protected>
+                    } />
+                    <Route path="/admin/manage-user" element={
+                        <Protected needLoggedIn={true}>
+                            <ManageUser />
+                        </Protected>
+                    } />
+                    <Route path="/logout" element={
+                        <Protected needLoggedIn={true}>
+                            <Logout />
+                        </Protected>
+                    } />
+                    <Route path='/change-password' element={
+                        <Protected needLoggedIn={true}>
+                            <ChangePassword />
+                        </Protected>
+                    } />
+                    <Route path='/saved-routes' element={
+                        <Protected needLoggedIn={true}>
+                            <ViewFavouriteRoutes />
+                        </Protected>
+                    } />
+                    <Route path="/admin/manage-station" element={
+                        <Protected needLoggedIn={true}>
+                            <ManageStation />
+                        </Protected>
+                    } />
                 </Routes>
             }
             <Footer />
