@@ -1,6 +1,5 @@
 import {isExpired} from 'react-jwt'
 
-let accessToken=''
 const backendUrlUser = "http://localhost:5000/user";
 
 const setRefreshToken=(token)=>{
@@ -13,10 +12,11 @@ const getRefreshToken=()=>{
 }
 
 const setAccessToken=(token)=>{
-    accessToken=token
+    localStorage.setItem('access',token);
 }
 
 const getAccessToken=async ()=>{
+    const accessToken = localStorage.getItem('access');
     if(accessToken!=='' && !isExpired(accessToken)) return accessToken;
     const api_url=`${backendUrlUser}/refresh`
     try {
