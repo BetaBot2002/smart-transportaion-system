@@ -21,7 +21,6 @@ import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from "react-redux"
 import { logoutUserAction } from '../../redux/actions/userActions'
-import DeepImage from "../../assets/deep_photo.jpg";
 import { useEffect } from 'react'
 
 
@@ -51,13 +50,13 @@ const NavLink = ({ children, to, fontSize }) => (
 export default function Navbar() {
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const navigate = useNavigate()
-	const { isAuthenticated, isLoggedOut } = useSelector(state => state.GetUser);
+	const { isAuthenticated, isLoggedOut,user } = useSelector(state => state.GetUser);
 	const dispatch = useDispatch();
-	useEffect(()=>{
-		if(isLoggedOut) {
+	useEffect(() => {
+		if (isLoggedOut) {
 			window.location.reload();
 		}
-	},[isLoggedOut])
+	}, [isLoggedOut])
 	const handleLogout = () => {
 		dispatch(logoutUserAction());
 	}
@@ -112,12 +111,12 @@ export default function Navbar() {
 									variant={'link'}
 									cursor={'pointer'}
 									minW={0}>
-									<Avatar
-										size={'sm'}
-										src={
-											DeepImage
-										}
-									/>
+									{user.imageUrl ?
+										<Avatar
+											size={'sm'}
+											src={user.imageUrl}
+											cursor={'pointer'}
+										/> : <Avatar size="md"/>}
 								</MenuButton>
 								<MenuList>
 									<MenuItem onClick={() => navigate('/profile')}>Profile</MenuItem>
