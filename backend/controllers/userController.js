@@ -130,7 +130,7 @@ const logoutUser = async (req, res, next) => {
     } catch (e) {
         res.status(400).json({
             success: false,
-            message: "An error occurred",
+            message: e.message,
         });
     }
 };
