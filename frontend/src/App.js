@@ -29,9 +29,8 @@ import Protected from './utils/protectedRoutes.js';
 
 function App() {
     const dispatch = useDispatch();
-    const refreshToken = localStorage.getItem("refreshToken");
+    const refreshToken = localStorage.getItem("refresh");
 
-    const { loading: loading1, error: err2, data: data1 = [] } = useSelector(state => state.GetAllStation);
     useEffect(() => {
         if (refreshToken) {
             dispatch(getProfileAction());
@@ -39,7 +38,6 @@ function App() {
         dispatch(getAllStations());
     }, [])
     const { loading: loading1, error: err2, data: data1 = [] } = useSelector(state => state.GetAllStation);
-    const { loading: loading2, data: trains, error: err1 } = useSelector(state => state.GetSearchHistory);
 
     function GoogleLogin() {
         return (

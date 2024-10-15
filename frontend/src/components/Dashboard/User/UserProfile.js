@@ -19,8 +19,8 @@ export default function UserProfile() {
 
     const dispatch = useDispatch();
     const toast = useToast();
-    const {loading, isAuthenticated,isLoggedOut,user,error} = useSelector(state=>state.GetUser);
-    const isAdmin = user && user.role === 'admin' ? true:false;
+    const { loading, isAuthenticated, isLoggedOut, user, error } = useSelector(state => state.GetUser);
+    const isAdmin = user && user.role === 'admin' ? true : false;
     const navigate = useNavigate();
     const {
         isOpen: isOpenPersonalInformation,
@@ -41,13 +41,19 @@ export default function UserProfile() {
     }, [dispatch])
     const handleSubmitLogout = () => {
         dispatch(logoutUserAction());
+        navigate('/home');
     }
     return (
-        loading ? <Spinner textAlign={'center'} display={'flex'} alignItems={'center'} justifyContent={'center'} size={'xl'}/> : !user ? <h1>Something went wrong</h1> : <Box p={4} maxW="lg" mx="auto">
+        loading ? <Spinner textAlign={'center'} display={'flex'} alignItems={'center'} justifyContent={'center'} size={'xl'} /> : !user ? <h1>Something went wrong</h1> : <Box p={4} maxW="lg" mx="auto">
             <Stack spacing={6}>
                 {/* User Information */}
                 <Box textAlign="center">
-                    <Avatar size="xl" name={user.username} />
+                    {isAuthenticated && user.imageUrl ?
+                        <Avatar
+                            size={'xl'}
+                            src={user.imageUrl}
+                            cursor={'pointer'}
+                        /> : <Avatar size={'xl'} />}
                     <Heading as="h2" mt={4}>{user.username}</Heading>
                     <Text fontSize="lg" color="gray.600">{user.email}</Text>
                     <Text fontSize="sm" color="gray.500">{user.role}</Text>
@@ -125,7 +131,7 @@ export default function UserProfile() {
                             <Stack spacing={2} mt={2}>
                                 <Button
                                     as='a'
-                                    onClick={()=>{
+                                    onClick={() => {
                                         navigate('/admin/manage-user');
                                     }}
                                     colorScheme="teal"

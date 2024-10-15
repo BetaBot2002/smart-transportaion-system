@@ -4,10 +4,10 @@ import { getRefreshToken } from "./jwt.helper";
 
 const Protected=({children,needLoggedIn})=>{
     if(needLoggedIn){
-        if(!getRefreshToken()) return <Navigate to={`/registration`}/>
+        if(!getRefreshToken()) return <Navigate to={`/login`}/>
         return <>{children}</>
     }
-    if(getRefreshToken()) return <Navigate to={`/`}/>
+    
     return <>{children}</>
 }
 
