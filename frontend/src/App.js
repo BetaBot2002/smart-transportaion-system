@@ -23,8 +23,9 @@ import GetShortestPath from './components/Train/GetShortestPath.js';
 import { Alert, AlertIcon, Box, Spinner } from '@chakra-ui/react';
 import PageNotFound from './pages/PageNotFound.js';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import CompleteRegistration from './components/Auth/CompleteRegistration.js';
 import Protected from './utils/protectedRoutes.js';
+import { AlertNav } from './components/Common/AlertNav.js';
+import { VerifyEmail } from './components/Auth/verifyEmail.js';
 
 
 function App() {
@@ -49,11 +50,7 @@ function App() {
 
     return (
         <Router>
-            <Alert status='info'>
-                <AlertIcon />
-                For the first you need to wait for 60 seconds since we have deployed backend free.
-                If ther is any error please reach out us via contact us form in home page
-            </Alert>
+            <AlertNav/>
             <Navbar />
             {loading1 ? (
                 <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
@@ -79,7 +76,12 @@ function App() {
                     } />
                     <Route path="/verify-otp" element={
                         <Protected needLoggedIn={false}>
-                            <VerifyOtp />
+                            <VerifyOtp navigate_link={'/reset-password'} />
+                        </Protected>
+                    } />
+                    <Route path="/verify-email" element={
+                        <Protected needLoggedIn={true}>
+                            <VerifyEmail/>
                         </Protected>
                     } />
 
