@@ -113,7 +113,7 @@ export default function Navbar() {
 									minW={0}>
 									{user.imageUrl ?
 										<Avatar
-											size={'sm'}
+											size={'md'}
 											src={user.imageUrl}
 											cursor={'pointer'}
 										/> : <Avatar size="md"/>}

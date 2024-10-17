@@ -14,10 +14,11 @@ v1/
 13. in Profile there is saved route(view is ready just need to implement data from redux).
 
 
-sinchan - 1 2 8 10 12
-deep - 4 5 9 11
+sinchan - 2 8* 10* 12
+deep - 4* 9 11*
 
 
 v2/
 2. subscription model for recommendation
 3. AI powered Query search
+4. connectivity will increase accross all metro cities.

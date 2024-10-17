@@ -142,8 +142,8 @@ const getTrainRoute = async (req, res) => {
 }
 const getTrainInBetweenStations = async (req, res) => {
 	try {
-		const from = req.query.from_station;
-		const to = req.query.to_station;
+		const from = req.body.source;
+		const to = req.body.destination;
 		const trainBwtn = (await axios.get(`https://indian-rail-api.onrender.com/trains/betweenStations?from=${from}&to=${to}`)).data;
 		res.status(200).json({
 			trainBwtn
@@ -211,18 +211,15 @@ const getRoute = async (req, res) => {
 
 		const adjacencyList = Array.from({ length: stationNames.length }, () => []);
 
-		// Build the adjacency list
 		for (const [index, station] of stationNames.entries()) {
-			const stationDB = allStations[index]; // Using index directly
+			const stationDB = allStations[index]; 
 
-			// Push connected metro stations
 			if (stationDB.connected_metro_stations) {
 				stationDB.connected_metro_stations.forEach(st => {
 					adjacencyList[index].push([stationNames.indexOf(st[0]), parseFloat(parseFloat(st[1]).toFixed(2))]);
 				});
 			}
 
-			// Push connected railway stations
 			if (stationDB.connected_railway_stations) {
 				stationDB.connected_railway_stations.forEach(st => {
 					adjacencyList[index].push([stationNames.indexOf(st[0]), parseFloat(parseFloat(st[1]).toFixed(2))]);
@@ -246,6 +243,7 @@ const getRoute = async (req, res) => {
 		res.json({
 			success: true,
 			distancesAndPaths: resultArray.filter(station => station.index === destinationIndex)
+			//distancesAndPaths: resultArray
 		});
 
 	} catch (error) {

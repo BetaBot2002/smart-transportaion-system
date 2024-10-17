@@ -7,7 +7,6 @@ import {
 } from '../controllers/stationController.js';
 
 import { isAuthenticatedAccess, isAuthrorizeRoles } from '../middlewares/Authentication.js';
-import Station from '../models/stationModel.js';
 const router = express.Router();
 
 router.route('/admin/station-create').post(isAuthenticatedAccess, isAuthrorizeRoles, createStation);
@@ -19,7 +18,7 @@ router.route('/get-train-details').get(getTrainDetails);
 router.route('/get-train-routes').get(getTrainRoute);
 router.route('/get-station-database-details/:stationName').get(getDatabaseStationDetails);
 router.route('/get-all-stations').get(getAllStations);
-router.route('/get-train-between').get(getTrainInBetweenStations);
+router.route('/get-train-between').post(getTrainInBetweenStations);
 router.route('/get-list-of-trains/:date').get(getTrainList);
 
 // router.route("/temp").post(temp);
