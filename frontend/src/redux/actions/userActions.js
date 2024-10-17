@@ -100,7 +100,6 @@ export const verifyOTPAction = (verifyOTPCredentials) => async (dispatch) => {
             type: USER_VERIFY_OTP_SUCCESS,
             payload: data.email,
         });
-        setToken(data.accessToken, data.refreshToken);
     } catch (err) {
         dispatch({
             type: USER_VERIFY_OTP_FAILED,
