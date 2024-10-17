@@ -44,7 +44,11 @@ export default function UserProfile() {
         navigate('/home');
     }
     return (
-        loading ? <Spinner textAlign={'center'} display={'flex'} alignItems={'center'} justifyContent={'center'} size={'xl'} /> : !user ? <h1>Something went wrong</h1> : <Box p={4} maxW="lg" mx="auto">
+        loading || !user ? 
+        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                    <Spinner size="xl" />
+                </Box>
+         : <Box p={4} maxW="lg" mx="auto">
             <Stack spacing={6}>
                 {/* User Information */}
                 <Box textAlign="center">
