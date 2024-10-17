@@ -25,7 +25,8 @@ const googleLogin = async (req,res)=>{
             user = await User.create({
                 username:name,
                 email:email,
-                imageUrl:picture
+                imageUrl:picture,
+                isEmailVerified:true
             })
         }
         

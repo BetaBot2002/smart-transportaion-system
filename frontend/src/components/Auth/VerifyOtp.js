@@ -14,12 +14,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { verifyOTPAction } from '../../redux/actions/userActions'
 import { useNavigate } from 'react-router-dom'
 
-export default function VerifyOtp() {
+export default function VerifyOtp({navigate_link}) {
     const [OTP, setOTP] = useState("");
     const toast = useToast();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading,isotpVerified,email,error } = useSelector(state=>state.IsUpdatedUser)
+    const { isotpVerified,email,error } = useSelector(state=>state.IsUpdatedUser)
     const handleSubmit = () => {
         if(OTP.length==6) {
             dispatch(verifyOTPAction({
@@ -54,7 +54,7 @@ export default function VerifyOtp() {
                 duration:3000,
                 isClosable:true
             })
-            navigate('/reset-password');
+            navigate(navigate_link);
         }
     },[isotpVerified,error])
     return (
