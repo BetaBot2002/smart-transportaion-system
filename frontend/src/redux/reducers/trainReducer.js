@@ -24,7 +24,7 @@ export const getShortestPathReducer = (state = initialTrainState, action) => {
         case GET_SHORTEST_PATH_REQUEST:
             return { ...state, loading: true };
         case GET_SHORTEST_PATH_SUCCESS:
-            return { ...state, loading: false, data: action.payload };
+            return { ...state, loading: false, distance:action.payload.distance, route: action.payload.path };
         case GET_SHORTEST_PATH_FAILED:
             return { ...state, loading: false, error: action.payload };
         case CLEAR_GET_SHORTEST_PATH:

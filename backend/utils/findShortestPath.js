@@ -21,36 +21,31 @@ class PriorityQueue {
 
 const findShortestPath = async (sourceIndex, allStations,adjacencyList) => {
     try {
-        const mp = new Map();
+        let distanceArray = new Array(allStations.length).fill(100000);
+		distanceArray[sourceIndex]=0;
+        let parentArray = new Array(allStations.length).fill().map((_, index) => index);
+		
 		const pq = new PriorityQueue();
 
 		pq.push([0, sourceIndex]);
-		mp.set(sourceIndex, [0, [sourceIndex]]);
 
 		while (!pq.empty()) {
 			const [distance, stationIndex] = pq.pop();
 
 
-			adjacencyList[stationIndex]?.forEach(([nextIndex, nextDistance]) => {
+			adjacencyList[stationIndex].forEach(([nextIndex, nextDistance]) => {
 				if (allStations.at(nextIndex).isActive === true) {
-					const current = mp.get(stationIndex)[1];
-
-					// Update the path if we find a shorter distance
-					if (!mp.has(nextIndex) || distance + nextDistance < mp.get(nextIndex)[0]) {
-						mp.set(nextIndex, [distance + nextDistance, [...current, nextIndex]]);
+					
+					if (distance + nextDistance < distanceArray[nextIndex]) {
+						distanceArray[nextIndex] = distance + nextDistance;
+						parentArray[nextIndex]=stationIndex;
 						pq.push([distance + nextDistance, nextIndex]);
 					}
 				}
 			});
 		}
-        const resultArray = Array.from(mp.entries()).map(([index, [distance, path]]) => {
-			return {
-				index,
-				distance,
-				path: path.map(stationIndex => [allStations.at(stationIndex).station_name, allStations.at(stationIndex).line_color_code]) 
-			};
-		});
-        return resultArray;
+        
+        return {distanceArray,parentArray};
     } catch (err) {
         return err.message || "Error finding shortest path";
     }

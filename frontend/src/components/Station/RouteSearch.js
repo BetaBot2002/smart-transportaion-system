@@ -72,7 +72,7 @@ export default function StationSearch() {
                         type='text'
                         onChange={(e) => {
                             setSource(e.target.value)
-                            setFilteredSource(filterStations(e.target.value))
+                            setFilteredSource(filterStations(e.target.value).slice(0,10))
                             if(e.target.value.length!=0) setOpenSourceStations(true);
                             else setOpenSourceStations(false);
                         }}
@@ -120,7 +120,7 @@ export default function StationSearch() {
                         type='text'
                         onChange={(e) => {
                             setDestination(e.target.value);
-                            setFilteredDestination(filterStations(e.target.value));
+                            setFilteredDestination(filterStations(e.target.value).slice(0,10));
                             if(e.target.value.length!=0) setOpenDestinationStations(true);
                             else setOpenDestinationStations(false);
                             

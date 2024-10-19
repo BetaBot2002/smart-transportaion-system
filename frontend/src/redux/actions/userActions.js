@@ -290,7 +290,7 @@ export const getProfileAction = () => async (dispatch) => {
         
         dispatch({
             type: GET_USER_FAILED,
-            payload: err.response.data
+            payload: err.response.data.message
         })
     }
 }

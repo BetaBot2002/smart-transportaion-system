@@ -108,7 +108,7 @@ const updateStation = async (req, res) => {
 
 const getAllStations = async (req, res) => {
 	try {
-		const stations = await Station.find({isActive:true}, ['station_name', 'station_type']);
+		const stations = await Station.find({isActive:true}, ['station_name', 'station_type','line_color_code']);
 		res.status(200).json({
 			stations
 		});
@@ -205,9 +205,8 @@ const getTrainList = async (req, res) => {
 
 const getRoute = async (req, res) => {
 	try {
-		const allStations = await Station.find({});
-		const stations = await Station.find({}, ['station_name']);
-		const stationNames = stations.map(station => station.station_name);
+		const allStations = await Station.find({isActive:true});
+		const stationNames = allStations.map(station => station.station_name);
 
 		const adjacencyList = Array.from({ length: stationNames.length }, () => []);
 
@@ -238,12 +237,24 @@ const getRoute = async (req, res) => {
 			});
 		}
 
-		const resultArray = await findShortestPath(sourceIndex,allStations,adjacencyList);
-
+		const {distanceArray,parentArray} = await findShortestPath(sourceIndex,allStations,adjacencyList);
+		if(distanceArray[destinationIndex]===100000) {
+			throw new CustomError("Something went wrong, retry");
+		}
+		let resultArray = []
+		let index=destinationIndex;
+		resultArray.push(index)
+		while(parentArray[index] != index) {
+			
+			resultArray.push(parentArray[index]);
+			index = parentArray[index];
+		}
+		resultArray.reverse();
+		
 		res.json({
 			success: true,
-			distancesAndPaths: resultArray.filter(station => station.index === destinationIndex)
-			//distancesAndPaths: resultArray
+			distance: distanceArray[destinationIndex],
+			path: resultArray
 		});
 
 	} catch (error) {
