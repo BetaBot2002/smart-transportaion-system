@@ -77,8 +77,8 @@ export function UserDetailsTable({user}) {
 		email: user.email,
 		phoneNumber: user.phoneNumber,
 		city: user.city,
-		nearestMetroStation: user.nearestMetroStation.station_name,
-		nearestRailStation: user.nearestRailStation.station_name
+		nearestMetroStation: user.nearestMetroStation?.station_name,
+		nearestRailStation: user.nearestRailStation?.station_name
 	});
 	const dispatch = useDispatch();
 	const toast = useToast();
