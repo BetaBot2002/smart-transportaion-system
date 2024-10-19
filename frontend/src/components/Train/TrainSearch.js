@@ -76,7 +76,7 @@ export default function TrainSearch() {
 					onChange={(e) => {
 						setTrainNo(e.target.value);
 						const trains = filterTrainNumbers(e.target.value);
-						setFilteredTrainNumbers(trains);
+						setFilteredTrainNumbers(trains.slice(0,10));
 						setOpenTrainNumbers(e.target.value.length > 0);
 					}}
 					value={trainNo}

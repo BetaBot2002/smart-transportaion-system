@@ -8,7 +8,7 @@ export default function RoutePage() {
     <Box p={4} mt={10} maxW="xl" mx="auto">
       <Tabs size='md' align='center' variant='enclosed'>
         <TabList>
-          <Tab>Station Search</Tab>
+          <Tab>Route Search</Tab>
           <Tab>Train Search</Tab>
           <Tab>Search History</Tab>
         </TabList>
