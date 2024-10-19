@@ -10,16 +10,28 @@ import {
 	googleLogin
 } from "../controllers/userController.js";
 import { isAuthenticatedAccess, isAuthenticatedRefresh, isAuthrorizeRoles } from "../middlewares/Authentication.js";
+import { rateLimit } from 'express-rate-limit';
+
+const authLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000, 
+    max: 5, // Block after 5 failed attempts
+    message: {
+        success: false,
+        message: 'Too many failed login attempts. Please try again after 10 minutes.',
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 const router = express.Router();
 
-router.route("/register").post(registerUser);
-router.route("/login").post(loginUser);
+router.route("/register").post(authLimiter,registerUser);
+router.route("/login").post(authLimiter,loginUser);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/verify-otp").post(verifyOTP);
 router.route("/reset-password").put(resetPassword);
 
-router.get('/auth/google',googleLogin);
+router.get('/auth/google',authLimiter,googleLogin);
 
 router.route("/logout").get(isAuthenticatedRefresh, logoutUser);
 router.route("/update/me").put(isAuthenticatedAccess, updateUser);
