@@ -28,6 +28,22 @@ const googleLogin = async (req,res)=>{
                 imageUrl:picture,
                 isEmailVerified:true
             })
+            await sendEmail(
+                user.email,
+                "Welcome to Smart Transportation – Explore Our Best Features!",
+                'Thank you for registering on our platform! Enjoy real-time tracking, seamless connectivity, and an efficient user-friendly interface.',
+                `
+            <h1>Welcome to Our Smart Transportation System!</h1>
+            <p>We are thrilled to have you on board. Here are the top 3 features you will love:</p>
+            <ul>
+                <li>Real-Time Tracking</li>
+                <li>Seamless Connectivity</li>
+                <li>User-Friendly Interface</li>
+            </ul>
+            <p>If you need help, please visit the <a href="">Contact Us</a> section on our website.</p>
+            <p>This is auto-generated email. Please do not reply to this email.</p>
+        `
+            );
         }
         
         const {accessToken,refreshToken}=signUser(user.username);
