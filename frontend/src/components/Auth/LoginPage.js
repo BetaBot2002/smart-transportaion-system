@@ -27,7 +27,11 @@ export default function LoginPage() {
 	useEffect(() => {
 		if (isAuthenticated) {
 			dispatch(getLRUtrains());
-			navigate('/home');
+			if(user && user.city) {
+				navigate('/home');
+			}else {
+				navigate('/complete-profile')
+			}
 			toast({
 				title: 'Success',
 				description: "Logged in successfully",

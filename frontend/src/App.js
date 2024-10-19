@@ -26,6 +26,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import Protected from './utils/protectedRoutes.js';
 import { AlertNav } from './components/Common/AlertNav.js';
 import { VerifyEmail } from './components/Auth/verifyEmail.js';
+import CompleteRegistration from './components/Auth/CompleteRegistration.js';
 
 
 function App() {
@@ -67,6 +68,11 @@ function App() {
                     <Route path="/register" element={
                         <Protected needLoggedIn={false}>
                             <RegisterPage />
+                        </Protected>
+                    } />
+                    <Route path="/complete-profile" element={
+                        <Protected needLoggedIn={true}>
+                            <CompleteRegistration/>
                         </Protected>
                     } />
                     <Route path="/forgot-password" element={
