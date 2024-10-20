@@ -119,7 +119,7 @@ const getAllStations = async (req, res) => {
 const getTrainDetails = async (req, res) => {
 	try {
 		const trainNo = req.query.trainNo;
-		const train = (await axios.get(`https://indian-rail-api.onrender.com/trains/getTrain?trainNo=${trainNo}`)).data;
+		const train = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/getTrain?trainNo=${trainNo}`)).data;
 		res.status(200).json({
 			success: true,
 			train
@@ -131,7 +131,7 @@ const getTrainDetails = async (req, res) => {
 const getTrainRoute = async (req, res) => {
 	try {
 		const trainNo = req.query.trainNo;
-		const train = (await axios.get(`https://indian-rail-api.onrender.com/trains/getRoute?trainNo=${trainNo}`)).data.data;
+		const train = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/getRoute?trainNo=${trainNo}`)).data.data;
 		res.status(200).json({
 			success: true,
 			train
@@ -144,7 +144,7 @@ const getTrainInBetweenStations = async (req, res) => {
 	try {
 		const from = req.body.source;
 		const to = req.body.destination;
-		const trainBwtn = (await axios.get(`https://indian-rail-api.onrender.com/trains/betweenStations?from=${from}&to=${to}`)).data;
+		const trainBwtn = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/betweenStations?from=${from}&to=${to}`)).data;
 		res.status(200).json({
 			trainBwtn
 		})
@@ -195,7 +195,7 @@ const getTrainList = async (req, res) => {
 	try {
 		const { from, to } = req.query;
 		const { date } = req.params;
-		const trainList = (await axios.get(`https://indian-rail-api.onrender.com/trains/getTrainOn?from=${from}&to=${to}&date=${date}`)).data;
+		const trainList = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/getTrainOn?from=${from}&to=${to}&date=${date}`)).data;
 		res.status(200).json({ success: true, trainList, message: "train list successfully" });
 
 	} catch (err) {

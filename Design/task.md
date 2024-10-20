@@ -4,15 +4,17 @@ v1/
 3. dockerize 
 6. route recommend(problem that i have given to public)
 7. route wise train or metro recommend.(also button to add the route in favourite route )
-8. Live tracking of train. (we have api )
+8. Live tracking of train (view with stepper in chakra) (we have api ) & add button to the card of train in train search tab
 9. reddis(route,train details)
 11. email content need to be updated (registrationn, contact us, otp, verifyMail)
 12. Our Logo 
 13. implement Profile/account actions there is saved route (view is ready just need to implement data from redux).
-
+14. reset-password page after forgot password->email->otp->reset password
+15. validate updation while update 
+16. train search (number is done, need to do by name(trie data stucture))
 
 sinchan - 2 8* 13 
-deep - 9 11* 6
+deep - 9 11* 6 14
 
 
 v2/
