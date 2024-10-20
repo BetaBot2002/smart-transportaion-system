@@ -45,6 +45,11 @@ export const VerifyEmail = () => {
             otp
         }))
     }
+    useEffect(()=>{
+        if(user) {
+            setEmail(user.email);
+        }
+    },[user])
     useEffect(() => {
         if (isForgotPassword) {
             toast({
