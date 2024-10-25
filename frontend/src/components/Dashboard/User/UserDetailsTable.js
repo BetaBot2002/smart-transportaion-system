@@ -85,6 +85,16 @@ export function UserDetailsTable({user}) {
 	const navigate = useNavigate();
 	const handleNewInputSubmit =  (e) => {
 		e.preventDefault();
+		if(userData.phoneNumber.length != 10) {
+            toast({
+                title: 'invalid',
+                description: "Enter valid phone Number",
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            })
+            return;
+        }
 		dispatch(putUserUpdate(userData));
 	};
 	

@@ -68,6 +68,16 @@ export default function RegisterPage() {
     };
     const toast = useToast();
     const handleSubmit = () => {
+        if(formData.phoneNumber.length != 10) {
+            toast({
+                title: 'invalid',
+                description: "Enter valid phone Number",
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            })
+            return;
+        }
         for (const key in formData) {
             if (formData[key] === '') {
                 toast({
