@@ -80,7 +80,7 @@ export const getLRUtrains = () => async (dispatch) => {
         dispatch({ type: GET_LRU_TRAINS_SUCCESS, payload: data.trains });
 
     } catch (error) {
-        dispatch({ type: GET_LRU_TRAINS_FAILED, payload: error.response.data });
+        dispatch({ type: GET_LRU_TRAINS_FAILED, payload: error.response.data.message });
     }
 };
 export const setLRUtrains = (train) => async (dispatch) => {
@@ -96,7 +96,7 @@ export const setLRUtrains = (train) => async (dispatch) => {
         dispatch({ type: SET_LRU_TRAINS_SUCCESS, payload: data.trains });
 
     } catch (error) {
-        dispatch({ type: SET_LRU_TRAINS_FAILED, payload: error.response.data });
+        dispatch({ type: SET_LRU_TRAINS_FAILED, payload: error.response.data.message });
     }
 };
 

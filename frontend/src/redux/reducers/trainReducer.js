@@ -66,10 +66,10 @@ export const getSearchHistoryReducer = (state = initialTrainState, action) => {
             return { ...state, loading: true };
         case GET_LRU_TRAINS_SUCCESS:
         case SET_LRU_TRAINS_SUCCESS:
-            return { ...state, loading: false, data: action.payload };
+            return { ...initialTrainState, loading: false, data: action.payload };
         case GET_LRU_TRAINS_FAILED:
         case SET_LRU_TRAINS_FAILED:
-            return { ...state, loading: false, error: action.payload };
+            return { ...initialTrainState, loading: false, error: action.payload };
         default:
             return state;
     }
@@ -80,9 +80,9 @@ export const getTrainStatusReducer = (state = initialTrainState, action) => {
         case GET_TRAIN_STATUS_REQUEST:
             return { ...state, loading: true };
         case GET_TRAIN_STATUS_SUCCESS:
-            return { ...state, loading: false, data: action.payload };
+            return { ...initialTrainState, loading: false,error:null, data: action.payload };
         case GET_TRAIN_STATUS_FAILED:
-            return { ...state, loading: false, error: action.payload };
+            return { ...initialTrainState, loading: false, data:null, error: action.payload };
         default:
             return state;
     }

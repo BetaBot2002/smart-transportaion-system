@@ -249,14 +249,14 @@ export const resetPasswordAction = (resetPasswordCredentials) => async (dispatch
             type: USER_UPDATE_REQUEST
         })
         const config = { headers: { "Content-type": "application/json" } };
-        const data = (await axios.post(link, resetPasswordCredentials, config)).data;
+        const data = (await axios.put(link, resetPasswordCredentials, config)).data;
         if (!data.success) {
             throw new CustomError(data.message);
         }
-        setToken(data.accessToken, data.refreshToken);
         dispatch({
             type: USER_UPDATE_SUCCESS,
         })
+        setToken(data.accessToken, data.refreshToken);
     } catch (err) {
         dispatch({
             type: USER_UPDATE_FAILED,
