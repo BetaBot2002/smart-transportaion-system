@@ -1,5 +1,4 @@
 # Logs
-trainNoList.txt
 logs
 *.log
 npm-debug.log*
