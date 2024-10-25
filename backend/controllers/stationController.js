@@ -1,8 +1,9 @@
 import Station from "../models/stationModel.js";
-import findShortestPath, { PriorityQueue } from "../utils/findShortestPath.js";
+import { constructAdjacencyList, constructAnswer, findShortestPath, PriorityQueue } from "../utils/findShortestPath.js";
 import CustomError from "../utils/customError.js";
 import axios from "axios";
-
+import { redisClient } from "../server.js"
+import { zip } from "../utils/helper.js";
 const createStation = async (req, res) => {
 	try {
 		const requestStations = req.body;
@@ -51,7 +52,10 @@ const createStation = async (req, res) => {
 			res.status(200).json({ successes });
 		}
 	} catch (err) {
-		res.status(500).json({ message: err.message });
+		res.status(400).json({
+			success: false,
+			message: err.message
+		});
 	}
 };
 
@@ -102,30 +106,62 @@ const updateStation = async (req, res) => {
 
 		res.status(200).json({ message: "Station updated successfully", station });
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		res.status(400).json({
+			success: false,
+			message: err.message
+		});
 	}
 };
 
 const getAllStations = async (req, res) => {
 	try {
-		const stations = await Station.find({isActive:true}, ['station_name', 'station_type','line_color_code']);
+		const cachedStations = await redisClient.json.get("allStations", "$");
+		if (cachedStations) {
+			return res.status(200).json({
+				stations: cachedStations
+			});
+		}
+		const stations = await Station.find({ isActive: true }, ['station_name', 'station_type', 'line_color_code']);
+
+		const saveInCache = redisClient.json.set(`allStations`, "$", stations);
+		if (saveInCache == "ok") {
+			throw new CustomError("Redis cached problem");
+		}
 		res.status(200).json({
 			stations
 		});
 	} catch (err) {
-		return res.status(500).json(err.message);
+		res.status(400).json({
+			success: false,
+			message: err.message
+		});
 	}
 }
 const getTrainDetails = async (req, res) => {
 	try {
 		const trainNo = req.query.trainNo;
+		let cachedTrain = await redisClient.get(`trains:${trainNo}`)
+		if (cachedTrain !== null) {
+			return res.status(200).json({
+				success: true,
+				train: JSON.parse(cachedTrain),
+			});
+		}
 		const train = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/getTrain?trainNo=${trainNo}`)).data;
+		if (!train.success) {
+			throw new CustomError(train.data);
+		}
+		await redisClient.set(`trains:${trainNo}`, JSON.stringify(train));
+		await redisClient.expire(`trains:${trainNo}`, 60 * 15);
 		res.status(200).json({
 			success: true,
 			train
 		});
 	} catch (err) {
-		res.status(500).json(err.message);
+		res.status(400).json({
+			success: false,
+			message: err.message
+		});
 	}
 }
 const getTrainRoute = async (req, res) => {
@@ -137,7 +173,10 @@ const getTrainRoute = async (req, res) => {
 			train
 		});
 	} catch (err) {
-		res.status(500).json(err.message);
+		res.status(400).json({
+			success: false,
+			message: err.message
+		});
 	}
 }
 const getTrainInBetweenStations = async (req, res) => {
@@ -149,13 +188,15 @@ const getTrainInBetweenStations = async (req, res) => {
 			trainBwtn
 		})
 	} catch (err) {
-		res.status(500).json(err.message);
+		res.status(400).json({
+			success: false,
+			message: err.message
+		});
 	}
 }
 const getDatabaseStationDetails = async (req, res) => {
 	try {
 		const stationName = req.params.stationName;
-
 		const station = await Station.findOne({ station_name: stationName });
 
 		if (!station) {
@@ -167,7 +208,7 @@ const getDatabaseStationDetails = async (req, res) => {
 		});
 	} catch (err) {
 		res.status(400).json({
-			success: true,
+			success: false,
 			message: err.message
 		});
 	}
@@ -205,27 +246,8 @@ const getTrainList = async (req, res) => {
 
 const getRoute = async (req, res) => {
 	try {
-		const allStations = await Station.find({isActive:true});
+		const allStations = await Station.find({ isActive: true });
 		const stationNames = allStations.map(station => station.station_name);
-
-		const adjacencyList = Array.from({ length: stationNames.length }, () => []);
-
-		for (const [index, station] of stationNames.entries()) {
-			const stationDB = allStations[index]; 
-
-			if (stationDB.connected_metro_stations) {
-				stationDB.connected_metro_stations.forEach(st => {
-					adjacencyList[index].push([stationNames.indexOf(st[0]), parseFloat(parseFloat(st[1]).toFixed(2))]);
-				});
-			}
-
-			if (stationDB.connected_railway_stations) {
-				stationDB.connected_railway_stations.forEach(st => {
-					adjacencyList[index].push([stationNames.indexOf(st[0]), parseFloat(parseFloat(st[1]).toFixed(2))]);
-				});
-			}
-		}
-
 		const { source, destination } = req.body;
 		const sourceIndex = stationNames.indexOf(source);
 		const destinationIndex = stationNames.indexOf(destination);
@@ -236,31 +258,41 @@ const getRoute = async (req, res) => {
 				message: "Station not found"
 			});
 		}
+		const cachedPath = await redisClient.get(`source:${sourceIndex}`);
+		if (cachedPath !== null) {
+			const {distanceArray,parentArray} = JSON.parse(cachedPath);
+			let resultArray = constructAnswer(parentArray, destinationIndex);
+			res.json({
+				success: true,
+				distance: parseFloat(parseFloat(distanceArray[destinationIndex]).toFixed(2)),
+				path: resultArray
+			});
+		}
+		const adjacencyList = constructAdjacencyList(allStations, stationNames);
 
-		const {distanceArray,parentArray} = await findShortestPath(sourceIndex,allStations,adjacencyList);
-		if(distanceArray[destinationIndex]===100000) {
+		const { distanceArray, parentArray } = await findShortestPath(sourceIndex, allStations, adjacencyList);
+		if (distanceArray[destinationIndex] === 100000) {
 			throw new CustomError("Something went wrong, retry");
 		}
-		let resultArray = []
-		let index=destinationIndex;
-		resultArray.push(index)
-		while(parentArray[index] != index) {
-			
-			resultArray.push(parentArray[index]);
-			index = parentArray[index];
+		await redisClient.set(`source:${sourceIndex}`, JSON.stringify({
+			distanceArray,
+			parentArray
+		}));
+		await redisClient.expire(`source:${sourceIndex}`, 60 * 60);
+		if (cachedPath === 0) {
+			throw new CustomError("Redis cache problem");
 		}
-		resultArray.reverse();
-		
+		let resultArray = constructAnswer(parentArray, destinationIndex);
 		res.json({
 			success: true,
-			distance: distanceArray[destinationIndex],
+			distance: parseFloat(parseFloat(distanceArray[destinationIndex]).toFixed(2)),
 			path: resultArray
 		});
 
 	} catch (error) {
 		res.json({
 			success: false,
-			error: error.message
+			message: error.message
 		});
 	}
 };
