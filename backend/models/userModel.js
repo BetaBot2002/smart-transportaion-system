@@ -17,7 +17,7 @@ const userSchema = new Schema({
 	phoneNumber: {
 		type: String,
 		unique: true,
-		validate: [phoneNumber => phoneNumber.length === 10, "Please enter valid phone number"]
+		validate: [phoneNumber => phoneNumber.length===0 || phoneNumber.length === 10, "Please enter valid phone number"]
 	},
 	isEmailVerified: {
 		type: Boolean,
