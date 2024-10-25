@@ -26,6 +26,7 @@
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.0",
     "react-icons": "^5.2.1",
+    "redis": "^4.7.0",
     "smart-transportaion-system": "file:",
     "xss-clean": "^0.1.4"
   }

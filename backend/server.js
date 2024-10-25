@@ -5,13 +5,15 @@ import express from 'express';
 import station from './routes/stationRoutes.js';
 import user from "./routes/userRoutes.js";
 import cors from 'cors';
-import connectDB from './database/database.js';
+import {connectMongoDB,connectRedisDB} from './database/database.js';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import xss from 'xss-clean';
 
 // Connect to the database
-connectDB();
+connectMongoDB();
+
+export const redisClient = connectRedisDB();
 
 const app = express();
 
@@ -23,7 +25,7 @@ app.use(cors());
 // Rate limiting middleware
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
-    limit: 200, // Limit each IP to 200 requests per window
+    limit: 500, // Limit each IP to 200 requests per window
     standardHeaders: true,
     legacyHeaders: false,
 });
