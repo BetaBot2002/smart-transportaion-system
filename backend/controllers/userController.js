@@ -1,5 +1,6 @@
 import blackListedToken from "../models/blackListedToken.js";
 import User from "../models/userModel.js";
+import { redisClient } from "../server.js";
 import CustomError from "../utils/customError.js";
 import { OauthClient } from "../utils/googleConfig.js";
 import { newAccessToken, signUser } from "../utils/jwt.helper.js";
@@ -13,6 +14,119 @@ export const sendToken = (res, user, accessToken, refreshToken) => {
         user
     });
 };
+
+const contactUs = async (req, res) => { 
+    try {
+        const {email, subject, message} = req.body;
+        const user = await User.findOne({email:email});
+        if(!user) {
+            throw new CustomError("Enter valid email id");
+        }
+        const username = req.username;
+        await sendEmail(process.env.ADMIN_EMAIL, subject, message);
+        const UserMailSubject = `Thank you ${username} for your Feedback`;
+        const UserMailMessage = `
+            <p>Dear ${username},</p>
+            <p>Thank you for providing your valuable feedback regarding our website. We appreciate your input and will review the matter you've raised: <strong>${message}</strong>.</p>
+            <p>We aim to continuously improve our services and your feedback helps us in this process.</p>
+            <p>For any further assistance, please visit the <a href="">Contact Us</a> section on our website.</p>
+            <p>Kind regards,</p>
+            <p>Smart Transportation Team</p>
+            <br/>
+            <p><strong>Note:</strong> This is an automated message. Please do not reply to this email.</p>
+        `;
+        await sendEmail(email, UserMailSubject, UserMailMessage);
+        res.status(200).json({
+            success: true,
+            message: "mail sent to the user"
+        });
+    } catch (err) {
+        res.status(400).json({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+const forgotPassword = async (req, res, next) => {
+    try {
+        const { email, phoneNo, username } = req.body;
+        let user;
+
+        if (email) user = await User.findOne({ email });
+        else if (phoneNo) user = await User.findOne({ phoneNumber: phoneNo });
+        else if (username) user = await User.findOne({ username });
+        else throw new CustomError("Enter email, phone number, or username");
+
+        if (!user) throw new CustomError("User does not exist");
+
+        const OTP = generateOTP();
+        const subject = 'Your One-Time Password (OTP)';
+        const message = `Your OTP for verification is ${OTP}.`;
+
+        const htmlContent = `
+            <h1>Verification Code</h1>
+            <p>Your OTP for verification is:</p>
+            <h2>${OTP}</h2>
+            <p>This code is valid for 10 minutes. Please do not share it with anyone.</p>
+            <p>If you did not request this OTP, please ignore this email or contact support.</p>
+            <br/>
+            <p>For further assistance, visit the <a href="">Contact Us</a> section on our website.</p>
+            <p><strong>Note:</strong> This is an automated message. Please do not reply to this email.</p>
+        `;
+        await sendEmail(user.email, subject, message, htmlContent);
+        user.otp = OTP;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            email: user.email,
+            message: "OTP sent to your email"
+        });
+    } catch (e) {
+        res.status(400).json({
+            success: false,
+            message: e.message,
+        });
+    }
+};
+
+const registerUser = async (req, res, next) => {
+    try {
+        const { username, phoneNumber, email, password, city, nearestRailStation, nearestMetroStation } = req.body;
+        const existUser = await User.findOne({username:username});
+        if(existUser) {
+            throw new CustomError("User already exists with your credentials");
+        }
+        const user = await User.create(req.body);
+        const { accessToken, refreshToken } = signUser(user.username);
+        await sendEmail(
+            user.email,
+            "Welcome to Smart Transportation – Explore Our Best Features!",
+            'Thank you for registering on our platform! Enjoy real-time tracking, seamless connectivity, and an efficient user-friendly interface.',
+            `
+                <h1>Welcome to Our Smart Transportation System!</h1>
+                <p>Dear ${user.username},</p>
+                <p>We are thrilled to have you on board. Here are the top 3 features you will love:</p>
+                <ul>
+                    <li>Real-Time Tracking</li>
+                    <li>Seamless Connectivity</li>
+                    <li>User-Friendly Interface</li>
+                </ul>
+                <p>For any help or inquiries, please visit the <a href="">Contact Us</a> section on our website.</p>
+                <br/>
+                <p><strong>Note:</strong> This is an automated message. Please do not reply to this email.</p>
+            `
+        );
+        sendToken(res, user, accessToken, refreshToken);
+    } catch (e) {
+        res.status(400).json({
+            success: false,
+            message: e.message,
+        });
+    }
+};
+
 const googleLogin = async (req,res)=>{
     try {
         const {code} = req.query;
@@ -33,16 +147,18 @@ const googleLogin = async (req,res)=>{
                 "Welcome to Smart Transportation – Explore Our Best Features!",
                 'Thank you for registering on our platform! Enjoy real-time tracking, seamless connectivity, and an efficient user-friendly interface.',
                 `
-            <h1>Welcome to Our Smart Transportation System!</h1>
-            <p>We are thrilled to have you on board. Here are the top 3 features you will love:</p>
-            <ul>
-                <li>Real-Time Tracking</li>
-                <li>Seamless Connectivity</li>
-                <li>User-Friendly Interface</li>
-            </ul>
-            <p>If you need help, please visit the <a href="">Contact Us</a> section on our website.</p>
-            <p>This is auto-generated email. Please do not reply to this email.</p>
-        `
+                    <h1>Welcome to Our Smart Transportation System!</h1>
+                    <p>Dear ${user.username},</p>
+                    <p>We are excited to have you on board. Here are the top 3 features you will love:</p>
+                    <ul>
+                        <li>Real-Time Tracking</li>
+                        <li>Seamless Connectivity</li>
+                        <li>User-Friendly Interface</li>
+                    </ul>
+                    <p>If you need assistance, visit the <a href="">Contact Us</a> section on our website.</p>
+                    <br/>
+                    <p><strong>Note:</strong> This is an automated message. Please do not reply to this email.</p>
+                `
             );
         }
         
@@ -56,40 +172,6 @@ const googleLogin = async (req,res)=>{
     }
 }
 
-
-const registerUser = async (req, res, next) => {
-    try {
-        const { username, phoneNumber, email, password, city, nearestRailStation, nearestMetroStation } = req.body;
-        const existUser = await User.findOne({username:username});
-        if(existUser) {
-            throw new CustomError("User already exists with your credentials");
-        }
-        const user = await User.create(req.body);
-        const { accessToken, refreshToken } = signUser(user.username);
-        await sendEmail(
-            user.email,
-            "Welcome to Smart Transportation – Explore Our Best Features!",
-            'Thank you for registering on our platform! Enjoy real-time tracking, seamless connectivity, and an efficient user-friendly interface.',
-            `
-        <h1>Welcome to Our Smart Transportation System!</h1>
-        <p>We are thrilled to have you on board. Here are the top 3 features you will love:</p>
-        <ul>
-            <li>Real-Time Tracking</li>
-            <li>Seamless Connectivity</li>
-            <li>User-Friendly Interface</li>
-        </ul>
-        <p>If you need help, please visit the <a href="">Contact Us</a> section on our website.</p>
-        <p>This is auto-generated email. Please do not reply to this email.</p>
-    `
-        );
-        sendToken(res, user, accessToken, refreshToken);
-    } catch (e) {
-        res.status(400).json({
-            success: false,
-            message: e.message,
-        });
-    }
-};
 
 const refresh = async (req, res) => {
     try {
@@ -197,25 +279,42 @@ const updatePassword = async (req, res, next) => {
 
 const getMe = async (req, res) => {
     try {
-        const user = await User.findOne({ username: req.username })
-            .populate('nearestRailStation', 'station_name')
-            .populate('nearestMetroStation', 'station_name')
-            .select(['-password','-otp']); 
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'User not found',
+        const username = req.username;
+
+        let cachedUser = await redisClient.get(`user:${username}`);
+
+        if (cachedUser!==null) {
+
+            return res.status(200).json({
+                success: true,
+                user: JSON.parse(cachedUser),
             });
         }
+
+        const user = await User.findOne({ username: username })
+            .populate('nearestRailStation', 'station_name')
+            .populate('nearestMetroStation', 'station_name')
+            .select(['-password', '-otp']);
+
+        if (!user) {
+            throw new CustomError("User not found");
+        }
+
+        await redisClient.set(`user:${username}`, JSON.stringify(user));
+        await redisClient.expire(`user:${username}`, 60*15);
+        console.log("Saved in cache");
 
         res.status(200).json({
             success: true,
             user,
         });
+
     } catch (e) {
+
         res.status(400).json({
             success: false,
             message: e.message,
+
         });
     }
 };
@@ -226,46 +325,7 @@ const generateOTP = () => {
     return otp;
 };
 
-const forgotPassword = async (req, res, next) => {
-    try {
-        const { email, phoneNo, username } = req.body;
-        let user;
 
-        if (email) user = await User.findOne({ email });
-        else if (phoneNo) user = await User.findOne({ phoneNumber: phoneNo });
-        else if (username) user = await User.findOne({ username });
-        else throw new CustomError("Enter email, phone number, or username");
-
-        if (!user) throw new CustomError("User does not exist");
-
-        const OTP = generateOTP();
-        const subject = 'Your One-Time Password (OTP)';
-        const message = `Your OTP for verification is ${OTP}.`;
-
-        const htmlContent = `
-        <h1>Verification Code</h1>
-        <p>Your OTP for verification is:</p>
-        <h2>${OTP}</h2>
-        <p>This code is valid for 10 minutes. Please do not share it with anyone.</p>
-        <p>If you did not request this OTP, please ignore this email or contact support.</p>
-        <p>Please do not reply to this email. For assistance, visit the <a href="">Contact Us</a> section on our website.</p>
-    `;
-        await sendEmail(user.email, subject, message, htmlContent);
-        user.otp = OTP;
-        await user.save();
-
-        res.status(200).json({
-            success: true,
-            email: user.email,
-            message: "OTP sent to your email"
-        });
-    } catch (e) {
-        res.status(400).json({
-            success: false,
-            message: e.message,
-        });
-    }
-};
 
 const resetPassword = async (req, res, next) => {
     try {
@@ -406,30 +466,7 @@ const addFavouriteRoute = async (req, res) => {
         })
     }
 }
-const contactUs = async (req, res) => {
-    try {
-        const {email, subject, message} = req.body;
-        const user = await User.findOne({email:email});
-        if(!user) {
-            throw new CustomError("Enter valid email id");
-        }
-        const username = req.username;
-        await sendEmail(process.env.ADMIN_EMAIL, subject, message);
-        const UserMailSubject = `Thank you ${username} for giving Feedback`;
-        const UserMailMessage = `Dear ${username} Thank you for giving us your valuable feedback for our website. We will look after the matter
-    you have raised: ${message}.`
-        await sendEmail(email, UserMailSubject, UserMailMessage);
-        res.status(200).json({
-            success: true,
-            message: "mail sent to the user"
-        });
-    } catch (err) {
-        res.status(400).json({
-            success: false,
-            message: err.message
-        });
-    }
-}
+
 const setlruTrains = async (req, res) => {
     try {
         const username = req.username;

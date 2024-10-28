@@ -49,8 +49,11 @@ export default function TrainSearch() {
 	}, [])
 	useEffect(() => {
 
-
-		if (error) {
+		if(error ===null && data && trainNo.length>=5) {
+			dispatch(setLRUtrains(trainNo));
+			
+		}
+		if (error!== null) {
 			toast({
 				title: "Invalid",
 				description: error,
@@ -58,13 +61,23 @@ export default function TrainSearch() {
 				duration: 3000,
 				isClosable: true,
 			});
+			setTrainNo("");
 		}
-	}, [error]);
+	}, [error,data]);
 
 	const handleSearch = () => {
+		if(trainNo.length < 5) {
+			toast({
+				title: "Invalid",
+				description: "Please enter valid train number",
+				status: "error",
+				duration: 3000,
+				isClosable: true,
+			});
+			return;
+		}
 		setOpenTrainNumbers(false);
 		dispatch(getTrainStatus(trainNo.slice(0, 5)));
-		dispatch(setLRUtrains(trainNo));
 	};
 
 	return (

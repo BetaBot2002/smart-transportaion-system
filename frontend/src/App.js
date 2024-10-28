@@ -27,6 +27,7 @@ import Protected from './utils/protectedRoutes.js';
 import { AlertNav } from './components/Common/AlertNav.js';
 import { VerifyEmail } from './components/Auth/verifyEmail.js';
 import CompleteRegistration from './components/Auth/CompleteRegistration.js';
+import ResetPassword from './components/Auth/ResetPassword.js';
 
 
 function App() {
@@ -85,6 +86,11 @@ function App() {
                             <VerifyOtp navigate_link={'/reset-password'} />
                         </Protected>
                     } />
+                    <Route path='/reset-password' element={
+                        <Protected needLoggedIn={false}>
+                            <ResetPassword/>
+                        </Protected>
+                    } />
                     <Route path="/verify-email" element={
                         <Protected needLoggedIn={true}>
                             <VerifyEmail/>
@@ -110,6 +116,7 @@ function App() {
                     <Route path="/get-shortest-path" element={
                         <Protected needLoggedIn={true}>
                             <GetShortestPath />
+                            
                         </Protected>
                     } />
                     <Route path="/profile" element={

@@ -61,6 +61,16 @@ export default function LoginPage() {
 				}))
 
 			} else if (inputField === 'phoneNo') {
+				if(inputField.length != 10) {
+					toast({
+						title: 'invalid',
+						description: "Enter valid phone Number",
+						status: 'error',
+						duration: 3000,
+						isClosable: true,
+					})
+					return;
+				}
 				dispatch(loginUserAction({
 					phoneNo: inputFieldValue,
 					password: password
