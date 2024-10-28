@@ -116,6 +116,7 @@ function App() {
                     <Route path="/get-shortest-path" element={
                         <Protected needLoggedIn={true}>
                             <GetShortestPath />
+                            
                         </Protected>
                     } />
                     <Route path="/profile" element={

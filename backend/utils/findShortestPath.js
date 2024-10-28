@@ -39,17 +39,20 @@ const constructAdjacencyList = (allStations, stationNames) => {
     return adjacencyList;
 
 }
-const constructAnswer = (parentArray,destinationIndex) => {
-    let resultArray = []
+const constructAnswer = (distanceArray,parentArray,destinationIndex) => {
+    let resultStationArray = []
+    let resultDistanceArray = []
     let index = destinationIndex;
-    resultArray.push(index)
+    resultStationArray.push(index);
+    resultDistanceArray.push(distanceArray[index]);
     while (parentArray[index] != index) {
-
-        resultArray.push(parentArray[index]);
+        resultDistanceArray.push(distanceArray[parentArray[index]]);
+        resultStationArray.push(parentArray[index]);
         index = parentArray[index];
     }
-    resultArray.reverse();
-    return resultArray;
+    resultDistanceArray.reverse();
+    resultStationArray.reverse();
+    return {resultStationArray,resultDistanceArray};
 }
 const findShortestPath = async (sourceIndex, allStations, adjacencyList) => {
     try {

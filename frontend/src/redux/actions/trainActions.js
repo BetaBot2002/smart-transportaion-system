@@ -25,7 +25,6 @@ export const getShortestPath = (source, destination) => async (dispatch) => {
         const config = {
             headers: {
                 "Content-type": "application/json",
-                Authorization: `Bearer ${await getAccessToken()}`,
             },
         };
         const { data } = await axios.post(`${stationBackendUrl}/get-route`, { source, destination },config);

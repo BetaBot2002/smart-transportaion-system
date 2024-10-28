@@ -3,7 +3,8 @@ import { constructAdjacencyList, constructAnswer, findShortestPath, PriorityQueu
 import CustomError from "../utils/customError.js";
 import axios from "axios";
 import { redisClient } from "../server.js"
-import { zip } from "../utils/helper.js";
+import { constructLineColorAnswer, zip } from "../utils/helper.js";
+import { alloydb } from "googleapis/build/src/apis/alloydb/index.js";
 const createStation = async (req, res) => {
 	try {
 		const requestStations = req.body;
@@ -260,12 +261,16 @@ const getRoute = async (req, res) => {
 		}
 		const cachedPath = await redisClient.get(`source:${sourceIndex}`);
 		if (cachedPath !== null) {
-			const {distanceArray,parentArray} = JSON.parse(cachedPath);
-			let resultArray = constructAnswer(parentArray, destinationIndex);
-			res.json({
+			const { distanceArray, parentArray } = JSON.parse(cachedPath);
+			let { resultStationArray, resultDistanceArray } = constructAnswer(distanceArray, parentArray, destinationIndex);
+			let lineColorArray = constructLineColorAnswer(resultStationArray, allStations);
+			return res.json({
 				success: true,
-				distance: parseFloat(parseFloat(distanceArray[destinationIndex]).toFixed(2)),
-				path: resultArray
+				path: {
+					resultStationArray,
+					resultDistanceArray,
+					lineColorArray
+				}
 			});
 		}
 		const adjacencyList = constructAdjacencyList(allStations, stationNames);
@@ -282,11 +287,15 @@ const getRoute = async (req, res) => {
 		if (cachedPath === 0) {
 			throw new CustomError("Redis cache problem");
 		}
-		let resultArray = constructAnswer(parentArray, destinationIndex);
+		let { resultStationArray, resultDistanceArray } = constructAnswer(distanceArray, parentArray, destinationIndex);
+		let lineColorArray = constructLineColorAnswer(resultStationArray, allStations);
 		res.json({
 			success: true,
-			distance: parseFloat(parseFloat(distanceArray[destinationIndex]).toFixed(2)),
-			path: resultArray
+			path: {
+				resultStationArray,
+				resultDistanceArray,
+				lineColorArray
+			}
 		});
 
 	} catch (error) {
