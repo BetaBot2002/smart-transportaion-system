@@ -8,9 +8,8 @@ v1/
 12. Our Logo 
 13. implement Profile/account actions there is saved route (view is ready just need to implement data from redux).
 15. validate updation while update 
-16. train search (number is done, need to do by name(trie data stucture))
 
-sinchan - 2 8* 13 
+sinchan -  8* 13 
 deep - 6
 
 
@@ -18,3 +17,6 @@ v2/
 2. subscription model for recommendation
 3. AI powered Query search
 4. connectivity will increase accross all metro cities.
+5
+. train search (number is done, need to do by name(trie data stucture))
+
