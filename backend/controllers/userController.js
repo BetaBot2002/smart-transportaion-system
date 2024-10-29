@@ -302,7 +302,6 @@ const getMe = async (req, res) => {
 
         await redisClient.set(`user:${username}`, JSON.stringify(user));
         await redisClient.expire(`user:${username}`, 60*15);
-        console.log("Saved in cache");
 
         res.status(200).json({
             success: true,

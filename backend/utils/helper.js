@@ -69,24 +69,6 @@ export function constructLineColorAnswer(resultStationArray, allStations) {
 
     const line_color = ['black', 'green', 'blue', 'pink', 'orange', 'purple'];
     array = array.map(nums => nums.map(color => line_color.indexOf(color.toLowerCase())));
-    let line_color_result = seperateLineForPath(array);
+    return seperateLineForPath(array);
 
-    const segments = [];
-    let startIdx = 0;
-    let currentColor = line_color[line_color_result[0][0]];
-
-    for (let i = 1; i < line_color_result.length; i++) {
-        const current = line_color_result[i];
-        const prev = line_color_result[i - 1];
-
-        if (current.length > 1 || current[0] !== prev[0]) {
-            segments.push([currentColor, startIdx, i - 1]);
-            startIdx = i;
-            currentColor = line_color[current[0]];  
-        }
-    }
-
-    segments.push([currentColor, startIdx, line_color_result.length - 1]);
-
-    return segments;
 }
