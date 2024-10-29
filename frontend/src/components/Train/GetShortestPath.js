@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getShortestPath } from '../../redux/actions/trainActions';
 import { MdOutlineSwapVerticalCircle } from 'react-icons/md';
 import StationStepper from './StationStepper';
+import { Loader } from '../../utils/Loader';
 
 const lineColorMap = {
 	0: 'black',
@@ -195,11 +196,7 @@ export default function GetShortestPath() {
 				<Button colorScheme="teal" onClick={handleSearch}>Search</Button>
 			</VStack>
 
-			{loading1 ? (
-				<Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-					<Spinner size="xl" />
-				</Box>
-			) : (
+			{loading1 ? <Loader/> : (
 				<Box ml={{ base: '10%', md: '20%', xl: '30%' }} mr={'20px'} mt={4}>
   <Accordion allowMultiple>
     {data1 && sections && sections.map((section, idx) => (
@@ -238,9 +235,10 @@ export default function GetShortestPath() {
           </h1>
         <AccordionPanel pb={4}>
 		<StationStepper
-            stations={section.stations.map(stationId => data1.at(stationId))}
+            stations={section.stations.map(stationId => data1.at(stationId).station_name)}
             distances={section.distances}
             lineColor={lineColorMap[section.color]}
+			StepSeparatorValue={80}
           />
         </AccordionPanel>
       </AccordionItem>

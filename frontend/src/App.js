@@ -28,6 +28,7 @@ import { AlertNav } from './components/Common/AlertNav.js';
 import { VerifyEmail } from './components/Auth/verifyEmail.js';
 import CompleteRegistration from './components/Auth/CompleteRegistration.js';
 import ResetPassword from './components/Auth/ResetPassword.js';
+import TrainRoutePath from './components/Train/TrainRoutePath.js';
 
 
 function App() {
@@ -109,12 +110,17 @@ function App() {
                     } />
 
                     <Route path="/routes" element={
-                        <Protected needLoggedIn={true}>
+                        <Protected needLoggedIn={false}>
                             <RoutePage />
                         </Protected>
                     } />
+                    <Route path="/trains/:trainNo" element={
+                        <Protected needLoggedIn={false}>
+                            <TrainRoutePath />
+                        </Protected>
+                    } />
                     <Route path="/get-shortest-path" element={
-                        <Protected needLoggedIn={true}>
+                        <Protected needLoggedIn={false}>
                             <GetShortestPath />
                             
                         </Protected>

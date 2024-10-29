@@ -82,6 +82,7 @@ export const getLRUtrains = () => async (dispatch) => {
         dispatch({ type: GET_LRU_TRAINS_FAILED, payload: error.response.data.message });
     }
 };
+
 export const setLRUtrains = (train) => async (dispatch) => {
     try {
         dispatch({ type: SET_LRU_TRAINS_REQUEST });
@@ -105,6 +106,9 @@ export const getTrainStatus = (trainNo) => async (dispatch) => {
         dispatch({ type: GET_TRAIN_STATUS_REQUEST });
         
         const { data } = await axios.get(`${stationBackendUrl}/get-train-details?trainNo=${trainNo}`);
+        if(!data.success) {
+            throw new CustomError(data.message);
+        }
         dispatch({ type: GET_TRAIN_STATUS_SUCCESS, payload: data.train });
         
     } catch (error) {
@@ -112,6 +116,20 @@ export const getTrainStatus = (trainNo) => async (dispatch) => {
     }
 };
 
+export const getTrainRoute = (trainNo) => async (dispatch) => {
+    try {
+        dispatch({ type: GET_TRAIN_STATUS_REQUEST });
+        
+        const { data } = await axios.get(`${stationBackendUrl}/get-train-routes?trainNo=${trainNo}`);
+        if(!data.success) {
+            throw new CustomError(data.message);
+        }
+        dispatch({ type: GET_TRAIN_STATUS_SUCCESS, payload: data.train });
+        
+    } catch (error) {
+        dispatch({ type: GET_TRAIN_STATUS_FAILED, payload: error.response.data.message });
+    }
+};
 export const getAvailableTrainsBetweenStations = (from, to, date) => async (dispatch) => {
     try {
         dispatch({ type: GET_ALL_AVAILABLE_TRAINS_REQUEST });
