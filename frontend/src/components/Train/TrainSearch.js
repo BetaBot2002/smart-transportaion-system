@@ -13,7 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getLRUtrains, getTrainStatus, setLRUtrains } from "../../redux/actions/trainActions";
 import { useNavigate } from "react-router-dom";
 import TrainInfoCard from "./TrainInfoCard.js";
-import trainFile from '../../assets/trainNoList.txt'
+import trainFile from '../../assets/trainNoList.txt';
+import { Loader } from "../../utils/Loader.js";
 
 export default function TrainSearch() {
 	const [openTrainNumbers, setOpenTrainNumbers] = useState(false);
@@ -49,11 +50,11 @@ export default function TrainSearch() {
 	}, [])
 	useEffect(() => {
 
-		if(error ===null && data && trainNo.length>=5) {
+		if (error === null && data && trainNo.length >= 5) {
 			dispatch(setLRUtrains(trainNo));
-			
+
 		}
-		if (error!== null) {
+		if (error !== null) {
 			toast({
 				title: "Invalid",
 				description: error,
@@ -63,10 +64,10 @@ export default function TrainSearch() {
 			});
 			setTrainNo("");
 		}
-	}, [error,data]);
+	}, [error, data]);
 
 	const handleSearch = () => {
-		if(trainNo.length < 5) {
+		if (trainNo.length < 5) {
 			toast({
 				title: "Invalid",
 				description: "Please enter valid train number",
@@ -89,7 +90,7 @@ export default function TrainSearch() {
 					onChange={(e) => {
 						setTrainNo(e.target.value);
 						const trains = filterTrainNumbers(e.target.value);
-						setFilteredTrainNumbers(trains.slice(0,10));
+						setFilteredTrainNumbers(trains.slice(0, 10));
 						setOpenTrainNumbers(e.target.value.length > 0);
 					}}
 					value={trainNo}
