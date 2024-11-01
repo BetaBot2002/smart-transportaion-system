@@ -53,11 +53,10 @@ const userSchema = new Schema({
 		type: [String],
 		default: []
 	},
-	favouriteRoutes: {
-		type: [[Schema.Types.ObjectId, Schema.Types.ObjectId]],
-		ref: "Station",
-		default: []
-	},
+	favouriteRoutes: [{
+		source: { type: Schema.Types.ObjectId, ref: "Station" },
+		destination: { type: Schema.Types.ObjectId, ref: "Station" }
+	}],
 	role: {
 		type: String,
 		default: "user"
@@ -70,7 +69,7 @@ userSchema.pre('save', async function (next) {
 
 	if (this.password && (this.isModified('password') || this.isNew)) {
 		const salt = await genSalt(2);
-		this.password = hash(this.password, salt);
+		this.password = await hash(this.password, salt);
 	}
 	next();
 });

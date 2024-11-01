@@ -15,11 +15,11 @@ export const sendToken = (res, user, accessToken, refreshToken) => {
     });
 };
 
-const contactUs = async (req, res) => { 
+const contactUs = async (req, res) => {
     try {
-        const {email, subject, message} = req.body;
-        const user = await User.findOne({email:email});
-        if(!user) {
+        const { email, subject, message } = req.body;
+        const user = await User.findOne({ email: email });
+        if (!user) {
             throw new CustomError("Enter valid email id");
         }
         const username = req.username;
@@ -94,8 +94,8 @@ const forgotPassword = async (req, res, next) => {
 const registerUser = async (req, res, next) => {
     try {
         const { username, phoneNumber, email, password, city, nearestRailStation, nearestMetroStation } = req.body;
-        const existUser = await User.findOne({username:username});
-        if(existUser) {
+        const existUser = await User.findOne({ username: username });
+        if (existUser) {
             throw new CustomError("User already exists with your credentials");
         }
         const user = await User.create(req.body);
@@ -127,20 +127,20 @@ const registerUser = async (req, res, next) => {
     }
 };
 
-const googleLogin = async (req,res)=>{
+const googleLogin = async (req, res) => {
     try {
-        const {code} = req.query;
+        const { code } = req.query;
         const googleRes = await OauthClient.getToken(code);
         OauthClient.setCredentials(googleRes.tokens);
-        const {data} = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`)
-        const {email,name,picture} = data;
-        let user = await User.findOne({email:email});
-        if(!user) {
+        const { data } = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`)
+        const { email, name, picture } = data;
+        let user = await User.findOne({ email: email });
+        if (!user) {
             user = await User.create({
-                username:name,
-                email:email,
-                imageUrl:picture,
-                isEmailVerified:true
+                username: name,
+                email: email,
+                imageUrl: picture,
+                isEmailVerified: true
             })
             await sendEmail(
                 user.email,
@@ -161,17 +161,16 @@ const googleLogin = async (req,res)=>{
                 `
             );
         }
-        
-        const {accessToken,refreshToken}=signUser(user.username);
-        sendToken(res,user,accessToken,refreshToken);
+
+        const { accessToken, refreshToken } = signUser(user.username);
+        sendToken(res, user, accessToken, refreshToken);
     } catch (error) {
         res.status(500).json({
-            success:false,
-            message:error.message,
+            success: false,
+            message: error.message,
         })
     }
 }
-
 
 const refresh = async (req, res) => {
     try {
@@ -198,12 +197,12 @@ const loginUser = async (req, res, next) => {
         if (email) user = await User.findOne({ email: email });
         else if (phoneNo) user = await User.findOne({ phoneNumber: phoneNo });
         else if (username) user = await User.findOne({ username: username });
-        else throw new CustomError("Enter email or phone number");
+        else throw new CustomError("Enter credentials");
 
         if (!user) throw new CustomError("User does not exist");
 
         const checkPassword = await user.comparePassword(password);
-        if (!checkPassword) throw new CustomError("Invalid email or password");
+        if (!checkPassword) throw new CustomError("Invalid credentials");
 
         const { accessToken, refreshToken } = signUser(user.username);
         sendToken(res, user, accessToken, refreshToken);
@@ -221,7 +220,7 @@ const logoutUser = async (req, res, next) => {
         const newToken = await blackListedToken.create({
             token: token
         });
-
+        await redisClient.del(`user:${req.username}`);
         res.status(200).json({
             success: true,
             message: "Logged out successfully",
@@ -240,6 +239,7 @@ const updateUser = async (req, res, next) => {
         const user = await User.findOneAndUpdate({ username: req.username }, updates, {
             new: true,
         });
+        await redisClient.del(`user:${req.username}`);
         const { accessToken, refreshToken } = signUser(user.username);
         res.status(200).json({
             success: true,
@@ -276,15 +276,12 @@ const updatePassword = async (req, res, next) => {
         });
     }
 };
-
 const getMe = async (req, res) => {
     try {
         const username = req.username;
 
         let cachedUser = await redisClient.get(`user:${username}`);
-
-        if (cachedUser!==null) {
-
+        if (cachedUser !== null) {
             return res.status(200).json({
                 success: true,
                 user: JSON.parse(cachedUser),
@@ -294,6 +291,13 @@ const getMe = async (req, res) => {
         const user = await User.findOne({ username: username })
             .populate('nearestRailStation', 'station_name')
             .populate('nearestMetroStation', 'station_name')
+            .populate({
+                path: 'favouriteRoutes',
+                populate: [
+                    { path: 'source', select: 'station_name -_id' },
+                    { path: 'destination', select: 'station_name -_id' }
+                ]
+            })
             .select(['-password', '-otp']);
 
         if (!user) {
@@ -301,7 +305,7 @@ const getMe = async (req, res) => {
         }
 
         await redisClient.set(`user:${username}`, JSON.stringify(user));
-        await redisClient.expire(`user:${username}`, 60*15);
+        await redisClient.expire(`user:${username}`, 60 * 15);
 
         res.status(200).json({
             success: true,
@@ -309,22 +313,19 @@ const getMe = async (req, res) => {
         });
 
     } catch (e) {
-
         res.status(400).json({
             success: false,
             message: e.message,
-
         });
     }
 };
+
 
 
 const generateOTP = () => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     return otp;
 };
-
-
 
 const resetPassword = async (req, res, next) => {
     try {
@@ -411,7 +412,7 @@ const adminGetUser = async (req, res, next) => {
 
 const adminGetAllUsers = async (req, res, next) => {
     try {
-        const users = await User.find({},['username','email']);
+        const users = await User.find({}, ['username', 'email']);
         res.status(200).json({
             success: true,
             users,
@@ -445,26 +446,40 @@ const updateRoleAdmin = async (req, res) => {
         });
     }
 };
+
+
 const addFavouriteRoute = async (req, res) => {
     try {
         const { source, destination } = req.body;
+
         if (!source || !destination) {
             throw new CustomError("Enter source and destination");
         }
+
         const user = await User.findOne({ username: req.username });
-        user.favouriteRoutes.push([source, destination]);
+        if (!user) {
+            throw new CustomError("User not found");
+        }
+
+        user.favouriteRoutes.push({ source, destination });
+
         await user.save();
+        await redisClient.del(`user:${user.username}`);
+
         res.status(200).json({
             success: true,
-            message: "station added as a favourite station",
+            message: "Route added to favourite routes",
         });
     } catch (err) {
         res.status(400).json({
             success: false,
-            message: err.message
-        })
+            message: err.message,
+        });
     }
-}
+};
+
+
+
 
 const setlruTrains = async (req, res) => {
     try {
@@ -472,10 +487,10 @@ const setlruTrains = async (req, res) => {
         const train = req.body.train;
         const user = await User.findOne({ username: username })
         let trains = user.lruTrains
-        if(trains.indexOf(train) !== -1) {
-            trains.splice(trains.indexOf(train),1);
-        } 
-        if(trains.length===5) {
+        if (trains.indexOf(train) !== -1) {
+            trains.splice(trains.indexOf(train), 1);
+        }
+        if (trains.length === 5) {
             trains.pop();
         }
         trains.unshift(train);
