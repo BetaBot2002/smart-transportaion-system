@@ -1,4 +1,4 @@
-import { Box, Text, Flex, IconButton, useDisclosure, Collapse } from '@chakra-ui/react';
+import { Box, Text, Flex, IconButton, useDisclosure, Collapse, Badge } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from "react-redux";
 import { getTrainStatus } from '../../redux/actions/trainActions';
@@ -11,9 +11,8 @@ export default function SearchHistory() {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const dispatch = useDispatch();
 
-  const handleSearch = (trainName, index) => {
+  const handleSearch = (trainNo, index) => {
     if (expandedIndex !== index) {
-      const trainNo = trainName.slice(0, 5);
       dispatch(getTrainStatus(trainNo));
       setExpandedIndex(index);
     } else {
@@ -24,11 +23,12 @@ export default function SearchHistory() {
   return (
     <Box>
       {trains && trains.length > 0 ? (
-        trains.map((entry, index) => (
-          <Box key={index} mb={3} p={3} border='1px solid gray' borderRadius="md" backgroundColor='white'>
+        trains.map((entry, index) => {
+          const temp = entry.split("-");
+          return <Box key={index} mb={3} p={3} border='1px solid gray' borderRadius="md" backgroundColor='white'>
             <Flex justify="space-between" align="center">
               <Flex flexDirection="column">
-                <Text>{entry}</Text>
+                <Text><Badge colorScheme='blue'>{temp[0]}</Badge>{` ${temp[1]}`}</Text>
               </Flex>
               <IconButton
                 aria-label="Search"
@@ -36,7 +36,7 @@ export default function SearchHistory() {
                 variant="outline"
                 colorScheme="teal"
                 size="sm"
-                onClick={() => handleSearch(entry, index)}
+                onClick={() => handleSearch(temp[0], index)}
               />
             </Flex>
             <Collapse in={expandedIndex === index} animateOpacity>
@@ -45,7 +45,7 @@ export default function SearchHistory() {
               )}
             </Collapse>
           </Box>
-        ))
+})
       ) : (
         <Text>No search history available.</Text>
       )}

@@ -1,8 +1,15 @@
-import { Box, Text, VStack, HStack, Badge } from '@chakra-ui/react';
+import { Box, Text, VStack, HStack, Badge, Button } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { convertTo12HourFormat } from '../../utils/convertTo12HourFormat';
+
 
 const TrainInfoCard = ({ data }) => {
+    const navigate = useNavigate();
     return (
         <Box mt={4} p={6} borderWidth={1} borderRadius="md" bg="white" boxShadow="lg">
+            <Button onClick={() => {
+                navigate(`/trains/${data.train_no}`)
+            }} color={'blue'}>Show Live Status</Button>
             <VStack align="start" spacing={4}>
                 <HStack>
                     <Text fontWeight="bold" color="teal.500">
@@ -36,13 +43,13 @@ const TrainInfoCard = ({ data }) => {
                     <Text fontWeight="bold" color="teal.500">
                         Departure Time:
                     </Text>
-                    <Text>{data.from_time}</Text>
+                    <Text>{convertTo12HourFormat(data.from_time)}</Text>
                 </HStack>
                 <HStack>
                     <Text fontWeight="bold" color="teal.500">
                         Arrival Time:
                     </Text>
-                    <Text>{data.to_time}</Text>
+                    <Text>{convertTo12HourFormat(data.to_time)}</Text>
                 </HStack>
                 <HStack>
                     <Text fontWeight="bold" color="teal.500">

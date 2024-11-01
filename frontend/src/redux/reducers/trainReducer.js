@@ -100,9 +100,9 @@ export const getAllAvailableTrainsReducer = (state = initialTrainState, action) 
         case GET_ALL_AVAILABLE_TRAINS_REQUEST:
             return { ...state, loading: true };
         case GET_ALL_AVAILABLE_TRAINS_SUCCESS:
-            return { ...state, loading: false, data: action.payload.trainList };
+            return { ...initialTrainState, loading: false, data: action.payload };
         case GET_ALL_AVAILABLE_TRAINS_FAILED:
-            return { ...state, loading: false, error: action.payload };
+            return { ...initialTrainState, loading: false, error: action.payload };
         default:
             return state;
     }

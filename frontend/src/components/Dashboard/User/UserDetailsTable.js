@@ -95,7 +95,11 @@ export function UserDetailsTable({user}) {
             })
             return;
         }
-		dispatch(putUserUpdate(userData));
+		dispatch(putUserUpdate({
+			...userData,
+			nearestMetroStation: user.nearestMetroStation?._id,
+			nearestRailStation: user.nearestRailStation?._id
+		}));
 	};
 	
 	useEffect(()=>{
@@ -107,6 +111,7 @@ export function UserDetailsTable({user}) {
                 duration: 3000,
                 isClosable: true,
             })
+			dispatch(clearUpdation());
 			navigate("/profile");
 		}
 		if(error) {
@@ -127,20 +132,9 @@ export function UserDetailsTable({user}) {
 				<TableCaption>
 					<Button
 						width={'100%'}
+						isLoading={loading}
 						bg={'blue.400'}
-						onClick={()=>{
-							setUserData({
-								...userData,
-								nearestMetroStation:user.nearestMetroStation._id,
-								nearestRailStation:user.nearestRailStation._id
-							})
-							handleNewInputSubmit()
-							setUserData({
-								...userData,
-								nearestMetroStation:user.nearestMetroStation.station_name,
-								nearestRailStation:user.nearestRailStation.station_name
-							})
-						}}
+						onClick={handleNewInputSubmit}
 						color={'white'}
 						_hover={{
 							bg: 'blue.500',

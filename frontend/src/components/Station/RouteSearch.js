@@ -2,7 +2,8 @@ import { ChevronDownIcon, Icon } from '@chakra-ui/icons';
 import {
     Heading, Input, Box, Text, UnorderedList, ListItem, Button,
     FormControl, FormLabel,
-    useToast
+    useToast,
+    Badge
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +21,7 @@ export default function StationSearch() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const toast = useToast();
-    const { loading:loading1, error:err1, data = [] } = useSelector(state => state.GetAllStation);
+    const { loading: loading1, error: err1, data = [] } = useSelector(state => state.GetAllStation);
 
     const filterStations = (stationInput) => {
         return data
@@ -28,7 +29,7 @@ export default function StationSearch() {
     }
 
 
-       
+
     const handleSourceSelection = (stationName) => {
         setSource(stationName);
         setOpenSourceStations(false);
@@ -50,11 +51,11 @@ export default function StationSearch() {
             })
             return;
         }
-        dispatch(getShortestPath(source,destination));
+        dispatch(getShortestPath(source, destination));
         navigate('/get-shortest-path');
     }
-    const handleStationSwap = ()=>{
-        const temp  = source;
+    const handleStationSwap = () => {
+        const temp = source;
         setSource(destination);
         setDestination(temp);
     }
@@ -72,9 +73,11 @@ export default function StationSearch() {
                         type='text'
                         onChange={(e) => {
                             setSource(e.target.value)
-                            setFilteredSource(filterStations(e.target.value).slice(0,10))
-                            if(e.target.value.length!=0) setOpenSourceStations(true);
+                            setFilteredSource(filterStations(e.target.value).slice(0, 10))
+                            if (e.target.value.length != 0) setOpenSourceStations(true);
                             else setOpenSourceStations(false);
+						    setOpenDestinationStations(false);
+
                         }}
                         value={source}
                         placeholder='Source'
@@ -98,12 +101,14 @@ export default function StationSearch() {
                                         key={index}
                                         onClick={() => handleSourceSelection(station.station_name)}
                                         cursor="pointer"
-                                        p={2}
+                                        pt={2}
+                                        pb={2}
+                                        textAlign={'left'}
                                         borderRadius="md"
                                         _hover={{ backgroundColor: "teal.100" }}
                                         _active={{ backgroundColor: "teal.200" }}
                                     >
-                                        {`${station.station_name} - ${station.station_type}`}
+                                        <Badge colorScheme='blue'>{station.station_code}</Badge>{`${station.station_name}-${station.station_type}`}
                                     </ListItem>
                                 ))}
 
@@ -112,7 +117,7 @@ export default function StationSearch() {
                     )}
                 </FormControl>
 
-                <MdOutlineSwapVerticalCircle size={35} cursor={'pointer'} onClick={handleStationSwap}/>
+                <MdOutlineSwapVerticalCircle size={35} cursor={'pointer'} onClick={handleStationSwap} />
 
                 <FormControl id="destination" mb={4}>
                     <FormLabel>Destination</FormLabel>
@@ -120,10 +125,10 @@ export default function StationSearch() {
                         type='text'
                         onChange={(e) => {
                             setDestination(e.target.value);
-                            setFilteredDestination(filterStations(e.target.value).slice(0,10));
-                            if(e.target.value.length!=0) setOpenDestinationStations(true);
+                            setFilteredDestination(filterStations(e.target.value).slice(0, 10));
+                            if (e.target.value.length != 0) setOpenDestinationStations(true);
                             else setOpenDestinationStations(false);
-                            
+                            setOpenSourceStations(false);
                         }}
                         value={destination}
                         placeholder='Destination'
@@ -147,12 +152,15 @@ export default function StationSearch() {
                                         key={index}
                                         onClick={() => handleDestinationSelection(station.station_name)}
                                         cursor="pointer"
-                                        p={2}
+                                        pt={2}
+                                        pb={2}
+                                        textAlign={'left'}
                                         borderRadius="md"
                                         _hover={{ backgroundColor: "teal.100" }}
                                         _active={{ backgroundColor: "teal.200" }}
                                     >
-                                        {`${station.station_name} - ${station.station_type}`}
+                                        <Badge colorScheme='blue'>{station.station_code}</Badge>{ `${station.station_name}-${station.station_type}`}
+
                                     </ListItem>
                                 ))}
 

@@ -72,3 +72,12 @@ export function constructLineColorAnswer(resultStationArray, allStations) {
     return seperateLineForPath(array);
 
 }
+
+
+export const sortTrainList = (res)=>{
+    const {data} = res;
+    return res.data = data.sort((a,b)=>{
+        return a.train_base.from_time - b.train_base.from_time
+    });
+    
+}

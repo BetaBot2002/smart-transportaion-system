@@ -3,8 +3,7 @@ import { constructAdjacencyList, constructAnswer, findShortestPath, PriorityQueu
 import CustomError from "../utils/customError.js";
 import axios from "axios";
 import { redisClient } from "../server.js"
-import { constructLineColorAnswer, zip } from "../utils/helper.js";
-import { alloydb } from "googleapis/build/src/apis/alloydb/index.js";
+import { constructLineColorAnswer, sortTrainList, zip } from "../utils/helper.js";
 const createStation = async (req, res) => {
 	try {
 		const requestStations = req.body;
@@ -122,12 +121,10 @@ const getAllStations = async (req, res) => {
 				stations: cachedStations
 			});
 		}
-		const stations = await Station.find({ isActive: true }, ['station_name', 'station_type', 'line_color_code']);
+		const stations = await Station.find({ isActive: true }, ['station_name','station_code', 'station_type', 'line_color_code']);
 
 		const saveInCache = redisClient.json.set(`allStations`, "$", stations);
-		if (saveInCache == "ok") {
-			throw new CustomError("Redis cached problem");
-		}
+		
 		res.status(200).json({
 			stations
 		});
@@ -180,29 +177,24 @@ const getTrainRoute = async (req, res) => {
 		});
 	}
 }
-const getTrainInBetweenStations = async (req, res) => {
-	try {
-		const from = req.body.source;
-		const to = req.body.destination;
-		const trainBwtn = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/betweenStations?from=${from}&to=${to}`)).data;
-		res.status(200).json({
-			trainBwtn
-		})
-	} catch (err) {
-		res.status(400).json({
-			success: false,
-			message: err.message
-		});
-	}
-}
+
 const getDatabaseStationDetails = async (req, res) => {
 	try {
 		const stationName = req.params.stationName;
+		let cachedStation = await redisClient.get(`stations:${stationName}`)
+		if (cachedStation !== null) {
+			return res.status(200).json({
+				success: true,
+				train: JSON.parse(cachedStation),
+			});
+		}
 		const station = await Station.findOne({ station_name: stationName });
 
 		if (!station) {
 			throw new CustomError("station not found");
 		}
+		await redisClient.set(`stations:${stationName}`, JSON.stringify(station));
+		await redisClient.expire(`stations:${stationName}`, 60 * 15);
 		res.status(200).json({
 			success: true,
 			station
@@ -245,6 +237,39 @@ const getTrainList = async (req, res) => {
 	}
 }
 
+const getTrainInBetweenStations = async (req, res) => {
+	try {
+		const from = req.body.source;
+		const to = req.body.destination;
+		let trainBwtn = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/betweenStations?from=${from}&to=${to}`)).data;
+		if(!trainBwtn.success) {
+			throw new CustomError("No trains found")
+		}
+		trainBwtn = await sortTrainList(trainBwtn);
+		const responseKeys = ['train_no','train_name','from_time','to_time','running_days'];
+		const filteredTrainData = await trainBwtn.filter(train => train.train_base.to_stn_code===to).map((train)=>{
+			const filteredTrain = {};
+			for(const key of responseKeys) {
+				if(key in train.train_base) {
+					filteredTrain[key]=train.train_base[key];
+				}
+			}
+			return filteredTrain;
+		})
+		if(filteredTrainData.length === 0) {
+			throw new CustomError("No Direct train available");
+		}
+		res.status(200).json({
+			success:true,
+			trainBwtn:filteredTrainData
+		})
+	} catch (err) {
+		res.status(400).json({
+			success: false,
+			message: err.message
+		});
+	}
+}
 const getRoute = async (req, res) => {
 	try {
 		const allStations = await Station.find({ isActive: true });
