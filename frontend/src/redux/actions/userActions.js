@@ -173,7 +173,7 @@ export const putUserUpdatePassword = (userPasswordUpdateCredentials) => async (d
 export const googleLoginAction = (code) => async (dispatch) => {
     try {
         dispatch({ type: GOOGLE_LOGIN_REQUEST });
-        
+
         const { data } = await axios.get(`${userBackendUrl}/auth/google?code=${code}`);
 
         dispatch({
@@ -185,8 +185,8 @@ export const googleLoginAction = (code) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: GOOGLE_LOGIN_FAILED,
-            payload: error.response && error.response.data.message 
-                ? error.response.data.message 
+            payload: error.response && error.response.data.message
+                ? error.response.data.message
                 : error.message,
         });
 
@@ -200,9 +200,11 @@ export const logoutUserAction = () => async (dispatch) => {
             type: USER_LOGOUT_REQUEST
         })
         const refreshToken = getRefreshToken();
-        const config = { headers: {
-            Authorization: `Bearer ${refreshToken}`,
-        } };
+        const config = {
+            headers: {
+                Authorization: `Bearer ${refreshToken}`,
+            }
+        };
         const data = (await axios.get(link, config)).data;
         if (!data.success) {
             throw new CustomError(data.message);
@@ -222,7 +224,7 @@ export const logoutUserAction = () => async (dispatch) => {
 export const forgotPasswordAction = (forgotPasswordCredentials) => async (dispatch) => {
     try {
         dispatch({
-            type:USER_FORGOT_PASSWORD_REQUEST
+            type: USER_FORGOT_PASSWORD_REQUEST
         })
         const config = { headers: { "Content-type": "application/json" } };
         var link = userBackendUrl + "/forgot-password";
@@ -231,8 +233,8 @@ export const forgotPasswordAction = (forgotPasswordCredentials) => async (dispat
             throw new CustomError(data.message);
         }
         dispatch({
-            type:USER_FORGOT_PASSWORD_SUCCESS,
-            payload:data.email
+            type: USER_FORGOT_PASSWORD_SUCCESS,
+            payload: data.email
         })
 
     } catch (err) {
@@ -276,8 +278,8 @@ export const getProfileAction = () => async (dispatch) => {
             },
         };
         const link = userBackendUrl + "/me";
-        const data = (await axios.get(link,config)).data;
-        if(!data.success) {
+        const data = (await axios.get(link, config)).data;
+        if (!data.success) {
             throw new CustomError(data.message);
         }
 
@@ -287,7 +289,7 @@ export const getProfileAction = () => async (dispatch) => {
         })
     } catch (err) {
         console.log(err);
-        
+
         dispatch({
             type: GET_USER_FAILED,
             payload: err.response.data.message
@@ -296,7 +298,7 @@ export const getProfileAction = () => async (dispatch) => {
 }
 
 
-export const contactUsAction = (body)=>async (dispatch)=> {
+export const contactUsAction = (body) => async (dispatch) => {
     try {
         dispatch({
             type: CONTACT_US_REQUEST
@@ -317,23 +319,39 @@ export const contactUsAction = (body)=>async (dispatch)=> {
 
         dispatch({
             type: CONTACT_US_SUCCESS,
-            payload:data.success
+            payload: data.success
         })
     } catch (err) {
         dispatch({
             type: CONTACT_US_FAILED,
-            payload: err.response.data.message          
+            payload: err.response.data.message
         })
     }
 }
+export const addFavouriteRoute = (credentials) => async (dispatch) => {
+    try {
+        const accessToken = await getAccessToken();
 
-export const clearUsers = ()=> async (dispatch)=> {
+        const config = {
+            headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        };
+        const response = await axios.post(`${userBackendUrl}/save-favourite-route`, credentials,config);
+        dispatch({ type: 'ADD_FAVOURITE_ROUTE_SUCCESS' });
+    } catch (error) {
+        dispatch({ type: 'ADD_FAVOURITE_ROUTE_ERROR' });
+    }
+};
+
+export const clearUsers = () => async (dispatch) => {
     dispatch({
-        type:CLEARUSER
+        type: CLEARUSER
     })
-}   
-export const clearUpdation = ()=> async (dispatch)=> {
+}
+export const clearUpdation = () => async (dispatch) => {
     dispatch({
-        type:CLEARUPDATION
+        type: CLEARUPDATION
     })
 }   

@@ -130,12 +130,21 @@ export const getTrainRoute = (trainNo) => async (dispatch) => {
         dispatch({ type: GET_TRAIN_STATUS_FAILED, payload: error.response.data.message });
     }
 };
-export const getAvailableTrainsBetweenStations = (from, to, date) => async (dispatch) => {
+export const getAvailableTrainsBtwn = (credentials) => async (dispatch) => {
     try {
         dispatch({ type: GET_ALL_AVAILABLE_TRAINS_REQUEST });
-
-        const { data } = await axios.get(`${stationBackendUrl}/get-list-of-trains/${date}?from=${from}&to=${to}`);
-        dispatch({ type: GET_ALL_AVAILABLE_TRAINS_SUCCESS, payload: data });
+        const config = {
+            headers: {
+                "Content-type": "application/json",
+            },
+        };
+        console.log(credentials);
+        
+        const { data } = await axios.post(`${stationBackendUrl}/get-train-between`,credentials,config);
+        if(!data.success) {
+            throw new CustomError(data.message);
+        }
+        dispatch({ type: GET_ALL_AVAILABLE_TRAINS_SUCCESS, payload: data.trainBwtn });
 
     } catch (error) {
         dispatch({ type: GET_ALL_AVAILABLE_TRAINS_FAILED, payload: error.response.data.message });
