@@ -7,6 +7,7 @@ import {
 	FormControl,
 	FormLabel,
 	useToast,
+	Badge,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -110,8 +111,9 @@ export default function TrainSearch() {
 						overflowY="auto"
 					>
 						<UnorderedList styleType="none">
-							{filteredTrainNumbers.map((train, index) => (
-								<ListItem
+							{filteredTrainNumbers.map((train, index) => {
+								const temp = train.split("-");
+								return <ListItem
 									key={index}
 									onClick={() => handleTrainSelection(train)}
 									cursor="pointer"
@@ -120,9 +122,9 @@ export default function TrainSearch() {
 									_hover={{ backgroundColor: "teal.100" }}
 									_active={{ backgroundColor: "teal.200" }}
 								>
-									{train}
+									<Badge colorScheme='blue'>{temp[0]}</Badge> {temp[1]}
 								</ListItem>
-							))}
+								})}
 						</UnorderedList>
 					</Box>
 				)}
