@@ -243,11 +243,11 @@ const getTrainInBetweenStations = async (req, res) => {
 		const to = req.body.destination;
 		let trainBwtn = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/betweenStations?from=${from}&to=${to}`)).data;
 		if(!trainBwtn.success) {
-			throw new CustomError("No trains found")
+			throw new CustomError("No Direct train found")
 		}
 		trainBwtn = await sortTrainList(trainBwtn);
 		const responseKeys = ['train_no','train_name','from_time','to_time','running_days'];
-		const filteredTrainData = await trainBwtn.filter(train => train.train_base.to_stn_code===to).map((train)=>{
+		const filteredTrainData = await trainBwtn.filter(train => train.train_base.to_stn_code===to &&train.train_base.from_stn_code===from ).map((train)=>{
 			const filteredTrain = {};
 			for(const key of responseKeys) {
 				if(key in train.train_base) {
