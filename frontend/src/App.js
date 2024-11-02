@@ -29,6 +29,7 @@ import { VerifyEmail } from './components/Auth/verifyEmail.js';
 import CompleteRegistration from './components/Auth/CompleteRegistration.js';
 import ResetPassword from './components/Auth/ResetPassword.js';
 import TrainRoutePath from './components/Train/TrainRoutePath.js';
+import ShowAvailableTrains from './components/Train/ShowAvailableTrains.js';
 
 
 function App() {
@@ -123,6 +124,11 @@ function App() {
                         <Protected needLoggedIn={false}>
                             <GetShortestPath />
                             
+                        </Protected>
+                    } />
+                    <Route path="/get-list-available-trains/:source/:destination" element={
+                        <Protected needLoggedIn={false}>
+                            <ShowAvailableTrains />
                         </Protected>
                     } />
                     <Route path="/profile" element={
