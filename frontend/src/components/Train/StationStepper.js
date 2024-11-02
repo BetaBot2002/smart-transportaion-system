@@ -18,7 +18,7 @@ const StationStepper = ({ stations, distances, arriveTimes, departTimes, lineCol
   return (
     <>
     { dayOfWeek && 
-      <Heading as="h2" fontSize={{ base: 'md', md: 'lg' }} color="black" textAlign="center" mb={{ base: 2, md: 4 }}>
+      <Heading as="h2" fontSize={{ base: 'lg', md: 'xl' }} color="black" textAlign="center" mb={{ base: 2, md: 4 }}>
         Date: {dayOfWeek}
       </Heading>
       }
@@ -30,7 +30,7 @@ const StationStepper = ({ stations, distances, arriveTimes, departTimes, lineCol
 
             return (
               <Tr key={index}>
-                <Td width="10px" padding={{ base: 1, md: 2 }}>
+                <Td width="10px" p={{ base: 3, md: 4 }}>
                   <Stepper orientation="vertical" colorScheme={lineColor}>
                     <Step>
                       <StepIndicator
@@ -46,7 +46,7 @@ const StationStepper = ({ stations, distances, arriveTimes, departTimes, lineCol
                   </Stepper>
                 </Td>
 
-                <Td textAlign="left" padding={{ base: 1, md: 2 }} fontSize={'lg'}>
+                <Td textAlign="left" p={{ base: 3, md: 4 }} fontSize={'lg'}>
                   <Text fontWeight="bold" isTruncated maxWidth={{ base: '120px', md: '140px' }}>
                     {station}
                   </Text>
@@ -55,15 +55,15 @@ const StationStepper = ({ stations, distances, arriveTimes, departTimes, lineCol
                   </Text>
                 </Td>
 
-                <Td textAlign="right" padding={{ base: 1, md: 2 }} fontSize={'lg'}>
+                <Td textAlign="right" p={{ base: 2, md: 4 }} fontSize={'lg'}>
                   {arriveTime && (
                     <Text fontSize="md" fontWeight="bold" color="gray.700">
-                      {`Arrive: ${arriveTime}`}
+                      {`arr: ${arriveTime}`}
                     </Text>
                   )}
                   {departTime && (
                     <Text fontSize="md" fontWeight="bold" color="gray.700">
-                      {`Depart: ${departTime}`}
+                      {`dep: ${departTime}`}
                     </Text>
                   )}
                 </Td>

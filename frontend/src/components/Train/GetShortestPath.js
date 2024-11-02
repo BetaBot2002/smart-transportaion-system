@@ -117,10 +117,7 @@ export default function GetShortestPath() {
 			});
 			return;
 		}
-		dispatch(getAvailableTrainsBtwn({
-			source:src_stn_code,
-			destination:dstn_stn_code
-		}));
+		
 		navigate(`/get-list-available-trains/${src_stn_code}/${dstn_stn_code}`)
 	}
 	const handleAddRoute = () => {
