@@ -138,8 +138,6 @@ export const getAvailableTrainsBtwn = (credentials) => async (dispatch) => {
                 "Content-type": "application/json",
             },
         };
-        console.log(credentials);
-        
         const { data } = await axios.post(`${stationBackendUrl}/get-train-between`,credentials,config);
         if(!data.success) {
             throw new CustomError(data.message);
