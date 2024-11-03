@@ -31,7 +31,7 @@ import {
 import CustomError from "../../customError.js";
 import { getAccessToken, getRefreshToken, setAccessToken, setRefreshToken } from "../../utils/jwt.helper.js";
 
-export const userBackendUrl = "http://localhost:3000/user"
+export const userBackendUrl = "https://smart-transportaion-system.onrender.com/user"
 
 export const setToken = (accessToken, refreshToken) => {
     setAccessToken(accessToken);
