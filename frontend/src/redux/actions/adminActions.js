@@ -20,8 +20,8 @@ import {
 import CustomError from "../../customError.js";
 import { getAccessToken } from "../../utils/jwt.helper.js";
 
-const backendUrlUser = "http://localhost:5000/user";
-const backendUrlStation = "http://localhost:5000/station";
+const backendUrlUser = "http://localhost:3000/user";
+const backendUrlStation = "http://localhost:3000/station";
 
 
 export const deleteUser = (id) => async (dispatch) => {

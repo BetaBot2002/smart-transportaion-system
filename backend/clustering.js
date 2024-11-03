@@ -3,12 +3,12 @@ import os from "os"
 import {dirname} from "path"
 import {fileURLToPath} from "url"
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const numCPUs = os.availableParallelism();
+const numCPUs = os.cpus().length;;
 
 console.log(`total number of cpu ${numCPUs}`)
 
 cluster.setupPrimary({
-    exec:__dirname+"/server.js",
+    exec:__dirname+"/index.js",
 });
 
 for(let i=0;i<numCPUs;i++) {
