@@ -3,7 +3,7 @@ import os from "os"
 import {dirname} from "path"
 import {fileURLToPath} from "url"
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const numCPUs = os.cpus().length;;
+const numCPUs = os.availableParallelism();
 
 console.log(`total number of cpu ${numCPUs}`)
 
