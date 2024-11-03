@@ -5,17 +5,19 @@ import express from 'express';
 import station from './routes/stationRoutes.js';
 import user from "./routes/userRoutes.js";
 import cors from 'cors';
-import {connectMongoDB,connectRedisDB} from './database/database.js';
+import { connectMongoDB, connectRedisDB } from './database/database.js';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import xss from 'xss-clean';
 
 // Connect to the database
 connectMongoDB();
-
 export const redisClient = connectRedisDB();
 
 const app = express();
+
+// Set trust proxy to limit it to known proxies (e.g., 1 for a single proxy)
+app.set('trust proxy', 1); // Only trust the first proxy
 
 // Security-related middlewares
 app.use(helmet());
@@ -25,7 +27,7 @@ app.use(cors());
 // Rate limiting middleware
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
-    limit: 500, // Limit each IP to 200 requests per window
+    limit: 500, // Limit each IP to 500 requests per window
     standardHeaders: true,
     legacyHeaders: false,
 });

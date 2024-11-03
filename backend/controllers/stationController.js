@@ -2,7 +2,7 @@ import Station from "../models/stationModel.js";
 import { constructAdjacencyList, constructAnswer, findShortestPath, PriorityQueue } from "../utils/findShortestPath.js";
 import CustomError from "../utils/customError.js";
 import axios from "axios";
-import { redisClient } from "../server.js"
+import { redisClient } from "../index.js"
 import { constructLineColorAnswer, sortTrainList, zip } from "../utils/helper.js";
 const createStation = async (req, res) => {
 	try {

@@ -17,7 +17,7 @@ import CustomError from "../../customError.js";
 import { userBackendUrl } from "./userActions.js";
 import { getAccessToken } from "../../utils/jwt.helper.js";
 
-export const stationBackendUrl = "http://localhost:5000/station";
+export const stationBackendUrl = "http://localhost:3000/station";
 
 export const getShortestPath = (source, destination) => async (dispatch) => {
     try {

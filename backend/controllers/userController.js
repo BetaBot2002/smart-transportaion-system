@@ -1,10 +1,10 @@
 import blackListedToken from "../models/blackListedToken.js";
 import User from "../models/userModel.js";
-import { redisClient } from "../server.js";
+import { redisClient } from "../index.js";
 import CustomError from "../utils/customError.js";
 import { OauthClient } from "../utils/googleConfig.js";
 import { newAccessToken, signUser } from "../utils/jwt.helper.js";
-import { sendEmail } from "../utils/SendMail.js";
+import { sendEmail } from "../utils/sendMail.js";
 import axios from 'axios'
 export const sendToken = (res, user, accessToken, refreshToken) => {
     res.status(201).json({
