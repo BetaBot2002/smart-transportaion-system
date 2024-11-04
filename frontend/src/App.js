@@ -30,6 +30,7 @@ import CompleteRegistration from './components/Auth/CompleteRegistration.js';
 import ResetPassword from './components/Auth/ResetPassword.js';
 import TrainRoutePath from './components/Train/TrainRoutePath.js';
 import ShowAvailableTrains from './components/Train/ShowAvailableTrains.js';
+import { ModalNotice } from './components/Common/ModalNotice.js';
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
 
     return (
         <Router>
+            <ModalNotice/>
             <AlertNav/>
             <Navbar />
             {loading1 ? (

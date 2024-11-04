@@ -24,7 +24,7 @@ import { logoutUserAction } from '../../redux/actions/userActions'
 import { useEffect } from 'react'
 
 
-const Links = ['Home', 'Routes', 'Stations', 'About us']
+const Links = ['Home', 'Routes', 'About us']
 
 const NavLink = ({ children, to, fontSize }) => (
 	<ChakraLink
@@ -76,7 +76,7 @@ export default function Navbar() {
 						<Box>
 							<Avatar
 								size={'lg'}
-								src={"https://thumbs.dreamstime.com/b/formez-l-illustration-de-logo-sur-le-fond-clair-embl%C3%A8me-77233500.jpg"}
+								src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3W283tfdXjTlkQe_8K_Lp-oFXwpBCMknGgw&s"}
 								cursor={'pointer'}
 							/>
 						</Box>
@@ -120,7 +120,6 @@ export default function Navbar() {
 								</MenuButton>
 								<MenuList>
 									<MenuItem onClick={() => navigate('/profile')}>Profile</MenuItem>
-									<MenuItem>Link 2</MenuItem>
 									<MenuDivider />
 									<MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
 								</MenuList>

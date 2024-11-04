@@ -18,7 +18,7 @@ const StationStepper = ({ stations, distances, arriveTimes, departTimes, lineCol
   return (
     <>
     { dayOfWeek && 
-      <Heading as="h2" fontSize={{ base: 'lg', md: 'xl' }} color="black" textAlign="center" mb={{ base: 2, md: 4 }}>
+      <Heading as="h2" fontSize={{ base: 'lg', md: 'xl' }} color="black" textAlign="center" mb={{ base: 3, md: 5 }}>
         Date: {dayOfWeek}
       </Heading>
       }
@@ -30,7 +30,7 @@ const StationStepper = ({ stations, distances, arriveTimes, departTimes, lineCol
 
             return (
               <Tr key={index}>
-                <Td width="10px" p={{ base: 3, md: 4 }}>
+                <Td width="10px" p={{ base: 2, md: 4 }}>
                   <Stepper orientation="vertical" colorScheme={lineColor}>
                     <Step>
                       <StepIndicator
@@ -46,7 +46,7 @@ const StationStepper = ({ stations, distances, arriveTimes, departTimes, lineCol
                   </Stepper>
                 </Td>
 
-                <Td textAlign="left" p={{ base: 3, md: 4 }} fontSize={'lg'}>
+                <Td textAlign="left" p={{ base: 2, md: 4 }} fontSize={'lg'}>
                   <Text fontWeight="bold" isTruncated maxWidth={{ base: '120px', md: '140px' }}>
                     {station}
                   </Text>

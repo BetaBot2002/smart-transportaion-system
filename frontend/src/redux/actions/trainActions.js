@@ -47,7 +47,7 @@ export const getStation = (stationName) => async (dispatch) => {
     try {
         dispatch({ type: GET_STATION_REQUEST });
         
-        const { data } = await axios.get(`${stationBackendUrl}/get-station-database-details/${stationName.station_name}`);
+        const { data } = await axios.get(`https://sts3-smart-transportation-backend.mdbgo.io/station/get-station-database-details/${stationName.station_name}`);
         
         dispatch({ type: GET_STATION_SUCCESS, payload: data.station });
 
@@ -60,7 +60,7 @@ export const getAllStations = () => async (dispatch) => {
     try {
         dispatch({ type: GET_ALL_STATION_REQUEST });
 
-        const { data } = await axios.get(`${stationBackendUrl}/get-all-stations`);
+        const { data } = await axios.get(`https://sts3-smart-transportation-backend.mdbgo.io/station/get-all-stations`);
         dispatch({ type: GET_ALL_STATION_SUCCESS, payload: data });
 
     } catch (error) {
