@@ -1,6 +1,6 @@
 import {isExpired} from 'react-jwt'
 
-const backendUrlUser = "http://localhost:5000/user";
+const backendUrlUser = "https://sts3-smart-transportation-backend.mdbgo.io/user";
 
 const setRefreshToken=(token)=>{
     if(token===``) localStorage.removeItem(`refresh`)
