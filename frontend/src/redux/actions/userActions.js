@@ -288,8 +288,6 @@ export const getProfileAction = () => async (dispatch) => {
             payload: data.user
         })
     } catch (err) {
-        console.log(err);
-
         dispatch({
             type: GET_USER_FAILED,
             payload: err.response.data.message
