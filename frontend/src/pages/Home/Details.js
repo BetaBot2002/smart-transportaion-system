@@ -43,7 +43,7 @@ export default function WhySmartTransportationComponent() {
                             <Box>
                                 <Heading fontSize="lg">Seamless Connectivity</Heading>
                                 <Text mt={2}>
-                                    Stay informed with real-time updates on metro and train schedules to avoid delays.
+                                    Stay informed with real-time updates on metro and train schedules and delays.
                                 </Text>
                             </Box>
                         </Box>
