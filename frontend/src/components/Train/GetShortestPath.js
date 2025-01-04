@@ -11,6 +11,7 @@ import StationStepper from './StationStepper';
 import { Loader } from '../../utils/Loader';
 import {useNavigate} from "react-router-dom";
 import { addFavouriteRoute } from '../../redux/actions/userActions';
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
 
 const lineColorMap = {
 	0: 'black',
@@ -25,7 +26,8 @@ export default function GetShortestPath() {
 	const { loading: loading2, error: err2, data: data1 = [] } = useSelector(state => state.GetAllStation);
 	const { loading: loading1, error: err1, distanceArray, stationArray, lineColorArray } = useSelector((state) => state.GetShortestPath);
 	const dispatch = useDispatch();
-	const toast = useToast();
+	const notifyError = useNotifyError();
+	const notifySuccess = useNotifySuccess();
 	const navigate = useNavigate();
 	const [source, setSource] = useState('');
 	const [destination, setDestination] = useState('');
@@ -61,26 +63,12 @@ export default function GetShortestPath() {
 			getSectionsByColor();
 
 		}
-		if (err1) {
-			toast({
-				title: 'Error',
-				description: err1,
-				status: 'error',
-				duration: 3000,
-				isClosable: true
-			});
-		}
+		notifyError(err1);
 	}, [stationArray, err1]);
 
 	const handleSearch = () => {
 		if (!source || !destination) {
-			toast({
-				title: 'Invalid input',
-				description: "Enter both source and destination",
-				status: 'error',
-				duration: 3000,
-				isClosable: true
-			});
+			notifyError("Enter both source and destination");
 			return;
 		}
 		dispatch(getShortestPath(source, destination));
@@ -108,13 +96,7 @@ export default function GetShortestPath() {
 	};
 	const handleGetAvailableTrains = (color,src_stn_code,dstn_stn_code) => {
 		if (color !== 0) {
-			toast({
-				title: 'Not available right now',
-				description: "We are working on it, soon it will open",
-				status: 'error',
-				duration: 4050,
-				isClosable: true
-			});
+			notifyError("We are working on it, soon it will open");
 			return;
 		}
 		
@@ -125,13 +107,7 @@ export default function GetShortestPath() {
 			const startId = data1.filter((station) => station.station_name === source);
 			const endId = data1.filter((station) => station.station_name === destination);
 			dispatch(addFavouriteRoute({ source: startId[0]._id, destination: endId[0]._id }));
-			toast({
-				title: 'Success',
-				description: "Route added to favourite",
-				status: 'success',
-				duration: 3000,
-				isClosable: true
-			});
+			notifyError("Route added to favourite");
 		}
 	};
 

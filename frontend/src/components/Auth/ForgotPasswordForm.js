@@ -17,24 +17,21 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { forgotPasswordAction } from '../../redux/actions/userActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { MdErrorOutline } from 'react-icons/md';
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
 
 
 export default function ForgotPasswordForm() {
     const [inputField,setinputField] = useState("Email");
     const [inputFieldValue,setinputFieldValue] = useState("");
     const toast = useToast();
+    const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
     const navigate= useNavigate();
     const dispatch = useDispatch();
     const {loading,isForgotPassword, error} = useSelector(state=>state.IsUpdatedUser)
     const handleSubmit = () => {
         if(inputFieldValue === '') {
-            toast({
-                title: 'invalid',
-                description: "enter all credentials",
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            })
+            notifyError("All fields are required");
             return;
         }
         if(inputField==='email'){
@@ -55,23 +52,11 @@ export default function ForgotPasswordForm() {
     }
     useEffect(()=>{
         if(isForgotPassword) {
-            toast({
-                title: 'success',
-                description: "OTP sent to your email",
-                status: 'success',
-                duration: 4000,
-                isClosable: true,
-            })
+            notifySuccess("OTP sent successfully");
             navigate("/verify-otp")
         }
         if(error) {
-            toast({
-                title: 'invalid',
-                description: error,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            })
+            notifyError(error);
         }
     },[isForgotPassword,error])
     return (

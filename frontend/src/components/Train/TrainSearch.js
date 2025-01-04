@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import TrainInfoCard from "./TrainInfoCard.js";
 import trainFile from '../../assets/trainNoList.txt';
 import { Loader } from "../../utils/Loader.js";
+import { useNotifyError, useNotifySuccess } from "../../customHooks/useNotifyError.js";
 
 export default function TrainSearch() {
 	const [openTrainNumbers, setOpenTrainNumbers] = useState(false);
@@ -23,7 +24,8 @@ export default function TrainSearch() {
 	const [trainNo, setTrainNo] = useState("");
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const toast = useToast();
+	const notifyError = useNotifyError();
+	const notifySuccess = useNotifySuccess();
 	const { loading, data, error } = useSelector((state) => state.GetTrainStatus);
 	const [trainNumbers, setTrainNumbers] = useState([]);
 	useEffect(() => {
@@ -56,26 +58,14 @@ export default function TrainSearch() {
 
 		}
 		if (error !== null) {
-			toast({
-				title: "Invalid",
-				description: error,
-				status: "error",
-				duration: 3000,
-				isClosable: true,
-			});
+			notifyError(error)
 			setTrainNo("");
 		}
 	}, [error, data]);
 
 	const handleSearch = () => {
 		if (trainNo.length < 5) {
-			toast({
-				title: "Invalid",
-				description: "Please enter valid train number",
-				status: "error",
-				duration: 3000,
-				isClosable: true,
-			});
+			notifyError("Please enter valid train number");
 			return;
 		}
 		setOpenTrainNumbers(false);

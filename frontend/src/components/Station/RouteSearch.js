@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { MdOutlineSwapVerticalCircle } from "react-icons/md";
 import { clearGetshortestPath, getShortestPath } from '../../redux/actions/trainActions';
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
 
 export default function StationSearch() {
     const [openSourceStations, setOpenSourceStations] = useState(false);
@@ -20,7 +21,8 @@ export default function StationSearch() {
     const [destination, setDestination] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const toast = useToast();
+    const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
     const { loading: loading1, error: err1, data = [] } = useSelector(state => state.GetAllStation);
 
     const filterStations = (stationInput) => {
@@ -42,13 +44,7 @@ export default function StationSearch() {
 
     const handleSearch = () => {
         if (source === '' || destination === '') {
-            toast({
-                title: 'invalid',
-                description: "Enter source or destination",
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            })
+            notifyError("Enter source or destination");
             return;
         }
         dispatch(getShortestPath(source, destination));

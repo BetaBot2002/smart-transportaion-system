@@ -3,7 +3,7 @@ import { Box, Button, Input, Stack, Text, useToast } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUpdation, forgotPasswordAction, putUserUpdate, verifyOTPAction } from '../../redux/actions/userActions';
 import { useNavigate } from 'react-router-dom';
-
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
 
 
 export const VerifyEmail = () => {
@@ -12,17 +12,13 @@ export const VerifyEmail = () => {
     const [email, setEmail] = useState(user?.email || '');
     const [otp,setOtp] =  useState('');
     const [gototp, setGotOtp] = useState(false);
-    const toast = useToast();
+    const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleRequestOTP = () => {
         if (email === '') {
-            toast({
-                title: "Email is required.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
+            notifyError("All fields are required.");
             return;
         }
 
@@ -32,12 +28,7 @@ export const VerifyEmail = () => {
     };
     const handleVerifyOtp = ()=>{
         if (otp.length !== 6) {
-            toast({
-                title: "Invalid otp.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
+            notifyError("All fields are required.");
             return;
         }
         dispatch(verifyOTPAction({
@@ -52,46 +43,22 @@ export const VerifyEmail = () => {
     },[user])
     useEffect(() => {
         if (isForgotPassword) {
-            toast({
-                title: 'success',
-                description: "OTP sent to your email",
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-            })
+            notifySuccess("otp sent successfully");
             setGotOtp(true);
         }
         if (isotpVerified) {
-            toast({
-                title: 'success',
-                description: "otp verified successfully",
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-            })
+            notifySuccess("otp verified successfully");
             dispatch(putUserUpdate({
                 isEmailVerified:true
             }))
         }
         if(isUpdated) {
-            toast({
-                title: 'success',
-                description: "Email verified successfully",
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-            })
+            notifySuccess("Profile updated successfully");
             dispatch(clearUpdation());
             navigate('/profile')
         }
         if (error) {
-            toast({
-                title: 'invalid',
-                description: error,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            })
+            notifyError(error);
         }
     }, [error, isUpdated, isForgotPassword, isotpVerified])
     return (

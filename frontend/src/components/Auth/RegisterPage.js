@@ -17,8 +17,10 @@ import {
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { registerUserAction } from '../../redux/actions/userActions.js';
+import { clearUsers, registerUserAction } from '../../redux/actions/userActions.js';
 import { useSelector, useDispatch } from "react-redux";
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError.js';
+
 export default function RegisterPage() {
     const dispatch = useDispatch();
     const [formStep, setFormStep] = useState(1);
@@ -64,65 +66,37 @@ export default function RegisterPage() {
             ...formData,
             [id]: value,
         });
-
     };
-    const toast = useToast();
+    const navigate = useNavigate();
+    const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
+
     const handleSubmit = () => {
         if(formData.phoneNumber.length != 10) {
-            toast({
-                title: 'invalid',
-                description: "Enter valid phone Number",
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            })
+            notifyError("Enter valid phone Number");
             return;
         }
         for (const key in formData) {
             if (formData[key] === '') {
-                toast({
-                    title: 'invalid',
-                    description: "Enter all credentials",
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                })
+                notifyError("Enter valid credentials");
                 return;
             }
         }
         if (formData.confirmPassword !== formData.password) {
-            toast({
-                title: 'invalid',
-                description: "password mismacth",
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            })
+            notifyError("Passwords don't match");
             return;
         }
         dispatch(registerUserAction(formData));
 
     };
-    const navigate = useNavigate();
     useEffect(() => {
         if (isAuthenticated) {
-            toast({
-                title: 'Success',
-                description: "congratulations You have created account",
-                status: 'success',
-                duration: 3000,
-                isClosable: true
-            })
+            notifySuccess("Registration successful");
             navigate('/home');
         }
         if (error) {
-            toast({
-                title: 'invalid',
-                description: error,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            })
+            notifyError(error);
+            dispatch(clearUsers());
         }
     }, [dispatch, isAuthenticated, error])
     return (

@@ -13,10 +13,13 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { verifyOTPAction } from '../../redux/actions/userActions'
 import { useNavigate } from 'react-router-dom'
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError'
 
 export default function VerifyOtp({navigate_link}) {
     const [OTP, setOTP] = useState("");
     const toast = useToast();
+    const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { isotpVerified,email,error } = useSelector(state=>state.IsUpdatedUser)
@@ -27,33 +30,15 @@ export default function VerifyOtp({navigate_link}) {
                 otp:OTP
             }));
         }else {
-            toast({
-                title:'invalid',
-                description:"please enter valid otp",
-                status:'error',
-                duration:3000,
-                isClosable:true
-            })
+            notifyError("All fields are required.");
         }
     }
     useEffect(()=>{
         if(error) {
-            toast({
-                title:'invalid',
-                description:error,
-                status:'error',
-                duration:3000,
-                isClosable:true
-            })
+            notifyError(error);
         }
         if(isotpVerified) {
-            toast({
-                title:'success',
-                description:"OTP verification successful",
-                status:'success',
-                duration:3000,
-                isClosable:true
-            })
+            notifySuccess("OTP verified successfully");
             navigate(navigate_link);
         }
     },[isotpVerified,error])

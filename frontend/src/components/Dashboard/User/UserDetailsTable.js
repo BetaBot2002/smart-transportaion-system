@@ -23,9 +23,11 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { clearUpdation, putUserUpdate } from "../../../redux/actions/userActions";
 import { useNavigate } from "react-router-dom";
+import { useNotifyError, useNotifySuccess } from "../../../customHooks/useNotifyError";
 
 export function UserDetailsTable({user}) {
 	const {loading,isUpdated,error } = useSelector(state=>state.IsUpdatedUser);
+
     
 	function EditableComponent({ id, value }) {
 
@@ -81,18 +83,13 @@ export function UserDetailsTable({user}) {
 		nearestRailStation: user.nearestRailStation?.station_name
 	});
 	const dispatch = useDispatch();
-	const toast = useToast();
+	const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
 	const navigate = useNavigate();
 	const handleNewInputSubmit =  (e) => {
 		e.preventDefault();
 		if(userData.phoneNumber.length != 10) {
-            toast({
-                title: 'invalid',
-                description: "Enter valid phone Number",
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            })
+			notifyError("Invalid phone number");
             return;
         }
 		dispatch(putUserUpdate({
@@ -104,24 +101,13 @@ export function UserDetailsTable({user}) {
 	
 	useEffect(()=>{
 		if(isUpdated) {
-			toast({
-                title: 'success',
-                description: "User Updated successfully",
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-            })
+			notifySuccess("Profile updated successfully");
 			dispatch(clearUpdation());
 			navigate("/profile");
 		}
 		if(error) {
-			toast({
-                title: 'invalid',
-                description: error,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            })
+			notifyError(error);
+			dispatch(clearUpdation());
 		}
 	},[isUpdated,error])
 
