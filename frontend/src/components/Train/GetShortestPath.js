@@ -13,6 +13,7 @@ import {useNavigate} from "react-router-dom";
 import { addFavouriteRoute } from '../../redux/actions/userActions';
 import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
 import ListComponent from '../../utils/ListComponent';
+import InputComponent from '../../utils/InputComponent';
 
 const lineColorMap = {
 	0: 'black',
@@ -115,20 +116,18 @@ export default function GetShortestPath() {
 	return (
 		<>
 			<VStack m={4} display={'flex'} justifyContent={'center'} alignItems="center">
-				{/* Source Input */}
-				<InputGroup>
-					<InputLeftAddon w={'120px'}>Source</InputLeftAddon>
-					<Input
-						value={source}
-						onChange={(e) => {
-							setSource(e.target.value);
-							setFilteredSource(filterStations(e.target.value).slice(0, 10));
-							setOpenSourceStations(e.target.value.length !== 0);
-							setOpenDestinationStations(false);
-						}}
-						placeholder='From'
-					/>
-				</InputGroup>
+
+				<InputComponent 
+					title={'Source'} 
+					placeholder={'From'} 
+					source={source} 
+					handleOnchange={(e) => {
+						setSource(e.target.value);
+						setFilteredSource(filterStations(e.target.value).slice(0, 10));
+						setOpenSourceStations(e.target.value.length !== 0);
+						setOpenDestinationStations(false);
+					}} 
+				/>
 
 				{openSourceStations && 
 					<ListComponent 
@@ -142,19 +141,17 @@ export default function GetShortestPath() {
 					setDestination(source);
 				}} />
 
-				<InputGroup>
-					<InputLeftAddon w={'120px'}>Destination</InputLeftAddon>
-					<Input
-						value={destination}
-						onChange={(e) => {
-							setDestination(e.target.value);
-							setFilteredDestination(filterStations(e.target.value).slice(0, 10));
-							setOpenDestinationStations(e.target.value.length !== 0);
-							setOpenSourceStations(false);
-						}}
-						placeholder="To"
-					/>
-				</InputGroup>
+				<InputComponent 
+					title={'Destination'} 
+					placeholder={'To'} 
+					source={destination} 
+					handleOnchange={(e) => {
+						setDestination(e.target.value);
+						setFilteredDestination(filterStations(e.target.value).slice(0, 10));
+						setOpenDestinationStations(e.target.value.length !== 0);
+						setOpenSourceStations(false);
+					}} 
+				/>
 
 				{openDestinationStations && 
 					<ListComponent 

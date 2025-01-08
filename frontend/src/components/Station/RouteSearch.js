@@ -12,6 +12,7 @@ import { MdOutlineSwapVerticalCircle } from "react-icons/md";
 import { clearGetshortestPath, getShortestPath } from '../../redux/actions/trainActions';
 import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
 import ListComponent from '../../utils/ListComponent';
+import InputComponent from '../../utils/InputComponent';
 
 export default function StationSearch() {
     const [openSourceStations, setOpenSourceStations] = useState(false);
@@ -64,20 +65,17 @@ export default function StationSearch() {
 
             <Box mb={4}>
                 <FormControl id="source" mb={4}>
-                    <FormLabel>Source</FormLabel>
-                    <Input
-                        type='text'
-                        onChange={(e) => {
-                            setSource(e.target.value)
-                            setFilteredSource(filterStations(e.target.value).slice(0, 10))
+                    <InputComponent 
+                        title="Source"
+                        source={source}
+                        placeholder="From"
+                        handleOnchange={(e) => {
+                            setSource(e.target.value);
+                            setFilteredSource(filterStations(e.target.value).slice(0, 10));
                             if (e.target.value.length != 0) setOpenSourceStations(true);
                             else setOpenSourceStations(false);
-						    setOpenDestinationStations(false);
-
-                        }}
-                        value={source}
-                        placeholder='Source'
-                        autoComplete="off"
+                            setOpenDestinationStations(false);
+                        }} 
                     />
                     {openSourceStations && <ListComponent 
                         filteredItem={filteredSource}
@@ -88,19 +86,17 @@ export default function StationSearch() {
                 <MdOutlineSwapVerticalCircle size={35} cursor={'pointer'} onClick={handleStationSwap} />
 
                 <FormControl id="destination" mb={4}>
-                    <FormLabel>Destination</FormLabel>
-                    <Input
-                        type='text'
-                        onChange={(e) => {
+                    <InputComponent 
+                        title="Destination"
+                        source={destination}
+                        placeholder="To"
+                        handleOnchange={(e) => {
                             setDestination(e.target.value);
                             setFilteredDestination(filterStations(e.target.value).slice(0, 10));
                             if (e.target.value.length != 0) setOpenDestinationStations(true);
                             else setOpenDestinationStations(false);
                             setOpenSourceStations(false);
-                        }}
-                        value={destination}
-                        placeholder='Destination'
-                        autoComplete="off"
+                        }}  
                     />
                     {openDestinationStations && 
                         <ListComponent 

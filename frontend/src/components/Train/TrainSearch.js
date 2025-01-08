@@ -55,7 +55,6 @@ export default function TrainSearch() {
 
 		if (error === null && data && trainNo.length >= 5) {
 			dispatch(setLRUtrains(trainNo));
-
 		}
 		if (error !== null) {
 			notifyError(error)

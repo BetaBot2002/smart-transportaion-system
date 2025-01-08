@@ -26,7 +26,7 @@ const TrainRoutePath = () => {
     useEffect(() => {
         setData(trainData);
         notifyError(err)
-    }, [err, trainData, toast]);
+    }, [err, trainData]);
 
     if (loading) return <Loader />;
 
