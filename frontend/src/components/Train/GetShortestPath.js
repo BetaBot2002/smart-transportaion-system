@@ -12,6 +12,7 @@ import { Loader } from '../../utils/Loader';
 import {useNavigate} from "react-router-dom";
 import { addFavouriteRoute } from '../../redux/actions/userActions';
 import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
+import ListComponent from '../../utils/ListComponent';
 
 const lineColorMap = {
 	0: 'black',
@@ -107,7 +108,7 @@ export default function GetShortestPath() {
 			const startId = data1.filter((station) => station.station_name === source);
 			const endId = data1.filter((station) => station.station_name === destination);
 			dispatch(addFavouriteRoute({ source: startId[0]._id, destination: endId[0]._id }));
-			notifyError("Route added to favourite");
+			notifySuccess("Route added to favourite");
 		}
 	};
 
@@ -129,37 +130,12 @@ export default function GetShortestPath() {
 					/>
 				</InputGroup>
 
-				{openSourceStations && (
-					<Box
-						bg='white'
-						boxShadow='md'
-						border='1px solid gray'
-						w='100%'
-						p={2}
-						mt={1}
-						borderRadius="md"
-						maxH="150px"
-						overflowY="auto"
-					>
-						<UnorderedList styleType="none">
-							{filteredSource.map((station, index) => (
-								<ListItem
-									key={index}
-									onClick={() => handleSourceSelection(station.station_name)}
-									cursor="pointer"
-									pt={2}
-									pb={2}
-									borderRadius="md"
-									_hover={{ backgroundColor: "teal.100" }}
-									_active={{ backgroundColor: "teal.200" }}
-								>
-									<Badge colorScheme='blue'>{station.station_code}</Badge>
-									{` ${station.station_name} - ${station.station_type}`}
-								</ListItem>
-							))}
-						</UnorderedList>
-					</Box>
-				)}
+				{openSourceStations && 
+					<ListComponent 
+						filteredItem={filteredSource} 
+						handleItemSelection={handleSourceSelection} 
+					/>
+				}
 
 				<MdOutlineSwapVerticalCircle size={35} cursor={'pointer'} onClick={() => {
 					setSource(destination);
@@ -180,37 +156,12 @@ export default function GetShortestPath() {
 					/>
 				</InputGroup>
 
-				{openDestinationStations && (
-					<Box
-						bg='white'
-						boxShadow='md'
-						border='1px solid gray'
-						w='100%'
-						p={2}
-						mt={1}
-						borderRadius="md"
-						maxH="150px"
-						overflowY="auto"
-					>
-						<UnorderedList styleType="none">
-							{filteredDestination.map((station, index) => (
-								<ListItem
-									key={index}
-									onClick={() => handleDestinationSelection(station.station_name)}
-									cursor="pointer"
-									pt={2}
-									pb={2}
-									borderRadius="md"
-									_hover={{ backgroundColor: "teal.100" }}
-									_active={{ backgroundColor: "teal.200" }}
-								>
-									<Badge colorScheme='blue'>{station.station_code}</Badge>
-									{` ${station.station_name} - ${station.station_type}`}
-								</ListItem>
-							))}
-						</UnorderedList>
-					</Box>
-				)}
+				{openDestinationStations && 
+					<ListComponent 
+						filteredItem={filteredDestination} 
+						handleItemSelection={handleDestinationSelection} 
+					/>
+				}
 
 				<Button colorScheme="teal" onClick={handleSearch}>Search</Button>
 				<Button onClick={handleAddRoute} isDisabled={!(source.length > 0 && destination.length > 0)}>Add to Favourite Route</Button>

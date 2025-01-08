@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { MdOutlineSwapVerticalCircle } from "react-icons/md";
 import { clearGetshortestPath, getShortestPath } from '../../redux/actions/trainActions';
 import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
+import ListComponent from '../../utils/ListComponent';
 
 export default function StationSearch() {
     const [openSourceStations, setOpenSourceStations] = useState(false);
@@ -22,7 +23,6 @@ export default function StationSearch() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const notifyError = useNotifyError();
-    const notifySuccess = useNotifySuccess();
     const { loading: loading1, error: err1, data = [] } = useSelector(state => state.GetAllStation);
 
     const filterStations = (stationInput) => {
@@ -79,38 +79,10 @@ export default function StationSearch() {
                         placeholder='Source'
                         autoComplete="off"
                     />
-                    {openSourceStations && (
-                        <Box
-                            bg='white'
-                            boxShadow='md'
-                            border='1px solid gray'
-                            w='100%'
-                            p={2}
-                            mt={1}
-                            borderRadius="md"
-                            maxH="150px"
-                            overflowY="auto"
-                        >
-                            <UnorderedList styleType="none">
-                                {filteredSource.map((station, index) => (
-                                    <ListItem
-                                        key={index}
-                                        onClick={() => handleSourceSelection(station.station_name)}
-                                        cursor="pointer"
-                                        pt={2}
-                                        pb={2}
-                                        textAlign={'left'}
-                                        borderRadius="md"
-                                        _hover={{ backgroundColor: "teal.100" }}
-                                        _active={{ backgroundColor: "teal.200" }}
-                                    >
-                                        <Badge colorScheme='blue'>{station.station_code}</Badge>{`${station.station_name}-${station.station_type}`}
-                                    </ListItem>
-                                ))}
-
-                            </UnorderedList>
-                        </Box>
-                    )}
+                    {openSourceStations && <ListComponent 
+                        filteredItem={filteredSource}
+                        handleItemSelection={handleSourceSelection}
+                    />}
                 </FormControl>
 
                 <MdOutlineSwapVerticalCircle size={35} cursor={'pointer'} onClick={handleStationSwap} />
@@ -130,39 +102,11 @@ export default function StationSearch() {
                         placeholder='Destination'
                         autoComplete="off"
                     />
-                    {openDestinationStations && (
-                        <Box
-                            bg='white'
-                            boxShadow='md'
-                            border='1px solid gray'
-                            w='100%'
-                            p={2}
-                            mt={1}
-                            borderRadius="md"
-                            maxH="150px"
-                            overflowY="auto"
-                        >
-                            <UnorderedList styleType="none">
-                                {filteredDestination.map((station, index) => (
-                                    <ListItem
-                                        key={index}
-                                        onClick={() => handleDestinationSelection(station.station_name)}
-                                        cursor="pointer"
-                                        pt={2}
-                                        pb={2}
-                                        textAlign={'left'}
-                                        borderRadius="md"
-                                        _hover={{ backgroundColor: "teal.100" }}
-                                        _active={{ backgroundColor: "teal.200" }}
-                                    >
-                                        <Badge colorScheme='blue'>{station.station_code}</Badge>{ `${station.station_name}-${station.station_type}`}
-
-                                    </ListItem>
-                                ))}
-
-                            </UnorderedList>
-                        </Box>
-                    )}
+                    {openDestinationStations && 
+                        <ListComponent 
+                            filteredItem={filteredDestination}
+                            handleItemSelection={handleDestinationSelection}
+                        />}
                 </FormControl>
 
                 <Button w='100%' colorScheme="teal" onClick={handleSearch}>
