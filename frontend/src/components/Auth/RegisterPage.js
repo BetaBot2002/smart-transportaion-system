@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { clearUsers, registerUserAction } from '../../redux/actions/userActions.js';
 import { useSelector, useDispatch } from "react-redux";
 import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError.js';
+import ListComponent from '../../utils/ListComponent.js';
 
 export default function RegisterPage() {
     const dispatch = useDispatch();
@@ -40,7 +41,18 @@ export default function RegisterPage() {
         return data
             .filter(station => station.station_type !== type && station.station_name.toLowerCase().startsWith(stationInput.toLowerCase()));
     }
-
+    const handleNearestRailStation = (stationName) => {
+        setNearestRailStation(stationName);
+        const station_id = data.find((station) => station.station_name === stationName)._id;
+        setFormData({ ...formData, nearestRailStation: station_id });
+        setOpenRailStations(false);
+    }
+    const handleNearestMetroStation = (stationName) => {
+        setNearestMetroStation(stationName);
+        const station_id = data.find((station) => station.station_name === stationName)._id;
+        setFormData({ ...formData, nearestMetroStation: station_id });
+        setOpenMetroStations(false);
+    }
     const [formData, setFormData] = useState({
         username: '',
         phoneNumber: '',
@@ -76,6 +88,9 @@ export default function RegisterPage() {
             notifyError("Enter valid phone Number");
             return;
         }
+
+        console.log(formData);
+
         for (const key in formData) {
             if (formData[key] === '') {
                 notifyError("Enter valid credentials");
@@ -86,6 +101,7 @@ export default function RegisterPage() {
             notifyError("Passwords don't match");
             return;
         }
+        
         dispatch(registerUserAction(formData));
 
     };
@@ -147,7 +163,7 @@ export default function RegisterPage() {
                     {formStep === 2 && (
                         <Stack spacing={4}>
                             <FormControl id="city">
-                                <Select onChange={handleChange} placeholder='Select city'>
+                                <Select value={formData.city} id="city" onChange={handleChange} placeholder='Select city'>
                                     <option value="Kolkata">Kolkata</option>
                                     <option value="Delhi">Delhi</option>
                                     <option value="Mumbai">Mumbai</option>
@@ -157,14 +173,10 @@ export default function RegisterPage() {
                                     <option value="Pune">Pune</option>
                                     <option value="Ahmedabad">Ahmedabad</option>
                                     <option value="Lucknow">Lucknow</option>
-                                    <option value="Kanpur">Kanpur</option>
-                                    <option value="Nagpur">Nagpur</option>
-                                    <option value="Patna">Patna</option>
-                                    <option value="Guwahati">Guwahati</option>
                                 </Select>
                             </FormControl>
                             <FormControl >
-                                <Text as={'b'} mb='8px'>NearestRailStation:</Text>
+                                <Text as={'b'} mb='8px'>Nearest Rail Station:</Text>
                                 <InputGroup>
                                     <Input
                                         maxW={'100%'}
@@ -172,53 +184,19 @@ export default function RegisterPage() {
                                         onChange={(e) => {
                                             setNearestRailStation(e.target.value);
                                             setFilteredRailStations(filterStations(e.target.value, 'Metro'))
-                                            if (e.target.value.length != 0) setOpenRailStations(true);
+                                            if (e.target.value.length !== 0) setOpenRailStations(true);
                                             else setOpenRailStations(false)
                                         }}
-                                        placeholder='From'
+                                        placeholder='Select'
                                     />
                                 </InputGroup>
 
                                 {openRailStations && (
-                                    <Box
-                                        bg='white'
-                                        boxShadow={'0 0 8px rgba(0, 0, 0, 0.2)'}
-                                        border='1px solid gray'
-                                        w='100%'
-                                        p={2}
-                                        mt={1}
-                                        borderRadius="md"
-                                        maxH="150px"
-                                        overflowY="auto"
-                                    >
-                                        <UnorderedList id="nearestRailStation" styleType="none">
-                                            {filteredRailStations.map((station, index) => (
-                                                <ListItem
-                                                    key={index}
-                                                    onClick={() => {
-                                                        setFormData({
-                                                            ...formData,
-                                                            nearestRailStation: station._id,
-                                                        });
-                                                        setOpenRailStations(false);
-                                                        setNearestRailStation(station.station_name);
-                                                    }}
-                                                    cursor="pointer"
-                                                    p={2}
-                                                    borderRadius="md"
-                                                    _hover={{ backgroundColor: "teal.100" }}
-                                                    _active={{ backgroundColor: "teal.200" }}
-                                                >
-                                                    {`${station.station_name} - ${station.station_type}`}
-                                                </ListItem>
-                                            ))}
-
-                                        </UnorderedList>
-                                    </Box>
+                                    <ListComponent filteredItem={filteredRailStations} handleItemSelection={handleNearestRailStation} />
                                 )}
                             </FormControl>
                             <FormControl>
-                                <Text as={'b'} mb='8px'>NearestMetroStation:</Text>
+                                <Text as={'b'} mb='8px'>Nearest Metro Station:</Text>
                                 <InputGroup>
                                     <Input
                                         maxW={'100%'}
@@ -229,45 +207,15 @@ export default function RegisterPage() {
                                             if (e.target.value.length !== 0) setOpenMetroStations(true);
                                             else setOpenMetroStations(false);
                                         }}
-                                        placeholder='From'
+                                        placeholder='Select'
                                     />
                                 </InputGroup>
 
                                 {openMetroStations && (
-                                    <Box
-                                        bg='white'
-                                        boxShadow={'0 0 8px rgba(0, 0, 0, 0.2)'}
-                                        border='1px solid gray'
-                                        w='100%'
-                                        p={2}
-                                        mt={1}
-                                        borderRadius="md"
-                                        maxH="150px"
-                                        overflowY="auto"
-                                    >
-                                        <UnorderedList id="nearestMetroStation" styleType="none">
-                                            {filteredMetroStations.map((station, index) => (
-                                                <ListItem
-                                                    key={index}
-                                                    onClick={() => {
-                                                        setFormData({
-                                                            ...formData,
-                                                            nearestMetroStation: station._id,
-                                                        });
-                                                        setOpenMetroStations(false);
-                                                        setNearestMetroStation(station.station_name);
-                                                    }}
-                                                    cursor="pointer"
-                                                    p={2}
-                                                    borderRadius="md"
-                                                    _hover={{ backgroundColor: "teal.100" }}
-                                                    _active={{ backgroundColor: "teal.200" }}
-                                                >
-                                                    {`${station.station_name} - ${station.station_type}`}
-                                                </ListItem>
-                                            ))}
-                                        </UnorderedList>
-                                    </Box>
+                                    <ListComponent 
+                                    filteredItem={filteredMetroStations} 
+                                    handleItemSelection={handleNearestMetroStation} 
+                                    />
                                 )}
                             </FormControl>
 

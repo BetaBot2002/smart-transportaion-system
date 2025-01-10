@@ -40,8 +40,7 @@ export default function GetShortestPath() {
 	const [filteredDestination, setFilteredDestination] = useState([]);
 
 	const filterStations = (stationInput) => {
-		return data1
-			.filter(station => station.station_name && station.station_name.toLowerCase().startsWith(stationInput.toLowerCase()));
+		return data1.filter(station => station.station_name && station.station_name.toLowerCase().startsWith(stationInput.toLowerCase()));
 	}
 
 	const handleSourceSelection = (stationName) => {

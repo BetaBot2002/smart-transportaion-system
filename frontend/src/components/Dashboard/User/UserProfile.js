@@ -12,14 +12,12 @@ import { UserDetailsTable } from './UserDetailsTable.js';
 import { Spinner } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { getProfileAction, logoutUserAction } from '../../../redux/actions/userActions.js';
-import { getAllUsers } from '../../../redux/actions/adminActions.js';
 
 
 export default function UserProfile() {
 
     const dispatch = useDispatch();
-    const toast = useToast();
-    const { loading, isAuthenticated, isLoggedOut, user, error } = useSelector(state => state.GetUser);
+    const { loading, isAuthenticated,user } = useSelector(state => state.GetUser);
     const isAdmin = user && user.role === 'admin' ? true : false;
     const navigate = useNavigate();
     const {
