@@ -1,20 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
-  Table,
-  Tbody,
-  Tr,
-  Td,
-  TableContainer,
-  ButtonGroup,
-  IconButton,
-  Flex,
-  Editable,
-  EditablePreview,
-  EditableInput,
-  Button,
-  TableCaption,
-  useToast,
-  useEditableControls,
+  Table, Tbody, Tr, Td, TableContainer, ButtonGroup,
+  IconButton, Flex, Editable,  EditablePreview, EditableInput,
+  Button, TableCaption, useToast, useEditableControls
 } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,7 +33,6 @@ export function UserDetailsTable({ user }) {
 
   const handleSave = (e) => {
     e.preventDefault();
-    // Validate phone number and email using regex
     const phoneRegex = /^[0-9]{10}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

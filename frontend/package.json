@@ -16,6 +16,8 @@
     "@emotion/styled": "^11.13.0",
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.5.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "framer-motion": "^11.5.4",
@@ -28,6 +30,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.26.2",
     "react-slick": "^0.30.2",
+    "redux-mock-store": "^1.5.5",
     "toastify": "^2.0.1"
   },
   "devDependencies": {
