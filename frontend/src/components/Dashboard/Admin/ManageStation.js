@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { getStation } from '../../../redux/actions/trainActions';
 import { StationCardInfo } from './StationCardInfo';
+import { useNotifyError, useNotifySuccess } from '../../../customHooks/useNotifyError';
 
 export default function ManageStation() {
     const [expandedIndex, setExpandedIndex] = useState(-1);
@@ -17,7 +18,8 @@ export default function ManageStation() {
     const [page, setPage] = useState(1);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const toast = useToast();
+    const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
     const { loading, data, error } = useSelector(state => state.GetAllStation);
     const { loading: loading1, data: station, error: error1 } = useSelector(state => state.GetStation);
     const [AllStations, setAllStations] = useState(data ? data : []);
@@ -87,24 +89,8 @@ export default function ManageStation() {
     }, [station]);
 
     useEffect(() => {
-        if (error) {
-            toast({
-                title: 'Invalid',
-                description: error,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            });
-        }
-        if(error1) {
-            toast({
-                title: 'Invalid',
-                description: error1,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            });
-        }
+        notifyError(error);
+        notifyError(error1);
     }, [error,error1]);
 
     return (

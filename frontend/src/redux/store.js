@@ -31,3 +31,28 @@ const store = configureStore({
 })
 
 export default store
+
+
+
+
+
+
+//rtk query with redux toolkit
+
+// import { configureStore } from '@reduxjs/toolkit';
+// import { userApi } from './apis/userApis.js';
+// import { adminApi } from './apis/adminApis.js';
+// import {stationApi} from './apis/trainApis.js';
+
+
+// const store = configureStore({
+//   reducer: {
+//     [userApi.reducerPath]: userApi.reducer,
+//     [adminApi.reducerPath]: adminApi.reducer,
+//     [stationApi.reducerPath]: stationApi.reducer
+//   },
+//   middleware: (getDefaultMiddleware) =>
+//     getDefaultMiddleware().concat(userApi.middleware),
+// });
+
+// export default store;

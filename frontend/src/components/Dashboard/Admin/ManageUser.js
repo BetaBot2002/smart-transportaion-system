@@ -18,12 +18,14 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from 'react-router-dom';
 import { deleteUser, getAllUsers, getSingleUser } from '../../../redux/actions/adminActions';
 import { UserCardInfo } from './UserCardInfo';
+import { useNotifyError, useNotifySuccess } from '../../../customHooks/useNotifyError';
 
 export default function ManageUser() {
     const [expandedIndex, setExpandedIndex] = useState(-1);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const toast = useToast();
+    const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
     const { loading, allUsers, singleUser, error } = useSelector(state => state.GetAllUser);
 
     const OverlayOne = () => (
@@ -49,15 +51,7 @@ export default function ManageUser() {
         dispatch(getAllUsers());
     };
     useEffect(() => {
-        if (error) {
-            toast({
-                title: 'invalid',
-                description: error,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            })
-        }
+        notifyError(error);
     }, [error])
     useEffect(() => {
         dispatch(getAllUsers());

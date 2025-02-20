@@ -10,6 +10,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { MdOutlineSwapVerticalCircle } from "react-icons/md";
 import { clearGetshortestPath, getShortestPath } from '../../redux/actions/trainActions';
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
+import ListComponent from '../../utils/ListComponent';
+import InputComponent from '../../utils/InputComponent';
 
 export default function StationSearch() {
     const [openSourceStations, setOpenSourceStations] = useState(false);
@@ -20,7 +23,7 @@ export default function StationSearch() {
     const [destination, setDestination] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const toast = useToast();
+    const notifyError = useNotifyError();
     const { loading: loading1, error: err1, data = [] } = useSelector(state => state.GetAllStation);
 
     const filterStations = (stationInput) => {
@@ -42,13 +45,7 @@ export default function StationSearch() {
 
     const handleSearch = () => {
         if (source === '' || destination === '') {
-            toast({
-                title: 'invalid',
-                description: "Enter source or destination",
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            })
+            notifyError("Enter source or destination");
             return;
         }
         dispatch(getShortestPath(source, destination));
@@ -68,105 +65,44 @@ export default function StationSearch() {
 
             <Box mb={4}>
                 <FormControl id="source" mb={4}>
-                    <FormLabel>Source</FormLabel>
-                    <Input
-                        type='text'
-                        onChange={(e) => {
-                            setSource(e.target.value)
-                            setFilteredSource(filterStations(e.target.value).slice(0, 10))
+                    <InputComponent 
+                        title="Source"
+                        source={source}
+                        placeholder="From"
+                        handleOnchange={(e) => {
+                            setSource(e.target.value);
+                            setFilteredSource(filterStations(e.target.value).slice(0, 10));
                             if (e.target.value.length != 0) setOpenSourceStations(true);
                             else setOpenSourceStations(false);
-						    setOpenDestinationStations(false);
-
-                        }}
-                        value={source}
-                        placeholder='Source'
-                        autoComplete="off"
+                            setOpenDestinationStations(false);
+                        }} 
                     />
-                    {openSourceStations && (
-                        <Box
-                            bg='white'
-                            boxShadow='md'
-                            border='1px solid gray'
-                            w='100%'
-                            p={2}
-                            mt={1}
-                            borderRadius="md"
-                            maxH="150px"
-                            overflowY="auto"
-                        >
-                            <UnorderedList styleType="none">
-                                {filteredSource.map((station, index) => (
-                                    <ListItem
-                                        key={index}
-                                        onClick={() => handleSourceSelection(station.station_name)}
-                                        cursor="pointer"
-                                        pt={2}
-                                        pb={2}
-                                        textAlign={'left'}
-                                        borderRadius="md"
-                                        _hover={{ backgroundColor: "teal.100" }}
-                                        _active={{ backgroundColor: "teal.200" }}
-                                    >
-                                        <Badge colorScheme='blue'>{station.station_code}</Badge>{`${station.station_name}-${station.station_type}`}
-                                    </ListItem>
-                                ))}
-
-                            </UnorderedList>
-                        </Box>
-                    )}
+                    {openSourceStations && <ListComponent 
+                        filteredItem={filteredSource}
+                        handleItemSelection={handleSourceSelection}
+                    />}
                 </FormControl>
 
                 <MdOutlineSwapVerticalCircle size={35} cursor={'pointer'} onClick={handleStationSwap} />
 
                 <FormControl id="destination" mb={4}>
-                    <FormLabel>Destination</FormLabel>
-                    <Input
-                        type='text'
-                        onChange={(e) => {
+                    <InputComponent 
+                        title="Destination"
+                        source={destination}
+                        placeholder="To"
+                        handleOnchange={(e) => {
                             setDestination(e.target.value);
                             setFilteredDestination(filterStations(e.target.value).slice(0, 10));
                             if (e.target.value.length != 0) setOpenDestinationStations(true);
                             else setOpenDestinationStations(false);
                             setOpenSourceStations(false);
-                        }}
-                        value={destination}
-                        placeholder='Destination'
-                        autoComplete="off"
+                        }}  
                     />
-                    {openDestinationStations && (
-                        <Box
-                            bg='white'
-                            boxShadow='md'
-                            border='1px solid gray'
-                            w='100%'
-                            p={2}
-                            mt={1}
-                            borderRadius="md"
-                            maxH="150px"
-                            overflowY="auto"
-                        >
-                            <UnorderedList styleType="none">
-                                {filteredDestination.map((station, index) => (
-                                    <ListItem
-                                        key={index}
-                                        onClick={() => handleDestinationSelection(station.station_name)}
-                                        cursor="pointer"
-                                        pt={2}
-                                        pb={2}
-                                        textAlign={'left'}
-                                        borderRadius="md"
-                                        _hover={{ backgroundColor: "teal.100" }}
-                                        _active={{ backgroundColor: "teal.200" }}
-                                    >
-                                        <Badge colorScheme='blue'>{station.station_code}</Badge>{ `${station.station_name}-${station.station_type}`}
-
-                                    </ListItem>
-                                ))}
-
-                            </UnorderedList>
-                        </Box>
-                    )}
+                    {openDestinationStations && 
+                        <ListComponent 
+                            filteredItem={filteredDestination}
+                            handleItemSelection={handleDestinationSelection}
+                        />}
                 </FormControl>
 
                 <Button w='100%' colorScheme="teal" onClick={handleSearch}>

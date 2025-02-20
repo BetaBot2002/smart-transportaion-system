@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUpdation, getProfileAction, putUserUpdate } from '../../redux/actions/userActions';
 import { getSingleUser } from '../../redux/actions/adminActions';
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
 
 export default function CompleteRegistration() {
     const [city, setCity] = useState('');
@@ -18,7 +19,8 @@ export default function CompleteRegistration() {
     const [openMetroStations, setOpenMetroStations] = useState(false);
     const [formData, setFormData] = useState({});
     const dispatch = useDispatch();
-    const toast = useToast();
+    const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
     const navigate = useNavigate();
     const { loading, isUpdated, error } = useSelector(state => state.IsUpdatedUser);
     const { user } = useSelector(state => state.GetUser);
@@ -28,18 +30,9 @@ export default function CompleteRegistration() {
         e.preventDefault();
 
         if (!city || !nearestRailStation || !nearestMetroStation) {
-            toast({
-                title: 'Error',
-                description: "Please fill all mandatory fields",
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            notifyError("All fields are required");
             return;
         }
-
-
-
         dispatch(putUserUpdate({
             ...formData,
             city:city,
@@ -49,25 +42,14 @@ export default function CompleteRegistration() {
 
     useEffect(() => {
         if (isUpdated) {
-            toast({
-                title: 'Success',
-                description: "Registration completed",
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-            });
+            notifySuccess("Registered successfully");
             dispatch(clearUpdation());
             dispatch(getProfileAction());
             navigate("/home");
         }
+
         if (error) {
-            toast({
-                title: 'Error',
-                description: error,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            notifyError(error);
         }
     }, [isUpdated, error]);
 

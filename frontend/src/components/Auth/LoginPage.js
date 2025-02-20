@@ -1,11 +1,8 @@
 'use client'
 import { useGoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { ArrowDownIcon, ArrowUpIcon, Icon } from '@chakra-ui/icons';
-import {
-	Flex, Box, FormControl, FormLabel, Link,
-	Input, Checkbox, Stack, Button, Heading,
-	Text, Menu, MenuButton, MenuItem, MenuList,
-	useColorModeValue, useToast
+import { Flex, Box, FormControl, FormLabel, Link, Input, Checkbox, Stack, Button, Heading,
+	Text, Menu, MenuButton, MenuItem, MenuList, useColorModeValue, useToast
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +10,8 @@ import { useSelector, useDispatch } from "react-redux"
 import { clearUsers, loginUserAction, googleLoginAction } from '../../redux/actions/userActions';
 import { getLRUtrains } from '../../redux/actions/trainActions';
 import { FcGoogle } from "react-icons/fc";
+import {useNotifyError, useNotifySuccess} from '../../customHooks/useNotifyError';
+
 export default function LoginPage() {
 
 	const [inputField, setInputField] = useState("username");
@@ -20,6 +19,8 @@ export default function LoginPage() {
 	const [password, setPassword] = useState("");
 	const toast = useToast();
 	const navigate = useNavigate();
+	const notifyError = useNotifyError();
+	const notifySuccess = useNotifySuccess();
 	const dispatch = useDispatch();
 	const { loading, isAuthenticated, user, error } = useSelector(state => state.GetUser);
 
@@ -32,25 +33,13 @@ export default function LoginPage() {
 			}else {
 				navigate('/complete-profile')
 			}
-			toast({
-				title: 'Success',
-				description: "Logged in successfully",
-				status: 'success',
-				duration: 3000,
-				isClosable: true
-			})
+			notifySuccess("Login successful");	
 		}
 		if (error) {
-			toast({
-				title: 'invalid',
-				description: error,
-				status: 'error',
-				duration: 3000,
-				isClosable: true
-			})
+			notifyError(error);
 			dispatch(clearUsers());
 		}
-	}, [dispatch, isAuthenticated, error])
+	}, [dispatch, isAuthenticated, error]);
 	const handleinputsubmit = (e) => {
 		e.preventDefault();
 		if (inputFieldValue != "" && password != "") {
@@ -62,13 +51,7 @@ export default function LoginPage() {
 
 			} else if (inputField === 'phoneNo') {
 				if(inputField.length != 10) {
-					toast({
-						title: 'invalid',
-						description: "Enter valid phone Number",
-						status: 'error',
-						duration: 3000,
-						isClosable: true,
-					})
+					notifyError("Enter valid phone Number");
 					return;
 				}
 				dispatch(loginUserAction({
@@ -82,13 +65,7 @@ export default function LoginPage() {
 				}))
 			}
 		} else {
-			toast({
-				title: 'invalid',
-				description: "enter all credentials",
-				status: 'error',
-				duration: 3000,
-				isClosable: true,
-			})
+			notifyError("Enter valid credentials");
 		}
 
 	}
@@ -99,25 +76,13 @@ export default function LoginPage() {
 				dispatch(googleLoginAction(response['code']));
 			}
 		} catch (error) {
-			toast({
-				title: "Error",
-				description: error,
-				status: "error",
-				duration: 3000,
-				isClosable: true,
-			});
+			notifyError("Something went wrong");
 		}
 	};
 
 
 	const googleLoginFailure = () => {
-		toast({
-			title: "Error",
-			description: "google error",
-			status: "error",
-			duration: 3000,
-			isClosable: true,
-		});
+		notifyError("Something went wrong");
 	};
 
 	const googleLogin = useGoogleLogin({
