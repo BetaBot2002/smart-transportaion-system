@@ -5,29 +5,23 @@ import { convertTo12HourFormat } from "../../utils/convertTo12HourFormat";
 import { Loader } from "../../utils/Loader";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAvailableTrainsBtwn } from "../../redux/actions/trainActions";
+import { useNotifyError, useNotifySuccess } from "../../customHooks/useNotifyError";
 
 const ShowAvailableTrains = () => {
     const { loading, error, data } = useSelector(state => state.GetAllAvailableTrains);
     const { source, destination } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const toast = useToast();
-    const trainRefs = useRef([]); // Array to hold refs to each train item
+    const notifyError = useNotifyError();
+	const notifySuccess = useNotifySuccess();
+    const trainRefs = useRef([]); 
 
     useEffect(() => {
         dispatch(getAvailableTrainsBtwn({ source, destination }));
     }, [source, destination]);
 
     useEffect(() => {
-        if (error) {
-            toast({
-                title: 'Something went wrong',
-                description: error,
-                status: 'error',
-                duration: 4050,
-                isClosable: true
-            });
-        }
+        notifyError(error);
     }, [error]);
 
     useEffect(() => {

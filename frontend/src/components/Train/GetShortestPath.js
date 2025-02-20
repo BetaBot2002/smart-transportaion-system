@@ -11,6 +11,9 @@ import StationStepper from './StationStepper';
 import { Loader } from '../../utils/Loader';
 import {useNavigate} from "react-router-dom";
 import { addFavouriteRoute } from '../../redux/actions/userActions';
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
+import ListComponent from '../../utils/ListComponent';
+import InputComponent from '../../utils/InputComponent';
 
 const lineColorMap = {
 	0: 'black',
@@ -25,7 +28,8 @@ export default function GetShortestPath() {
 	const { loading: loading2, error: err2, data: data1 = [] } = useSelector(state => state.GetAllStation);
 	const { loading: loading1, error: err1, distanceArray, stationArray, lineColorArray } = useSelector((state) => state.GetShortestPath);
 	const dispatch = useDispatch();
-	const toast = useToast();
+	const notifyError = useNotifyError();
+	const notifySuccess = useNotifySuccess();
 	const navigate = useNavigate();
 	const [source, setSource] = useState('');
 	const [destination, setDestination] = useState('');
@@ -36,8 +40,7 @@ export default function GetShortestPath() {
 	const [filteredDestination, setFilteredDestination] = useState([]);
 
 	const filterStations = (stationInput) => {
-		return data1
-			.filter(station => station.station_name && station.station_name.toLowerCase().startsWith(stationInput.toLowerCase()));
+		return data1.filter(station => station.station_name && station.station_name.toLowerCase().startsWith(stationInput.toLowerCase()));
 	}
 
 	const handleSourceSelection = (stationName) => {
@@ -61,26 +64,12 @@ export default function GetShortestPath() {
 			getSectionsByColor();
 
 		}
-		if (err1) {
-			toast({
-				title: 'Error',
-				description: err1,
-				status: 'error',
-				duration: 3000,
-				isClosable: true
-			});
-		}
+		notifyError(err1);
 	}, [stationArray, err1]);
 
 	const handleSearch = () => {
 		if (!source || !destination) {
-			toast({
-				title: 'Invalid input',
-				description: "Enter both source and destination",
-				status: 'error',
-				duration: 3000,
-				isClosable: true
-			});
+			notifyError("Enter both source and destination");
 			return;
 		}
 		dispatch(getShortestPath(source, destination));
@@ -108,13 +97,7 @@ export default function GetShortestPath() {
 	};
 	const handleGetAvailableTrains = (color,src_stn_code,dstn_stn_code) => {
 		if (color !== 0) {
-			toast({
-				title: 'Not available right now',
-				description: "We are working on it, soon it will open",
-				status: 'error',
-				duration: 4050,
-				isClosable: true
-			});
+			notifyError("We are working on it, soon it will open");
 			return;
 		}
 		
@@ -125,116 +108,56 @@ export default function GetShortestPath() {
 			const startId = data1.filter((station) => station.station_name === source);
 			const endId = data1.filter((station) => station.station_name === destination);
 			dispatch(addFavouriteRoute({ source: startId[0]._id, destination: endId[0]._id }));
-			toast({
-				title: 'Success',
-				description: "Route added to favourite",
-				status: 'success',
-				duration: 3000,
-				isClosable: true
-			});
+			notifySuccess("Route added to favourite");
 		}
 	};
 
 	return (
 		<>
 			<VStack m={4} display={'flex'} justifyContent={'center'} alignItems="center">
-				{/* Source Input */}
-				<InputGroup>
-					<InputLeftAddon w={'120px'}>Source</InputLeftAddon>
-					<Input
-						value={source}
-						onChange={(e) => {
-							setSource(e.target.value);
-							setFilteredSource(filterStations(e.target.value).slice(0, 10));
-							setOpenSourceStations(e.target.value.length !== 0);
-							setOpenDestinationStations(false);
-						}}
-						placeholder='From'
-					/>
-				</InputGroup>
 
-				{openSourceStations && (
-					<Box
-						bg='white'
-						boxShadow='md'
-						border='1px solid gray'
-						w='100%'
-						p={2}
-						mt={1}
-						borderRadius="md"
-						maxH="150px"
-						overflowY="auto"
-					>
-						<UnorderedList styleType="none">
-							{filteredSource.map((station, index) => (
-								<ListItem
-									key={index}
-									onClick={() => handleSourceSelection(station.station_name)}
-									cursor="pointer"
-									pt={2}
-									pb={2}
-									borderRadius="md"
-									_hover={{ backgroundColor: "teal.100" }}
-									_active={{ backgroundColor: "teal.200" }}
-								>
-									<Badge colorScheme='blue'>{station.station_code}</Badge>
-									{` ${station.station_name} - ${station.station_type}`}
-								</ListItem>
-							))}
-						</UnorderedList>
-					</Box>
-				)}
+				<InputComponent 
+					title={'Source'} 
+					placeholder={'From'} 
+					source={source} 
+					handleOnchange={(e) => {
+						setSource(e.target.value);
+						setFilteredSource(filterStations(e.target.value).slice(0, 10));
+						setOpenSourceStations(e.target.value.length !== 0);
+						setOpenDestinationStations(false);
+					}} 
+				/>
+
+				{openSourceStations && 
+					<ListComponent 
+						filteredItem={filteredSource} 
+						handleItemSelection={handleSourceSelection} 
+					/>
+				}
 
 				<MdOutlineSwapVerticalCircle size={35} cursor={'pointer'} onClick={() => {
 					setSource(destination);
 					setDestination(source);
 				}} />
 
-				<InputGroup>
-					<InputLeftAddon w={'120px'}>Destination</InputLeftAddon>
-					<Input
-						value={destination}
-						onChange={(e) => {
-							setDestination(e.target.value);
-							setFilteredDestination(filterStations(e.target.value).slice(0, 10));
-							setOpenDestinationStations(e.target.value.length !== 0);
-							setOpenSourceStations(false);
-						}}
-						placeholder="To"
-					/>
-				</InputGroup>
+				<InputComponent 
+					title={'Destination'} 
+					placeholder={'To'} 
+					source={destination} 
+					handleOnchange={(e) => {
+						setDestination(e.target.value);
+						setFilteredDestination(filterStations(e.target.value).slice(0, 10));
+						setOpenDestinationStations(e.target.value.length !== 0);
+						setOpenSourceStations(false);
+					}} 
+				/>
 
-				{openDestinationStations && (
-					<Box
-						bg='white'
-						boxShadow='md'
-						border='1px solid gray'
-						w='100%'
-						p={2}
-						mt={1}
-						borderRadius="md"
-						maxH="150px"
-						overflowY="auto"
-					>
-						<UnorderedList styleType="none">
-							{filteredDestination.map((station, index) => (
-								<ListItem
-									key={index}
-									onClick={() => handleDestinationSelection(station.station_name)}
-									cursor="pointer"
-									pt={2}
-									pb={2}
-									borderRadius="md"
-									_hover={{ backgroundColor: "teal.100" }}
-									_active={{ backgroundColor: "teal.200" }}
-								>
-									<Badge colorScheme='blue'>{station.station_code}</Badge>
-									{` ${station.station_name} - ${station.station_type}`}
-								</ListItem>
-							))}
-						</UnorderedList>
-					</Box>
-				)}
+				{openDestinationStations && 
+					<ListComponent 
+						filteredItem={filteredDestination} 
+						handleItemSelection={handleDestinationSelection} 
+					/>
+				}
 
 				<Button colorScheme="teal" onClick={handleSearch}>Search</Button>
 				<Button onClick={handleAddRoute} isDisabled={!(source.length > 0 && destination.length > 0)}>Add to Favourite Route</Button>

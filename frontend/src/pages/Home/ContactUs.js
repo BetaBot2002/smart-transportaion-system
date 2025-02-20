@@ -4,6 +4,7 @@ import { bounceVariants } from './HomePage.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { clearUpdation, contactUsAction } from '../../redux/actions/userActions.js';
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError.js';
 
 
 export default function ContactUsForm() {
@@ -12,17 +13,12 @@ export default function ContactUsForm() {
     const [email,setEmail] = useState("");
     const [message,setMessage] = useState("");
     const [subject,setSubject] = useState("");
-    const toast = useToast();
+    const notifyError = useNotifyError();
+	const notifySuccess = useNotifySuccess();
     const dispatch = useDispatch();
     const handleSubmit = ()=>{
         if(email==="" ||message==="" || subject==="") {
-            toast({
-                title: 'invalid',
-                description: "Enter all details",
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            })
+            notifyError("Enter all details");
             return;
         }
         dispatch(contactUsAction({
@@ -33,22 +29,10 @@ export default function ContactUsForm() {
     }
     useEffect(()=>{
         if(isMessageSent) {
-            toast({
-                title: 'success',
-                description: "Feedback sent successfully",
-                status: 'success',
-                duration: 3000,
-                isClosable: true
-            })
+            notifyError("Feedback sent successfully");
         }
         if(error) {
-            toast({
-                title: 'invalid',
-                description: error,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            })
+            notifyError(error);
             dispatch(clearUpdation());
         }
     },[isMessageSent,error])

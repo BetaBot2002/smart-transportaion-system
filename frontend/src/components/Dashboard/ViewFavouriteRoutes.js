@@ -3,6 +3,7 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { getShortestPath } from "../../redux/actions/trainActions";
+import { useNotifyError, useNotifySuccess } from "../../customHooks/useNotifyError";
 
 
 export default function ViewFavouriteRoutes() {
@@ -10,16 +11,11 @@ export default function ViewFavouriteRoutes() {
     const favouriteRoutes = user?.favouriteRoutes || [];
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const toast = useToast();
+    const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
     const handleSearch = (source,destination) => {
         if (source === '' || destination === '') {
-            toast({
-                title: 'invalid',
-                description: "Enter source or destination",
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            })
+            notifyError("Enter source or destination");
             return;
         }
         dispatch(getShortestPath(source,destination));

@@ -6,13 +6,15 @@ import { Loader } from '../../utils/Loader';
 import { getTrainRoute } from '../../redux/actions/trainActions';
 import StationStepper from './StationStepper';
 import { daysOfWeek, months } from '../../utils/assets';
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
 
 const TrainRoutePath = () => {
     const { trainNo: params } = useParams();
     const [trainNo, setTrainNo] = useState(params);
     const [data, setData] = useState();
     const dispatch = useDispatch();
-    const toast = useToast();
+    const notifyError = useNotifyError();
+	const notifySuccess = useNotifySuccess();
 
     const { loading, data: trainData, err } = useSelector((state) => state.GetTrainStatus);
     
@@ -23,17 +25,8 @@ const TrainRoutePath = () => {
 
     useEffect(() => {
         setData(trainData);
-
-        if (err) {
-            toast({
-                title: 'Error',
-                description: err,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            });
-        }
-    }, [err, trainData, toast]);
+        notifyError(err)
+    }, [err, trainData]);
 
     if (loading) return <Loader />;
 

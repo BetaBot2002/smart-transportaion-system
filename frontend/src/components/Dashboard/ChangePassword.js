@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react'
 import {useDispatch,useSelector} from "react-redux";
 import { putUserUpdatePassword } from '../../redux/actions/userActions';
 import { useNavigate } from 'react-router-dom';
+import { useNotifyError, useNotifySuccess } from '../../customHooks/useNotifyError';
 
 export default function ChangePassword() {
     const [showOldPassword, setShowOldPassword] = useState(false);
@@ -30,39 +31,22 @@ export default function ChangePassword() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const toast= useToast();
+    const notifyError = useNotifyError();
+    const notifySuccess = useNotifySuccess();
     const {loading,isUpdated,error} = useSelector(state=> state.IsUpdatedUser)
     const handleSubmit = () => {
         if (!oldPassword || !newPassword || !confirmPassword) {
-            toast({
-                title: 'Error',
-                description: 'All fields are required.',
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            });
+            notifyError("All fields are required.");
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            toast({
-                title: 'Error',
-                description: 'New password and confirmation password do not match.',
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            });
+            notifyError("Passwords do not match.");
             return;
         }
 
         if (newPassword.length < 6) {
-            toast({
-                title: 'Error',
-                description: 'Password must be at least 6 characters long.',
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            });
+            notifyError("Password must be at least 6 characters long.");
             return;
         }
 
@@ -74,23 +58,11 @@ export default function ChangePassword() {
     };
     useEffect(()=>{
         if(isUpdated) {
-            toast({
-                title: 'Success',
-                description: 'Password changed successfully.',
-                status: 'success',
-                duration: 5000,
-                isClosable: true,
-            });
+            notifySuccess("Password changed successfully.");
             navigate("/home");
         }
         if(error) {
-            toast({
-                title: 'invalid',
-                description: error,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            })
+            notifyError(error);
         }
     },[isUpdated,error])
 
