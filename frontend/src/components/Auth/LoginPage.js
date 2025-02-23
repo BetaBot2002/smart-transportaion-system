@@ -29,7 +29,7 @@ export default function LoginPage() {
 		if (isAuthenticated) {
 			dispatch(getLRUtrains());
 			if(user && user.city) {
-				navigate('/home');
+				navigate('/');
 			}else {
 				navigate('/complete-profile')
 			}

@@ -89,8 +89,6 @@ export default function RegisterPage() {
             return;
         }
 
-        console.log(formData);
-
         for (const key in formData) {
             if (formData[key] === '') {
                 notifyError("Enter valid credentials");
@@ -108,7 +106,7 @@ export default function RegisterPage() {
     useEffect(() => {
         if (isAuthenticated) {
             notifySuccess("Registration successful");
-            navigate('/home');
+            navigate('/');
         }
         if (error) {
             notifyError(error);

@@ -45,7 +45,7 @@ export default function CompleteRegistration() {
             notifySuccess("Registered successfully");
             dispatch(clearUpdation());
             dispatch(getProfileAction());
-            navigate("/home");
+            navigate("/");
         }
 
         if (error) {

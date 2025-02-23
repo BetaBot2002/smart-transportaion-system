@@ -59,7 +59,7 @@ export default function ChangePassword() {
     useEffect(()=>{
         if(isUpdated) {
             notifySuccess("Password changed successfully.");
-            navigate("/home");
+            navigate("/");
         }
         if(error) {
             notifyError(error);

@@ -39,7 +39,7 @@ export default function UserProfile() {
     }, [dispatch])
     const handleSubmitLogout = () => {
         dispatch(logoutUserAction());
-        navigate('/home');
+        navigate('/');
     }
     return (
         loading || !user ? 

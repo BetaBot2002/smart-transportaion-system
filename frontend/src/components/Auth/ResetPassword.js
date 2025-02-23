@@ -62,7 +62,7 @@ export default function ResetPassword() {
         if (isUpdated) {
             notifySuccess("Password reset successfully.");
             dispatch(getProfileAction());
-            navigate("/home");
+            navigate("/");
         }
         if (error) {
             toast({
