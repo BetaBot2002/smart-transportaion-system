@@ -4,6 +4,9 @@ import CustomError from "../utils/customError.js";
 import axios from "axios";
 import { redisClient } from "../index.js"
 import { constructLineColorAnswer, sortTrainList, zip } from "../utils/helper.js";
+
+const indianRailAPI = "https://sts5-indian-rail-api.mdbgo.io";
+
 const createStation = async (req, res) => {
 	try {
 		const requestStations = req.body;
@@ -115,15 +118,8 @@ const updateStation = async (req, res) => {
 
 const getAllStations = async (req, res) => {
 	try {
-		const cachedStations = await redisClient.json.get("allStations", "$");
-		if (cachedStations) {
-			return res.status(200).json({
-				stations: cachedStations
-			});
-		}
+		
 		const stations = await Station.find({ isActive: true }, ['station_name','station_code', 'station_type', 'line_color_code']);
-
-		const saveInCache = redisClient.json.set(`allStations`, "$", stations);
 		
 		res.status(200).json({
 			stations
@@ -145,7 +141,7 @@ const getTrainDetails = async (req, res) => {
 				train: JSON.parse(cachedTrain),
 			});
 		}
-		const train = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/getTrain?trainNo=${trainNo}`)).data;
+		const train = (await axios.get(`${indianRailAPI}/trains/getTrain?trainNo=${trainNo}`)).data;
 		if (!train.success) {
 			throw new CustomError(train.data);
 		}
@@ -165,7 +161,7 @@ const getTrainDetails = async (req, res) => {
 const getTrainRoute = async (req, res) => {
 	try {
 		const trainNo = req.query.trainNo;
-		const train = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/getRoute?trainNo=${trainNo}`)).data.data;
+		const train = (await axios.get(`${indianRailAPI}/trains/getRoute?trainNo=${trainNo}`)).data.data;
 		res.status(200).json({
 			success: true,
 			train
@@ -229,7 +225,7 @@ const getTrainList = async (req, res) => {
 	try {
 		const { from, to } = req.query;
 		const { date } = req.params;
-		const trainList = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/getTrainOn?from=${from}&to=${to}&date=${date}`)).data;
+		const trainList = (await axios.get(`${indianRailAPI}/trains/getTrainOn?from=${from}&to=${to}&date=${date}`)).data;
 		res.status(200).json({ success: true, trainList, message: "train list successfully" });
 
 	} catch (err) {
@@ -241,7 +237,7 @@ const getTrainInBetweenStations = async (req, res) => {
 	try {
 		const from = req.body.source;
 		const to = req.body.destination;
-		let trainBwtn = (await axios.get(`https://webscraped-indian-rail-api.mdbgo.io/trains/betweenStations?from=${from}&to=${to}`)).data;
+		let trainBwtn = (await axios.get(`${indianRailAPI}/trains/betweenStations?from=${from}&to=${to}`)).data;
 		if(!trainBwtn.success) {
 			throw new CustomError("No Direct train found")
 		}
