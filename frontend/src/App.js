@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './components/Auth/LoginPage.js';
 import RegisterPage from './components/Auth/RegisterPage.js';
 import Test from "./Test.js";
@@ -101,15 +101,13 @@ function App() {
                         </Protected>
                     } />
 
-                    <Route path="/home" element={
-                        <Protected needLoggedIn={false}>
-                            <HomePage />
-                        </Protected>
-                    } />
                     <Route path="/" element={
                         <Protected needLoggedIn={false}>
                             <HomePage />
                         </Protected>
+                    } />
+                    <Route path="/Home" element={
+                        <Navigate to={'/'} />
                     } />
 
                     <Route path="/routes" element={

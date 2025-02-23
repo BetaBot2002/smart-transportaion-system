@@ -45,7 +45,7 @@ export default function Test() {
 
           <Stack align={'center'}>
             <Text>Features</Text>
-            <Text cursor="pointer" onClick={() => navigate('/home')}>Home</Text>
+            <Text cursor="pointer" onClick={() => navigate('/')}>Home</Text>
             <Text cursor="pointer" onClick={() => navigate('/trains')}>Trains</Text>
             <Text cursor="pointer" onClick={() => navigate('/stations')}>Stations</Text>
             <Text cursor="pointer" onClick={() => navigate('/routes')}>Routes</Text>
