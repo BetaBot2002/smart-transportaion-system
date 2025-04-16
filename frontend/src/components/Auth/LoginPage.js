@@ -1,4 +1,3 @@
-'use client'
 import { useGoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { ArrowDownIcon, ArrowUpIcon, Icon } from '@chakra-ui/icons';
 import { Flex, Box, FormControl, FormLabel, Link, Input, Checkbox, Stack, Button, Heading,
@@ -42,33 +41,31 @@ export default function LoginPage() {
 	}, [dispatch, isAuthenticated, error]);
 	const handleinputsubmit = (e) => {
 		e.preventDefault();
-		if (inputFieldValue != "" && password != "") {
-			if (inputField === 'email') {
-				dispatch(loginUserAction({
-					email: inputFieldValue,
-					password: password
-				}))
-
-			} else if (inputField === 'phoneNo') {
-				if(inputField.length != 10) {
-					notifyError("Enter valid phone Number");
-					return;
-				}
-				dispatch(loginUserAction({
-					phoneNo: inputFieldValue,
-					password: password
-				}))
-			} else {
-				dispatch(loginUserAction({
-					username: inputFieldValue,
-					password: password
-				}))
-			}
-		} else {
+	
+		if (!inputFieldValue || !password) {
 			notifyError("Enter valid credentials");
+			return;
 		}
-
-	}
+	
+		if (inputField === 'email') {
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(inputFieldValue)) {
+				notifyError("Enter a valid email address");
+				return;
+			}
+			dispatch(loginUserAction({ email: inputFieldValue, password }));
+		} else if (inputField === 'phoneNo') {
+			const phoneRegex = /^[6-9]\d{9}$/; // Indian phone number format
+			if (!phoneRegex.test(inputFieldValue)) {
+				notifyError("Enter a valid 10-digit phone number");
+				return;
+			}
+			dispatch(loginUserAction({ phoneNo: inputFieldValue, password }));
+		} else {
+			dispatch(loginUserAction({ username: inputFieldValue, password }));
+		}
+	};
+	
 	const googleLoginSuccess = async (response) => {
 
 		try {
