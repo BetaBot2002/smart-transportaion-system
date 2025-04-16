@@ -50,12 +50,10 @@ app.use((req, res, next) => {
 });
 
 
-if (process.env.NODE_ENV !== 'test') {
-    app.listen(process.env.PORT, () => {
-        console.log(`Server running on port ${process.env.PORT}`);
-        console.log(`working process id = ${process.pid}`);
-    });
-}
+app.listen(process.env.PORT, () => {
+    console.log(`Server running on port ${process.env.PORT}`);
+    console.log(`working process id = ${process.pid}`);
+});
 
 
 // Export app for testing
