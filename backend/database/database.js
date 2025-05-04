@@ -11,10 +11,10 @@ const connectMongoDB = () => {
 
 const connectRedisDB = () => {
     const client = createClient({
-        password: 'nLzsUtyqysHRjGNgmMsCjKKPDS7dUwbn',
+        password: 'MGvLZIcdUurBS3wdb3U0tMxFxh4X1HZe',
         socket: {
-            host: 'redis-15513.c212.ap-south-1-1.ec2.redns.redis-cloud.com',
-            port: 15513
+            host: 'redis-18905.c264.ap-south-1-1.ec2.redns.redis-cloud.com',
+            port: 18905
         }
     });
     client.connect();
